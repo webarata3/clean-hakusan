@@ -1,0 +1,340 @@
+@charset "utf-8";
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Hiragino Maru Gothic Pro', 'ヒラギノ丸ゴ Pro',
+               'Meiryo', 'メイリオ', 'MS PGothic', 'MS Pゴシック', 'Webフォント', sans-serif;
+  color: #444;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  background: #fff;
+  box-sizing: border-box;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+header {
+  color: #fff;
+  background-color: #1e88e5;
+  font-size: 24px;
+  display: flex;
+  padding: 16px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  will-change: transform;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: center;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 9px 1px rgba(0, 0, 0, 0.12),
+  0 4px 2px -2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.233s cubic-bezier(0, 0, 0.21, 1) 0.1s;
+}
+
+.header-title {
+  align-items: center;
+  display: flex;
+  font-weight: 400;
+  font-size: 20px;
+  flex: 1;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.alert {
+  margin: 10px 5px 0 5px;
+  color: #f00;
+  font-size: 14px;
+}
+
+/********** menu **********/
+button {
+  background: url(image/menu.svg) center center no-repeat;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.7);
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.menu {
+  position: relative;
+}
+
+menu {
+  background-color: #fff;
+  border-left: 1px solid #000;
+  height: 100vh;
+  padding: 5px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 150px;
+  z-index: 1500;
+}
+
+menu ul {
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+  line-height: 1.5em;
+  white-space: nowrap;
+}
+
+menu a, menu a:hover, menu a:active, menu a:visited {
+  display: block;
+  color: #000;
+  text-decoration: none;
+  padding: 5px;
+}
+
+.menu-background-enter-active, .menu-background-leave-active {
+  transition: opacity 0.3s;
+}
+
+.menu-backgroud-enter, .menu-background-leave-to {
+  opacity: 0;
+}
+
+.menu-main-enter-active, .menu-main-leave-active {
+  transition: right 0.3s;
+}
+.menu-main-enter, .menu-main-leave-to {
+  right: -150px;
+}
+
+.headerButton {
+  width: 24px;
+  height: 24px;
+  margin-right: 16px;
+  text-indent: -30000px;
+  overflow: hidden;
+  opacity: 0.54;
+  transition: opacity 0.333s cubic-bezier(0, 0, 0.21, 1);
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.fa-external-link {
+  margin-left: 5px;
+}
+
+.disclaimer, .credit {
+  background-color: rgba(0, 0, 0, 0.7);
+  height: 100vh;
+  left: 0;
+  overflow: scroll;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2000;
+}
+
+.disclaimer > div, .credit > div {
+  background-color: #fff;
+  color: #000;
+  margin: 10px 0;
+  padding: 5px;
+}
+
+.disclaimer > div > div, .credit > div > div {
+  margin-bottom: 20px;
+}
+
+.disclaimer h1, .credit h1 {
+  background-color: #888;
+  color: #fff;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.disclaimer .text {
+  font-size: 14pt;
+  line-height: 1.4em;
+}
+
+.credit h2 {
+  border-bottom: 1px solid #888;
+  font-size: 16px;
+  padding: 5px;
+}
+
+.link {
+  margin-bottom: 10px;
+}
+
+.link a, .link a:hover, .link a:active, .link a:visited {
+  color: #00f;
+  font-size: 14px;
+}
+
+pre {
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+/********** select **********/
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(image/arrow.png) 99% 50% no-repeat, linear-gradient(to bottom, #fff 0%, #efebe1 100%);
+  background-size: 20px, 100%;
+  border: 1px solid #999;
+  flex: 1;
+  padding: 10px;
+  width: 100%;
+}
+
+.area {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-size: 14pt;
+  padding: 10px 20px;
+}
+
+.area a, .area a:hover, .area a:active, .area a:visited {
+  color: #ff4040;
+  font-size: 10pt;
+  text-align: right;
+  text-decoration: none;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.select-area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+label {
+  font-size: 16px;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+/********** garbage **********/
+
+.garbages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.garbage-item {
+  border: 1px solid #444;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin: 5px;
+  z-index: -1;
+}
+
+.garbage-title {
+  background-color: #1698cc;
+  color: #fff;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.2em;
+  padding: 5px;
+  position: relative;
+}
+
+.garbage-title:before{
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -24px;
+  margin-top: -12px;
+  border: 12px solid transparent;
+  border-left: 12px solid #1698cc;
+  z-index: 2;
+}
+
+.garbage-title:after{
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  margin-top: -16px;
+  border: 16px solid transparent;
+  border-left: 16px solid #1698cc;
+  z-index: 1;
+}
+
+.garbage-title > div {
+  margin-bottom: 8px;
+}
+
+.garbage-schedule {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 5px;
+  position: relative;
+}
+
+.garbage-how-many-days {
+  flex: 1;
+  font-size: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.garbage-next-date {
+  bottom: 5px;
+  color: #888;
+  font-size: 16px;
+  text-align: right;
+  position: absolute;
+  right: 5px;
+}
+
+.today {
+  background-color: #ffff90;
+}
+
+.today .garbage-how-many-days {
+  color: #f00;
+}
+
+.tomorrow .garbage-how-many-days {
+  color: #f00;
+}
+
+.day-after-tomorrow .garbage-how-many-days {
+  color: #00f;
+}
