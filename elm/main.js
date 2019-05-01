@@ -5940,6 +5940,34 @@ var author$project$Main$init = function (_n0) {
 				url: '/src/api/version.json'
 			}));
 };
+var author$project$CommonTime$toMonthNumber = function (month) {
+	switch (month.$) {
+		case 'Jan':
+			return 1;
+		case 'Feb':
+			return 2;
+		case 'Mar':
+			return 3;
+		case 'Apr':
+			return 4;
+		case 'May':
+			return 5;
+		case 'Jun':
+			return 6;
+		case 'Jul':
+			return 7;
+		case 'Aug':
+			return 8;
+		case 'Sep':
+			return 9;
+		case 'Oct':
+			return 10;
+		case 'Nov':
+			return 11;
+		default:
+			return 12;
+	}
+};
 var author$project$Main$SetCurrentDate = function (a) {
 	return {$: 'SetCurrentDate', a: a};
 };
@@ -6017,34 +6045,6 @@ var author$project$Main$getRegions = function (_n0) {
 var elm$core$Debug$toString = _Debug_toString;
 var author$project$Main$httpErr = function (error) {
 	return elm$core$Debug$toString(error);
-};
-var author$project$Main$toMonthNumber = function (month) {
-	switch (month.$) {
-		case 'Jan':
-			return 1;
-		case 'Feb':
-			return 2;
-		case 'Mar':
-			return 3;
-		case 'Apr':
-			return 4;
-		case 'May':
-			return 5;
-		case 'Jun':
-			return 6;
-		case 'Jul':
-			return 7;
-		case 'Aug':
-			return 8;
-		case 'Sep':
-			return 9;
-		case 'Oct':
-			return 10;
-		case 'Nov':
-			return 11;
-		default:
-			return 12;
-	}
 };
 var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -6748,7 +6748,7 @@ var author$project$Main$update = F2(
 						justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
 						time));
 				var month = elm$core$String$fromInt(
-					author$project$Main$toMonthNumber(
+					author$project$CommonTime$toMonthNumber(
 						A2(
 							elm$time$Time$toMonth,
 							justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
@@ -6926,7 +6926,7 @@ var author$project$Main$onChange = function (handler) {
 		'change',
 		A2(elm$json$Json$Decode$map, handler, elm$html$Html$Events$targetValue));
 };
-var author$project$Main$numberToMonth = function (month) {
+var author$project$CommonTime$numberToMonth = function (month) {
 	switch (month) {
 		case 1:
 			return elm$time$Time$Jan;
@@ -7162,7 +7162,7 @@ var author$project$Main$intDateToPosix = function (intDate) {
 		A7(
 			justinmimbs$time_extra$Time$Extra$Parts,
 			intDate.year,
-			author$project$Main$numberToMonth(intDate.month),
+			author$project$CommonTime$numberToMonth(intDate.month),
 			intDate.day,
 			0,
 			0,
