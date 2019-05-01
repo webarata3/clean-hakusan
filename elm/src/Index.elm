@@ -88,7 +88,7 @@ decodeGarbage =
         (field "garbageDates" (list string))
 
 
-nextDate : String -> List String -> String
+nextDate : YyyymmddDate -> List YyyymmddDate -> String
 nextDate currentDate garbageDates =
     case List.head (List.filter (\d -> d >= currentDate) garbageDates) of
         Just date ->
@@ -136,8 +136,8 @@ howManyDaysCss howManyDays =
 
 type alias Model =
     { time : Time.Posix
-    , dispDate : String
-    , currentDate : String
+    , dispDate : DispDate
+    , currentDate : YyyymmddDate
     , apiVersion : String
     , areaNo : String
     , regions : List Region
@@ -166,7 +166,7 @@ type alias AreaGarbage =
 
 type alias Garbage =
     { garbageTitles : List String
-    , garbageDates : List String
+    , garbageDates : List YyyymmddDate
     }
 
 
@@ -341,7 +341,7 @@ viewArea area =
     option [ value area.areaNo ] [ text area.areaName ]
 
 
-viewAreaGarbage : String -> AreaGarbage -> Html Msg
+viewAreaGarbage : YyyymmddDate -> AreaGarbage -> Html Msg
 viewAreaGarbage currentDate areaGarbage =
     let
         t =
@@ -350,7 +350,7 @@ viewAreaGarbage currentDate areaGarbage =
     viewGarbages currentDate areaGarbage.garbages
 
 
-viewGarbages : String -> List Garbage -> Html Msg
+viewGarbages : YyyymmddDate -> List Garbage -> Html Msg
 viewGarbages currentDate garbages =
     let
         t =
@@ -362,7 +362,7 @@ viewGarbages currentDate garbages =
     div [ class "garbages" ] (List.map viewGarbage2 garbages)
 
 
-viewGarbage : String -> Garbage -> Html Msg
+viewGarbage : YyyymmddDate -> Garbage -> Html Msg
 viewGarbage currentDate garbage =
     div [ class "garbage-item" ]
         [ viewGarbageTitles garbage.garbageTitles
@@ -375,7 +375,7 @@ viewGarbageTitles garbageTitles =
     div [ class "garbage-title" ] (List.map viewLine garbageTitles)
 
 
-viewGarbageDates : String -> List String -> Html Msg
+viewGarbageDates : YyyymmddDate -> List YyyymmddDate -> Html Msg
 viewGarbageDates currentDate garbageDates =
     let
         nextGarbageDate =
