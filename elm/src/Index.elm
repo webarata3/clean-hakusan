@@ -1,7 +1,7 @@
-module Main exposing (Area, AreaGarbage, Garbage, IntDate, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, diffStringDay, dispHowManyDays, getAreaGarbage, getRegions, howManyDaysCss, httpErr, init, intDateToJapaneseDate, intDateToPosix, main, nextDate, onChange, sliceToInt, stringToIntDate, stringToJapaneseDate, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
+module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, dispHowManyDays, getAreaGarbage, getRegions, howManyDaysCss, httpErr, init, main, nextDate, onChange, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
 
 import Browser
-import CommonTime exposing (numberToMonth, toMonthNumber)
+import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -98,73 +98,6 @@ nextDate currentDate garbageDates =
             ""
 
 
-stringToIntDate : String -> IntDate
-stringToIntDate dateString =
-    let
-        sliceToInt2 =
-            sliceToInt dateString
-    in
-    { year = sliceToInt2 0 4
-    , month = sliceToInt2 4 6
-    , day = sliceToInt2 6 8
-    }
-
-
-intDateToJapaneseDate : IntDate -> String
-intDateToJapaneseDate intDate =
-    String.fromInt intDate.year
-        ++ "年"
-        ++ String.fromInt intDate.month
-        ++ "月"
-        ++ String.fromInt intDate.day
-        ++ "日"
-
-
-stringToJapaneseDate : String -> String
-stringToJapaneseDate dateString =
-    intDateToJapaneseDate (stringToIntDate dateString)
-
-
-sliceToInt : String -> Int -> Int -> Int
-sliceToInt dateString begin end =
-    case String.toInt (String.slice begin end dateString) of
-        Just value ->
-            value
-
-        Nothing ->
-            0
-
-
-diffStringDay : String -> String -> Int
-diffStringDay dateString1 dateString2 =
-    let
-        intDate1 =
-            stringToIntDate dateString1
-
-        intDate2 =
-            stringToIntDate dateString2
-    in
-    Time.Extra.diff Time.Extra.Day
-        Time.utc
-        (intDateToPosix intDate1)
-        (intDateToPosix intDate2)
-
-
-intDateToPosix : IntDate -> Time.Posix
-intDateToPosix intDate =
-    Time.Extra.partsToPosix
-        Time.utc
-        (Time.Extra.Parts
-            intDate.year
-            (numberToMonth intDate.month)
-            intDate.day
-            0
-            0
-            0
-            0
-        )
-
-
 dispHowManyDays : Int -> String
 dispHowManyDays howManyDays =
     case howManyDays of
@@ -237,13 +170,6 @@ type alias Garbage =
     }
 
 
-type alias IntDate =
-    { year : Int
-    , month : Int
-    , day : Int
-    }
-
-
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { time = Time.millisToPosix 0
@@ -284,21 +210,12 @@ update msg model =
 
         SetCurrentDate time ->
             let
-                year =
-                    String.fromInt (Time.toYear (TimeZone.asia__tokyo ()) time)
-
-                month =
-                    String.fromInt
-                        (toMonthNumber
-                            (Time.toMonth (TimeZone.asia__tokyo ()) time)
-                        )
-
-                day =
-                    String.fromInt (Time.toDay (TimeZone.asia__tokyo ()) time)
+                intDate =
+                    CommonTime.posixToIntDate time
             in
             ( { model
-                | dispDate = year ++ "年" ++ month ++ "月" ++ day ++ "日"
-                , currentDate = year ++ String.padLeft 2 '0' month ++ String.padLeft 2 '0' day
+                | dispDate = CommonTime.intDateToDispDate intDate
+                , currentDate = CommonTime.intDateToYyyymmddDate intDate
               }
             , Cmd.none
             )
@@ -465,14 +382,20 @@ viewGarbageDates currentDate garbageDates =
             nextDate currentDate garbageDates
 
         howManyDays =
-            diffStringDay currentDate nextGarbageDate
+            CommonTime.diffDayYyyymmddDate currentDate nextGarbageDate
 
         dispDays =
-            dispHowManyDays (diffStringDay currentDate nextGarbageDate)
+            dispHowManyDays
+                (CommonTime.diffDayYyyymmddDate
+                    currentDate
+                    nextGarbageDate
+                )
     in
     div [ class (howManyDaysCss howManyDays) ]
         [ div [ class "garbage-how-many-days" ] [ text dispDays ]
-        , div [ class "garbage-next-date" ] [ text (stringToJapaneseDate nextGarbageDate) ]
+        , div [ class "garbage-next-date" ]
+            [ text (CommonTime.yyyymmddDateToDispDate nextGarbageDate)
+            ]
         ]
 
 

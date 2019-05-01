@@ -5940,115 +5940,9 @@ var author$project$Main$init = function (_n0) {
 				url: '/src/api/version.json'
 			}));
 };
-var author$project$CommonTime$toMonthNumber = function (month) {
-	switch (month.$) {
-		case 'Jan':
-			return 1;
-		case 'Feb':
-			return 2;
-		case 'Mar':
-			return 3;
-		case 'Apr':
-			return 4;
-		case 'May':
-			return 5;
-		case 'Jun':
-			return 6;
-		case 'Jul':
-			return 7;
-		case 'Aug':
-			return 8;
-		case 'Sep':
-			return 9;
-		case 'Oct':
-			return 10;
-		case 'Nov':
-			return 11;
-		default:
-			return 12;
-	}
+var author$project$CommonTime$intDateToDispDate = function (intDate) {
+	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + '日'))));
 };
-var author$project$Main$SetCurrentDate = function (a) {
-	return {$: 'SetCurrentDate', a: a};
-};
-var author$project$Main$AreaGarbage = F3(
-	function (areaNo, areaName, garbages) {
-		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
-	});
-var author$project$Main$Garbage = F2(
-	function (garbageTitles, garbageDates) {
-		return {garbageDates: garbageDates, garbageTitles: garbageTitles};
-	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$list = _Json_decodeList;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Main$decodeGarbage = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Garbage,
-	A2(
-		elm$json$Json$Decode$field,
-		'garbageTitles',
-		elm$json$Json$Decode$list(elm$json$Json$Decode$string)),
-	A2(
-		elm$json$Json$Decode$field,
-		'garbageDates',
-		elm$json$Json$Decode$list(elm$json$Json$Decode$string)));
-var author$project$Main$decodeGarbages = elm$json$Json$Decode$list(author$project$Main$decodeGarbage);
-var elm$json$Json$Decode$map3 = _Json_map3;
-var author$project$Main$decodeAreaGarbage = A4(
-	elm$json$Json$Decode$map3,
-	author$project$Main$AreaGarbage,
-	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
-var author$project$Main$Region = F2(
-	function (regionName, areas) {
-		return {areas: areas, regionName: regionName};
-	});
-var author$project$Main$Area = F2(
-	function (areaNo, areaName) {
-		return {areaName: areaName, areaNo: areaNo};
-	});
-var author$project$Main$decodeArea = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Area,
-	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
-var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
-var author$project$Main$decodeRegion = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Region,
-	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
-var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
-var author$project$Main$GotAreaGarbage = function (a) {
-	return {$: 'GotAreaGarbage', a: a};
-};
-var author$project$Main$getAreaGarbage = function (areaNo) {
-	return elm$http$Http$get(
-		{
-			expect: elm$http$Http$expectString(author$project$Main$GotAreaGarbage),
-			url: '/src/api/' + (areaNo + '.json')
-		});
-};
-var author$project$Main$GotRegions = function (a) {
-	return {$: 'GotRegions', a: a};
-};
-var author$project$Main$getRegions = function (_n0) {
-	return elm$http$Http$get(
-		{
-			expect: elm$http$Http$expectString(author$project$Main$GotRegions),
-			url: '/src/api/areas.json'
-		});
-};
-var elm$core$Debug$toString = _Debug_toString;
-var author$project$Main$httpErr = function (error) {
-	return elm$core$Debug$toString(error);
-};
-var elm$core$Debug$log = _Debug_log;
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$core$String$cons = _String_cons;
 var elm$core$String$fromChar = function (_char) {
 	return A2(elm$core$String$cons, _char, '');
@@ -6077,87 +5971,50 @@ var elm$core$String$padLeft = F3(
 				elm$core$String$fromChar(_char)),
 			string);
 	});
-var elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
+var author$project$CommonTime$intDateToYyyymmddDate = function (intDate) {
+	var stringYear = elm$core$String$fromInt(intDate.year);
+	var stringMonth = A3(
+		elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		elm$core$String$fromInt(intDate.month));
+	var stringDay = A3(
+		elm$core$String$padLeft,
+		2,
+		_Utils_chr('0'),
+		elm$core$String$fromInt(intDate.day));
+	return _Utils_ap(
+		stringYear,
+		_Utils_ap(stringMonth, stringDay));
 };
-var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$spawnCmd = F2(
-	function (router, _n0) {
-		var task = _n0.a;
-		return _Scheduler_spawn(
-			A2(
-				elm$core$Task$andThen,
-				elm$core$Platform$sendToApp(router),
-				task));
-	});
-var elm$core$Task$onEffects = F3(
-	function (router, commands, state) {
-		return A2(
-			elm$core$Task$map,
-			function (_n0) {
-				return _Utils_Tuple0;
-			},
-			elm$core$Task$sequence(
-				A2(
-					elm$core$List$map,
-					elm$core$Task$spawnCmd(router),
-					commands)));
-	});
-var elm$core$Task$onSelfMsg = F3(
-	function (_n0, _n1, _n2) {
-		return elm$core$Task$succeed(_Utils_Tuple0);
-	});
-var elm$core$Task$cmdMap = F2(
-	function (tagger, _n0) {
-		var task = _n0.a;
-		return elm$core$Task$Perform(
-			A2(elm$core$Task$map, tagger, task));
-	});
-_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
-var elm$core$Task$command = _Platform_leaf('Task');
-var elm$core$Task$perform = F2(
-	function (toMessage, task) {
-		return elm$core$Task$command(
-			elm$core$Task$Perform(
-				A2(elm$core$Task$map, toMessage, task)));
-	});
-var elm$json$Json$Decode$decodeString = _Json_runOnString;
-var elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
+var author$project$CommonTime$toMonthNumber = function (month) {
+	switch (month.$) {
+		case 'Jan':
+			return 1;
+		case 'Feb':
+			return 2;
+		case 'Mar':
+			return 3;
+		case 'Apr':
+			return 4;
+		case 'May':
+			return 5;
+		case 'Jun':
+			return 6;
+		case 'Jul':
+			return 7;
+		case 'Aug':
+			return 8;
+		case 'Sep':
+			return 9;
+		case 'Oct':
+			return 10;
+		case 'Nov':
+			return 11;
+		default:
+			return 12;
+	}
 };
-var elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var elm$time$Time$customZone = elm$time$Time$Zone;
-var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
 var elm$time$Time$flooredDiv = F2(
 	function (numerator, denominator) {
 		return elm$core$Basics$floor(numerator / denominator);
@@ -6274,6 +6131,11 @@ var elm$time$Time$toYear = F2(
 		return elm$time$Time$toCivil(
 			A2(elm$time$Time$toAdjustedMinutes, zone, time)).year;
 	});
+var elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var elm$time$Time$customZone = elm$time$Time$Zone;
 var justinmimbs$timezone_data$TimeZone$maxYear = 2037;
 var justinmimbs$timezone_data$TimeZone$minYear = 1970;
 var elm$core$Tuple$second = function (_n0) {
@@ -6316,6 +6178,20 @@ var elm$core$List$append = F2(
 var elm$core$List$concat = function (lists) {
 	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
 };
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
 var elm$core$List$concatMap = F2(
 	function (f, list) {
 		return elm$core$List$concat(
@@ -6731,6 +6607,165 @@ var justinmimbs$timezone_data$TimeZone$asia__tokyo = function (_n0) {
 				540,
 				justinmimbs$timezone_data$TimeZone$Specification$Save(0))));
 };
+var author$project$CommonTime$posixToIntDate = function (time) {
+	var year = A2(
+		elm$time$Time$toYear,
+		justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
+		time);
+	var month = author$project$CommonTime$toMonthNumber(
+		A2(
+			elm$time$Time$toMonth,
+			justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
+			time));
+	var day = A2(
+		elm$time$Time$toDay,
+		justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
+		time);
+	return {day: day, month: month, year: year};
+};
+var author$project$Main$SetCurrentDate = function (a) {
+	return {$: 'SetCurrentDate', a: a};
+};
+var author$project$Main$AreaGarbage = F3(
+	function (areaNo, areaName, garbages) {
+		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
+	});
+var author$project$Main$Garbage = F2(
+	function (garbageTitles, garbageDates) {
+		return {garbageDates: garbageDates, garbageTitles: garbageTitles};
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$list = _Json_decodeList;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Main$decodeGarbage = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Garbage,
+	A2(
+		elm$json$Json$Decode$field,
+		'garbageTitles',
+		elm$json$Json$Decode$list(elm$json$Json$Decode$string)),
+	A2(
+		elm$json$Json$Decode$field,
+		'garbageDates',
+		elm$json$Json$Decode$list(elm$json$Json$Decode$string)));
+var author$project$Main$decodeGarbages = elm$json$Json$Decode$list(author$project$Main$decodeGarbage);
+var elm$json$Json$Decode$map3 = _Json_map3;
+var author$project$Main$decodeAreaGarbage = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Main$AreaGarbage,
+	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
+var author$project$Main$Region = F2(
+	function (regionName, areas) {
+		return {areas: areas, regionName: regionName};
+	});
+var author$project$Main$Area = F2(
+	function (areaNo, areaName) {
+		return {areaName: areaName, areaNo: areaNo};
+	});
+var author$project$Main$decodeArea = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Area,
+	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
+var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
+var author$project$Main$decodeRegion = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Region,
+	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
+var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
+var author$project$Main$GotAreaGarbage = function (a) {
+	return {$: 'GotAreaGarbage', a: a};
+};
+var author$project$Main$getAreaGarbage = function (areaNo) {
+	return elm$http$Http$get(
+		{
+			expect: elm$http$Http$expectString(author$project$Main$GotAreaGarbage),
+			url: '/src/api/' + (areaNo + '.json')
+		});
+};
+var author$project$Main$GotRegions = function (a) {
+	return {$: 'GotRegions', a: a};
+};
+var author$project$Main$getRegions = function (_n0) {
+	return elm$http$Http$get(
+		{
+			expect: elm$http$Http$expectString(author$project$Main$GotRegions),
+			url: '/src/api/areas.json'
+		});
+};
+var elm$core$Debug$toString = _Debug_toString;
+var author$project$Main$httpErr = function (error) {
+	return elm$core$Debug$toString(error);
+};
+var elm$core$Debug$log = _Debug_log;
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var elm$core$Task$Perform = function (a) {
+	return {$: 'Perform', a: a};
+};
+var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
+var elm$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return elm$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var elm$core$Task$spawnCmd = F2(
+	function (router, _n0) {
+		var task = _n0.a;
+		return _Scheduler_spawn(
+			A2(
+				elm$core$Task$andThen,
+				elm$core$Platform$sendToApp(router),
+				task));
+	});
+var elm$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			elm$core$Task$map,
+			function (_n0) {
+				return _Utils_Tuple0;
+			},
+			elm$core$Task$sequence(
+				A2(
+					elm$core$List$map,
+					elm$core$Task$spawnCmd(router),
+					commands)));
+	});
+var elm$core$Task$onSelfMsg = F3(
+	function (_n0, _n1, _n2) {
+		return elm$core$Task$succeed(_Utils_Tuple0);
+	});
+var elm$core$Task$cmdMap = F2(
+	function (tagger, _n0) {
+		var task = _n0.a;
+		return elm$core$Task$Perform(
+			A2(elm$core$Task$map, tagger, task));
+	});
+_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
+var elm$core$Task$command = _Platform_leaf('Task');
+var elm$core$Task$perform = F2(
+	function (toMessage, task) {
+		return elm$core$Task$command(
+			elm$core$Task$Perform(
+				A2(elm$core$Task$map, toMessage, task)));
+	});
+var elm$json$Json$Decode$decodeString = _Json_runOnString;
+var elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6742,40 +6777,13 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'SetCurrentDate':
 				var time = msg.a;
-				var year = elm$core$String$fromInt(
-					A2(
-						elm$time$Time$toYear,
-						justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
-						time));
-				var month = elm$core$String$fromInt(
-					author$project$CommonTime$toMonthNumber(
-						A2(
-							elm$time$Time$toMonth,
-							justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
-							time)));
-				var day = elm$core$String$fromInt(
-					A2(
-						elm$time$Time$toDay,
-						justinmimbs$timezone_data$TimeZone$asia__tokyo(_Utils_Tuple0),
-						time));
+				var intDate = author$project$CommonTime$posixToIntDate(time);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							currentDate: _Utils_ap(
-								year,
-								_Utils_ap(
-									A3(
-										elm$core$String$padLeft,
-										2,
-										_Utils_chr('0'),
-										month),
-									A3(
-										elm$core$String$padLeft,
-										2,
-										_Utils_chr('0'),
-										day))),
-							dispDate: year + ('年' + (month + ('月' + (day + '日'))))
+							currentDate: author$project$CommonTime$intDateToYyyymmddDate(intDate),
+							dispDate: author$project$CommonTime$intDateToDispDate(intDate)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'GotApiVersion':
@@ -7155,7 +7163,7 @@ var justinmimbs$time_extra$Time$Extra$partsToPosix = F2(
 				A3(elm$core$Basics$clamp, 0, 59, second),
 				A3(elm$core$Basics$clamp, 0, 999, millisecond)));
 	});
-var author$project$Main$intDateToPosix = function (intDate) {
+var author$project$CommonTime$intDateToPosix = function (intDate) {
 	return A2(
 		justinmimbs$time_extra$Time$Extra$partsToPosix,
 		elm$time$Time$utc,
@@ -7171,7 +7179,7 @@ var author$project$Main$intDateToPosix = function (intDate) {
 };
 var elm$core$String$slice = _String_slice;
 var elm$core$String$toInt = _String_toInt;
-var author$project$Main$sliceToInt = F3(
+var author$project$CommonTime$sliceToInt = F3(
 	function (dateString, begin, end) {
 		var _n0 = elm$core$String$toInt(
 			A3(elm$core$String$slice, begin, end, dateString));
@@ -7182,8 +7190,8 @@ var author$project$Main$sliceToInt = F3(
 			return 0;
 		}
 	});
-var author$project$Main$stringToIntDate = function (dateString) {
-	var sliceToInt2 = author$project$Main$sliceToInt(dateString);
+var author$project$CommonTime$yyyymmddDateToIntDate = function (yyyymmddDate) {
+	var sliceToInt2 = author$project$CommonTime$sliceToInt(yyyymmddDate);
 	return {
 		day: A2(sliceToInt2, 6, 8),
 		month: A2(sliceToInt2, 4, 6),
@@ -7559,17 +7567,21 @@ var justinmimbs$time_extra$Time$Extra$diff = F4(
 			}
 		}
 	});
-var author$project$Main$diffStringDay = F2(
-	function (dateString1, dateString2) {
-		var intDate2 = author$project$Main$stringToIntDate(dateString2);
-		var intDate1 = author$project$Main$stringToIntDate(dateString1);
+var author$project$CommonTime$diffDayYyyymmddDate = F2(
+	function (yyyymmddDate1, yyyymmddDate2) {
+		var intDate2 = author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate2);
+		var intDate1 = author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate1);
 		return A4(
 			justinmimbs$time_extra$Time$Extra$diff,
 			justinmimbs$time_extra$Time$Extra$Day,
 			elm$time$Time$utc,
-			author$project$Main$intDateToPosix(intDate1),
-			author$project$Main$intDateToPosix(intDate2));
+			author$project$CommonTime$intDateToPosix(intDate1),
+			author$project$CommonTime$intDateToPosix(intDate2));
 	});
+var author$project$CommonTime$yyyymmddDateToDispDate = function (yyyymmddDate) {
+	return author$project$CommonTime$intDateToDispDate(
+		author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate));
+};
 var author$project$Main$dispHowManyDays = function (howManyDays) {
 	switch (howManyDays) {
 		case 0:
@@ -7619,13 +7631,6 @@ var author$project$Main$nextDate = F2(
 			return '';
 		}
 	});
-var author$project$Main$intDateToJapaneseDate = function (intDate) {
-	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + '日'))));
-};
-var author$project$Main$stringToJapaneseDate = function (dateString) {
-	return author$project$Main$intDateToJapaneseDate(
-		author$project$Main$stringToIntDate(dateString));
-};
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
@@ -7641,9 +7646,9 @@ var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('cl
 var author$project$Main$viewGarbageDates = F2(
 	function (currentDate, garbageDates) {
 		var nextGarbageDate = A2(author$project$Main$nextDate, currentDate, garbageDates);
-		var howManyDays = A2(author$project$Main$diffStringDay, currentDate, nextGarbageDate);
+		var howManyDays = A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate);
 		var dispDays = author$project$Main$dispHowManyDays(
-			A2(author$project$Main$diffStringDay, currentDate, nextGarbageDate));
+			A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate));
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
@@ -7672,7 +7677,7 @@ var author$project$Main$viewGarbageDates = F2(
 					_List_fromArray(
 						[
 							elm$html$Html$text(
-							author$project$Main$stringToJapaneseDate(nextGarbageDate))
+							author$project$CommonTime$yyyymmddDateToDispDate(nextGarbageDate))
 						]))
 				]));
 	});
