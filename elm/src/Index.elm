@@ -1,7 +1,8 @@
-module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, dispHowManyDays, getAreaGarbage, getRegions, howManyDaysCss, httpErr, init, main, nextDate, onChange, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
+module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, httpErr, init, main, onChange, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
 
 import Browser
 import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
+import CommonUtil
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -86,48 +87,6 @@ decodeGarbage =
     Json.Decode.map2 Garbage
         (field "garbageTitles" (list string))
         (field "garbageDates" (list string))
-
-
-nextDate : YyyymmddDate -> List YyyymmddDate -> String
-nextDate currentDate garbageDates =
-    case List.head (List.filter (\d -> d >= currentDate) garbageDates) of
-        Just date ->
-            date
-
-        Nothing ->
-            ""
-
-
-dispHowManyDays : Int -> String
-dispHowManyDays howManyDays =
-    case howManyDays of
-        0 ->
-            "今日"
-
-        1 ->
-            "明日"
-
-        2 ->
-            "明後日"
-
-        _ ->
-            String.fromInt howManyDays ++ "日後"
-
-
-howManyDaysCss : Int -> String
-howManyDaysCss howManyDays =
-    case howManyDays of
-        0 ->
-            "garbage-schedule today"
-
-        1 ->
-            "garbage-schedule tomorrow"
-
-        2 ->
-            "garbage-schedule day-after-tomorrow"
-
-        _ ->
-            "garbage-schedule"
 
 
 
@@ -379,19 +338,19 @@ viewGarbageDates : YyyymmddDate -> List YyyymmddDate -> Html Msg
 viewGarbageDates currentDate garbageDates =
     let
         nextGarbageDate =
-            nextDate currentDate garbageDates
+            CommonUtil.nextDate currentDate garbageDates
 
         howManyDays =
             CommonTime.diffDayYyyymmddDate currentDate nextGarbageDate
 
         dispDays =
-            dispHowManyDays
+            CommonUtil.dispHowManyDays
                 (CommonTime.diffDayYyyymmddDate
                     currentDate
                     nextGarbageDate
                 )
     in
-    div [ class (howManyDaysCss howManyDays) ]
+    div [ class (CommonUtil.howManyDaysCss howManyDays) ]
         [ div [ class "garbage-how-many-days" ] [ text dispDays ]
         , div [ class "garbage-next-date" ]
             [ text (CommonTime.yyyymmddDateToDispDate nextGarbageDate)

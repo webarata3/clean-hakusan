@@ -7582,7 +7582,7 @@ var author$project$CommonTime$yyyymmddDateToDispDate = function (yyyymmddDate) {
 	return author$project$CommonTime$intDateToDispDate(
 		author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate));
 };
-var author$project$Main$dispHowManyDays = function (howManyDays) {
+var author$project$CommonUtil$dispHowManyDays = function (howManyDays) {
 	switch (howManyDays) {
 		case 0:
 			return '今日';
@@ -7594,7 +7594,7 @@ var author$project$Main$dispHowManyDays = function (howManyDays) {
 			return elm$core$String$fromInt(howManyDays) + '日後';
 	}
 };
-var author$project$Main$howManyDaysCss = function (howManyDays) {
+var author$project$CommonUtil$howManyDaysCss = function (howManyDays) {
 	switch (howManyDays) {
 		case 0:
 			return 'garbage-schedule today';
@@ -7615,7 +7615,7 @@ var elm$core$List$head = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
-var author$project$Main$nextDate = F2(
+var author$project$CommonUtil$nextDate = F2(
 	function (currentDate, garbageDates) {
 		var _n0 = elm$core$List$head(
 			A2(
@@ -7645,16 +7645,16 @@ var elm$html$Html$Attributes$stringProperty = F2(
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var author$project$Main$viewGarbageDates = F2(
 	function (currentDate, garbageDates) {
-		var nextGarbageDate = A2(author$project$Main$nextDate, currentDate, garbageDates);
+		var nextGarbageDate = A2(author$project$CommonUtil$nextDate, currentDate, garbageDates);
 		var howManyDays = A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate);
-		var dispDays = author$project$Main$dispHowManyDays(
+		var dispDays = author$project$CommonUtil$dispHowManyDays(
 			A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate));
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$class(
-					author$project$Main$howManyDaysCss(howManyDays))
+					author$project$CommonUtil$howManyDaysCss(howManyDays))
 				]),
 			_List_fromArray(
 				[
