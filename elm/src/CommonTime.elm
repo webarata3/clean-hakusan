@@ -3,6 +3,11 @@ module CommonTime exposing (numberToMonth, toMonthNumber)
 import Time
 
 
+{-| Time.Monthで定義されている月を数字の月に置き換える
+
+    toMonthNumber Time.Jan == 1
+
+-}
 toMonthNumber : Time.Month -> Int
 toMonthNumber month =
     case month of
@@ -43,6 +48,12 @@ toMonthNumber month =
             12
 
 
+{-| 数字の月をTime.Monthで定義されている月に置き換える
+TODO 1〜12以外の数字の場合にはどうするか。。。
+
+    numberToMonth 1 == Time.Jan
+
+-}
 numberToMonth : Int -> Time.Month
 numberToMonth month =
     case month of
