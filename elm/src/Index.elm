@@ -149,7 +149,7 @@ init _ =
       , regions = []
       , areaGarbage = { areaNo = "", areaName = "", garbages = [] }
       }
-    , getSavedApiVersion ()
+    , Task.perform SetCurrentDate Time.now
     )
 
 
@@ -201,7 +201,7 @@ update msg model =
                 | dispDate = CommonTime.intDateToDispDate intDate
                 , currentDate = CommonTime.intDateToYyyymmddDate intDate
               }
-            , Cmd.none
+            , getSavedApiVersion ()
             )
 
         GotSavedApiVersion apiVersion ->
