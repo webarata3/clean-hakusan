@@ -6812,7 +6812,7 @@ var author$project$Main$update = F2(
 		update:
 		while (true) {
 			switch (msg.$) {
-				case 'LoadingArea':
+				case 'Loading':
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,

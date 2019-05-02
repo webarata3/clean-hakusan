@@ -164,7 +164,7 @@ subscriptions model =
 
 type Msg
     = DataError String
-    | LoadingArea
+    | Loading
     | SetCurrentDate Time.Posix
     | GotWebApiVersion (Result Http.Error String)
     | GotRegions (Result Http.Error String)
@@ -182,7 +182,7 @@ type ApiVersionState
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        LoadingArea ->
+        Loading ->
             ( { model | apiVersion = "" }
             , Cmd.none
             )
