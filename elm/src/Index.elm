@@ -239,8 +239,7 @@ update msg model =
                 RequireRegion webApiVersion ->
                     ( { model
                         | apiVersion = webApiVersion
-
-                            , viewState = DataOk
+                        , viewState = DataOk
                       }
                     , getRegions ()
                     )
