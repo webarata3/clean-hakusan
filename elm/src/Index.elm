@@ -1,4 +1,4 @@
-module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, httpErr, init, main, onChange, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
+port module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getSavedApiVersion, httpErr, init, main, onChange, retGetSavedApiVersion, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
 
 import Browser
 import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
@@ -14,13 +14,19 @@ import Time.Extra
 import TimeZone
 
 
+port getSavedApiVersion : () -> Cmd msg
+
+
+port retGetSavedApiVersion : (String -> msg) -> Sub msg
+
+
 main : Program () Model Msg
 main =
     Browser.element
         { init = init
         , update = update
         , view = view
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
 
 
@@ -139,11 +145,13 @@ init _ =
       , regions = []
       , areaGarbage = { areaNo = "", areaName = "", garbages = [] }
       }
-    , Http.get
-        { url = "/src/api/version.json"
-        , expect = Http.expectString GotApiVersion
-        }
+    , getSavedApiVersion ()
     )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    retGetSavedApiVersion GotSavedApiVersion
 
 
 
@@ -153,10 +161,11 @@ init _ =
 type Msg
     = LoadingArea
     | SetCurrentDate Time.Posix
-    | GotApiVersion (Result Http.Error String)
+    | GotWebApiVersion (Result Http.Error String)
     | GotRegions (Result Http.Error String)
     | GotAreaGarbage (Result Http.Error String)
     | ChangeArea String
+    | GotSavedApiVersion String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -179,7 +188,15 @@ update msg model =
             , Cmd.none
             )
 
-        GotApiVersion (Ok resp) ->
+        GotSavedApiVersion apiVersion ->
+            ( model
+            , Http.get
+                { url = "/src/api/version.json"
+                , expect = Http.expectString GotWebApiVersion
+                }
+            )
+
+        GotWebApiVersion (Ok resp) ->
             let
                 result =
                     decodeString (field "apiVersion" string) resp
@@ -196,7 +213,7 @@ update msg model =
             , getRegions ()
             )
 
-        GotApiVersion (Err message) ->
+        GotWebApiVersion (Err message) ->
             ( { model | apiVersion = Debug.toString message }
             , Cmd.none
             )
@@ -270,7 +287,8 @@ view model =
             , div [ class "menu" ] [ button [ class "" ] [] ]
             ]
         , main_ []
-            [ div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
+            [ div [] [ text model.apiVersion ]
+            , div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
             , div [ class "area" ]
                 [ div [ class "select-area" ]
                     [ label
