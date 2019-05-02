@@ -5229,13 +5229,29 @@ var author$project$Main$init = function (_n0) {
 		},
 		A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
 };
+var author$project$Main$CompleteSaveApiVersion = function (a) {
+	return {$: 'CompleteSaveApiVersion', a: a};
+};
 var author$project$Main$GotSavedApiVersion = function (a) {
 	return {$: 'GotSavedApiVersion', a: a};
 };
+var author$project$Main$GotSavedRegions = function (a) {
+	return {$: 'GotSavedRegions', a: a};
+};
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var author$project$Main$completeSaveApiVersion = _Platform_incomingPort('completeSaveApiVersion', elm$json$Json$Decode$bool);
 var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$Main$retGetSavedApiVersion = _Platform_incomingPort('retGetSavedApiVersion', elm$json$Json$Decode$string);
+var author$project$Main$retGetSavedRegions = _Platform_incomingPort('retGetSavedRegions', elm$json$Json$Decode$string);
+var elm$core$Platform$Sub$batch = _Platform_batch;
 var author$project$Main$subscriptions = function (model) {
-	return author$project$Main$retGetSavedApiVersion(author$project$Main$GotSavedApiVersion);
+	return elm$core$Platform$Sub$batch(
+		_List_fromArray(
+			[
+				author$project$Main$retGetSavedApiVersion(author$project$Main$GotSavedApiVersion),
+				author$project$Main$completeSaveApiVersion(author$project$Main$CompleteSaveApiVersion),
+				author$project$Main$retGetSavedRegions(author$project$Main$GotSavedRegions)
+			]));
 };
 var author$project$CommonTime$intDateToDispDate = function (intDate) {
 	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + '日'))));
@@ -5966,26 +5982,6 @@ var author$project$Main$decodeAreaGarbage = A4(
 	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
-var author$project$Main$Region = F2(
-	function (regionName, areas) {
-		return {areas: areas, regionName: regionName};
-	});
-var author$project$Main$Area = F2(
-	function (areaNo, areaName) {
-		return {areaName: areaName, areaNo: areaNo};
-	});
-var author$project$Main$decodeArea = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Area,
-	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
-var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
-var author$project$Main$decodeRegion = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Region,
-	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
-var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
 var author$project$Main$GotAreaGarbage = function (a) {
 	return {$: 'GotAreaGarbage', a: a};
 };
@@ -6786,15 +6782,40 @@ var author$project$Main$getAreaGarbage = function (areaNo) {
 			url: '/src/api/' + (areaNo + '.json')
 		});
 };
-var author$project$Main$GotRegions = function (a) {
-	return {$: 'GotRegions', a: a};
-};
-var author$project$Main$getRegions = function (_n0) {
-	return elm$http$Http$get(
-		{
-			expect: elm$http$Http$expectString(author$project$Main$GotRegions),
-			url: '/src/api/areas.json'
-		});
+var author$project$Main$Region = F2(
+	function (regionName, areas) {
+		return {areas: areas, regionName: regionName};
+	});
+var author$project$Main$Area = F2(
+	function (areaNo, areaName) {
+		return {areaName: areaName, areaNo: areaNo};
+	});
+var author$project$Main$decodeArea = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Area,
+	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
+var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
+var author$project$Main$decodeRegion = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Region,
+	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
+var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
+var elm$json$Json$Decode$decodeString = _Json_runOnString;
+var author$project$Main$getRegions = function (regionJson) {
+	var regionsResult = A2(
+		elm$json$Json$Decode$decodeString,
+		A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
+		regionJson);
+	if (regionsResult.$ === 'Ok') {
+		var resultJson = regionsResult.a;
+		return elm$core$Result$Ok(resultJson);
+	} else {
+		var error = regionsResult.a;
+		return elm$core$Result$Err(
+			author$project$CommonUtil$jsonError(error));
+	}
 };
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$getSavedApiVersion = _Platform_outgoingPort(
@@ -6802,14 +6823,26 @@ var author$project$Main$getSavedApiVersion = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var elm$core$Debug$toString = _Debug_toString;
-var author$project$Main$httpErr = function (error) {
-	return elm$core$Debug$toString(error);
+var author$project$Main$getSavedRegions = _Platform_outgoingPort(
+	'getSavedRegions',
+	function ($) {
+		return elm$json$Json$Encode$null;
+	});
+var author$project$Main$GotRegions = function (a) {
+	return {$: 'GotRegions', a: a};
 };
+var author$project$Main$getWebRegions = function (_n0) {
+	return elm$http$Http$get(
+		{
+			expect: elm$http$Http$expectString(author$project$Main$GotRegions),
+			url: '/src/api/areas.json'
+		});
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var author$project$Main$saveApiVersion = _Platform_outgoingPort('saveApiVersion', elm$json$Json$Encode$string);
 var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var elm$json$Json$Decode$decodeString = _Json_runOnString;
 var author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -6842,7 +6875,9 @@ var author$project$Main$update = F2(
 				case 'GotSavedApiVersion':
 					var apiVersion = msg.a;
 					return _Utils_Tuple2(
-						model,
+						_Utils_update(
+							model,
+							{apiVersion: apiVersion}),
 						elm$http$Http$get(
 							{
 								expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
@@ -6855,16 +6890,19 @@ var author$project$Main$update = F2(
 							elm$json$Json$Decode$decodeString,
 							A2(elm$json$Json$Decode$field, 'apiVersion', elm$json$Json$Decode$string),
 							resp);
-						var apiVersionState = function () {
-							if (result.$ === 'Ok') {
-								var webApiVersion = result.a;
-								return (_Utils_cmp(webApiVersion, model.apiVersion) > 0) ? author$project$Main$RequireRegion(webApiVersion) : author$project$Main$NoChange;
-							} else {
-								var error = result.a;
-								return author$project$Main$GetError(
-									author$project$CommonUtil$jsonError(error));
-							}
-						}();
+						var apiVersionState = A2(
+							elm$core$Debug$log,
+							'apiVersionState',
+							function () {
+								if (result.$ === 'Ok') {
+									var webApiVersion = result.a;
+									return ((model.apiVersion === '') || (_Utils_cmp(webApiVersion, model.apiVersion) > 0)) ? author$project$Main$RequireRegion(webApiVersion) : author$project$Main$NoChange;
+								} else {
+									var error = result.a;
+									return author$project$Main$GetError(
+										author$project$CommonUtil$jsonError(error));
+								}
+							}());
 						switch (apiVersionState.$) {
 							case 'RequireRegion':
 								var webApiVersion = apiVersionState.a;
@@ -6872,9 +6910,11 @@ var author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{apiVersion: webApiVersion, viewState: author$project$Main$DataOk}),
-									author$project$Main$getRegions(_Utils_Tuple0));
+									author$project$Main$saveApiVersion(webApiVersion));
 							case 'NoChange':
-								return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+								return _Utils_Tuple2(
+									model,
+									author$project$Main$getSavedRegions(_Utils_Tuple0));
 							default:
 								var errorMessage = apiVersionState.a;
 								var $temp$msg = author$project$Main$DataError(errorMessage),
@@ -6892,42 +6932,53 @@ var author$project$Main$update = F2(
 						model = $temp$model;
 						continue update;
 					}
-				case 'GotRegions':
-					if (msg.a.$ === 'Ok') {
-						var resp = msg.a.a;
-						var regionResult = A2(
-							elm$json$Json$Decode$decodeString,
-							A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
-							resp);
-						var regions = function () {
-							if (regionResult.$ === 'Ok') {
-								var result = regionResult.a;
-								return result;
-							} else {
-								var message = regionResult.a;
-								return _List_fromArray(
-									[
-										{
-										areas: _List_Nil,
-										regionName: elm$core$Debug$toString(message)
-									}
-									]);
-							}
-						}();
+				case 'CompleteSaveApiVersion':
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$getWebRegions(_Utils_Tuple0));
+				case 'GotSavedRegions':
+					var jsonRegions = msg.a;
+					var regionsResult = author$project$Main$getRegions(jsonRegions);
+					if (regionsResult.$ === 'Ok') {
+						var regions = regionsResult.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{regions: regions}),
-							A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
-					} else {
-						var message = msg.a.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									apiVersion: author$project$Main$httpErr(message)
-								}),
 							elm$core$Platform$Cmd$none);
+					} else {
+						var error = regionsResult.a;
+						return _Utils_Tuple2(
+							model,
+							author$project$Main$getWebRegions(_Utils_Tuple0));
+					}
+				case 'GotRegions':
+					if (msg.a.$ === 'Ok') {
+						var resp = msg.a.a;
+						var regionResult = author$project$Main$getRegions(resp);
+						if (regionResult.$ === 'Ok') {
+							var regions = regionResult.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{regions: regions, viewState: author$project$Main$DataOk}),
+								elm$core$Platform$Cmd$none);
+						} else {
+							var error = regionResult.a;
+							var $temp$msg = author$project$Main$DataError(error),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						}
+					} else {
+						var error = msg.a.a;
+						var $temp$msg = author$project$Main$DataError(
+							author$project$CommonUtil$httpError(error)),
+							$temp$model = model;
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
 					}
 				case 'GotAreaGarbage':
 					if (msg.a.$ === 'Ok') {
@@ -6953,9 +7004,7 @@ var author$project$Main$update = F2(
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{
-									apiVersion: author$project$Main$httpErr(message)
-								}),
+								{apiVersion: ''}),
 							elm$core$Platform$Cmd$none);
 					}
 				default:
@@ -7711,7 +7760,6 @@ var author$project$CommonUtil$nextDate = F2(
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(

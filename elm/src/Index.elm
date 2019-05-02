@@ -1,4 +1,4 @@
-port module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getSavedApiVersion, httpErr, init, main, onChange, retGetSavedApiVersion, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
+port module Main exposing (Area, AreaGarbage, Garbage, Model, Msg(..), Region, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getSavedApiVersion, getSavedRegions, init, main, onChange, retGetSavedApiVersion, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewRegion)
 
 import Browser
 import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
@@ -20,6 +20,18 @@ port getSavedApiVersion : () -> Cmd msg
 port retGetSavedApiVersion : (String -> msg) -> Sub msg
 
 
+port saveApiVersion : String -> Cmd msg
+
+
+port completeSaveApiVersion : (Bool -> msg) -> Sub msg
+
+
+port getSavedRegions : () -> Cmd msg
+
+
+port retGetSavedRegions : (String -> msg) -> Sub msg
+
+
 main : Program () Model Msg
 main =
     Browser.element
@@ -30,8 +42,8 @@ main =
         }
 
 
-getRegions : () -> Cmd Msg
-getRegions _ =
+getWebRegions : () -> Cmd Msg
+getWebRegions _ =
     Http.get
         { url = "/src/api/areas.json"
         , expect = Http.expectString GotRegions
@@ -44,11 +56,6 @@ getAreaGarbage areaNo =
         { url = "/src/api/" ++ areaNo ++ ".json"
         , expect = Http.expectString GotAreaGarbage
         }
-
-
-httpErr : Error -> String
-httpErr error =
-    Debug.toString error
 
 
 decodeRegions : Decoder (List Region)
@@ -93,6 +100,20 @@ decodeGarbage =
     Json.Decode.map2 Garbage
         (field "garbageTitles" (list string))
         (field "garbageDates" (list string))
+
+
+getRegions : String -> Result String (List Region)
+getRegions regionJson =
+    let
+        regionsResult =
+            decodeString (field "regions" decodeRegions) regionJson
+    in
+    case regionsResult of
+        Ok resultJson ->
+            Ok resultJson
+
+        Err error ->
+            Err (CommonUtil.jsonError error)
 
 
 
@@ -155,7 +176,11 @@ init _ =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    retGetSavedApiVersion GotSavedApiVersion
+    Sub.batch
+        [ retGetSavedApiVersion GotSavedApiVersion
+        , completeSaveApiVersion CompleteSaveApiVersion
+        , retGetSavedRegions GotSavedRegions
+        ]
 
 
 
@@ -171,6 +196,8 @@ type Msg
     | GotAreaGarbage (Result Http.Error String)
     | ChangeArea String
     | GotSavedApiVersion String
+    | CompleteSaveApiVersion Bool
+    | GotSavedRegions String
 
 
 type ViewState
@@ -211,7 +238,7 @@ update msg model =
             )
 
         GotSavedApiVersion apiVersion ->
-            ( model
+            ( { model | apiVersion = apiVersion }
             , Http.get
                 { url = "/src/api/version.json"
                 , expect = Http.expectString GotWebApiVersion
@@ -224,16 +251,18 @@ update msg model =
                     decodeString (field "apiVersion" string) resp
 
                 apiVersionState =
-                    case result of
-                        Ok webApiVersion ->
-                            if webApiVersion > model.apiVersion then
-                                RequireRegion webApiVersion
+                    Debug.log "apiVersionState"
+                        (case result of
+                            Ok webApiVersion ->
+                                if model.apiVersion == "" || webApiVersion > model.apiVersion then
+                                    RequireRegion webApiVersion
 
-                            else
-                                NoChange
+                                else
+                                    NoChange
 
-                        Err error ->
-                            GetError (CommonUtil.jsonError error)
+                            Err error ->
+                                GetError (CommonUtil.jsonError error)
+                        )
             in
             case apiVersionState of
                 RequireRegion webApiVersion ->
@@ -241,11 +270,11 @@ update msg model =
                         | apiVersion = webApiVersion
                         , viewState = DataOk
                       }
-                    , getRegions ()
+                    , saveApiVersion webApiVersion
                     )
 
                 NoChange ->
-                    ( model, Cmd.none )
+                    ( model, getSavedRegions () )
 
                 GetError errorMessage ->
                     update (DataError errorMessage) model
@@ -253,28 +282,37 @@ update msg model =
         GotWebApiVersion (Err error) ->
             update (DataError (CommonUtil.httpError error)) model
 
+        CompleteSaveApiVersion _ ->
+            ( model, getWebRegions () )
+
+        GotSavedRegions jsonRegions ->
+            let
+                regionsResult =
+                    getRegions jsonRegions
+            in
+            case regionsResult of
+                Ok regions ->
+                    ( { model | regions = regions }, Cmd.none )
+
+                Err error ->
+                    ( model, getWebRegions () )
+
         GotRegions (Ok resp) ->
             let
                 regionResult =
-                    decodeString (field "regions" decodeRegions) resp
-
-                regions =
-                    case regionResult of
-                        Ok result ->
-                            result
-
-                        Err message ->
-                            [ { regionName = Debug.toString message, areas = [] } ]
+                    getRegions resp
             in
-            ( { model | regions = regions }
-              -- , Cmd.none
-            , Task.perform SetCurrentDate Time.now
-            )
+            case regionResult of
+                Ok regions ->
+                    ( { model | viewState = DataOk, regions = regions }
+                    , Cmd.none
+                    )
 
-        GotRegions (Err message) ->
-            ( { model | apiVersion = httpErr message }
-            , Cmd.none
-            )
+                Err error ->
+                    update (DataError error) model
+
+        GotRegions (Err error) ->
+            update (DataError (CommonUtil.httpError error)) model
 
         GotAreaGarbage (Ok resp) ->
             let
@@ -298,7 +336,7 @@ update msg model =
             )
 
         GotAreaGarbage (Err message) ->
-            ( { model | apiVersion = httpErr message }
+            ( { model | apiVersion = "" }
             , Cmd.none
             )
 
