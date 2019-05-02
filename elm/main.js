@@ -4568,10 +4568,10 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Main$PrepareData = {$: 'PrepareData'};
 var author$project$Main$SetCurrentDate = function (a) {
 	return {$: 'SetCurrentDate', a: a};
 };
-var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4790,6 +4790,7 @@ var elm$core$Task$sequence = function (tasks) {
 		elm$core$Task$succeed(_List_Nil),
 		tasks);
 };
+var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
 	if (result.$ === 'Ok') {
@@ -5224,7 +5225,7 @@ var author$project$Main$init = function (_n0) {
 			errorMessage: '',
 			regions: _List_Nil,
 			time: elm$time$Time$millisToPosix(0),
-			viewErrorPage: false
+			viewState: author$project$Main$PrepareData
 		},
 		A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
 };
@@ -5923,6 +5924,7 @@ var author$project$CommonUtil$jsonError = function (error) {
 var author$project$Main$DataError = function (a) {
 	return {$: 'DataError', a: a};
 };
+var author$project$Main$DataOk = {$: 'DataOk'};
 var author$project$Main$GetError = function (a) {
 	return {$: 'GetError', a: a};
 };
@@ -5933,6 +5935,7 @@ var author$project$Main$NoChange = {$: 'NoChange'};
 var author$project$Main$RequireRegion = function (a) {
 	return {$: 'RequireRegion', a: a};
 };
+var author$project$Main$SystemError = {$: 'SystemError'};
 var author$project$Main$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
 		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
@@ -6823,7 +6826,7 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{errorMessage: errorMessage, viewErrorPage: true}),
+							{errorMessage: errorMessage, viewState: author$project$Main$SystemError}),
 						elm$core$Platform$Cmd$none);
 				case 'SetCurrentDate':
 					var time = msg.a;
@@ -6868,7 +6871,7 @@ var author$project$Main$update = F2(
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
-										{apiVersion: webApiVersion}),
+										{apiVersion: webApiVersion, viewState: author$project$Main$DataOk}),
 									author$project$Main$getRegions(_Utils_Tuple0));
 							case 'NoChange':
 								return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -7837,6 +7840,7 @@ var author$project$Main$viewRegion = function (region) {
 		A2(elm$core$List$map, author$project$Main$viewArea, region.areas));
 };
 var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$img = _VirtualDom_node('img');
 var elm$html$Html$label = _VirtualDom_node('label');
 var elm$html$Html$main_ = _VirtualDom_node('main');
 var elm$html$Html$select = _VirtualDom_node('select');
@@ -7848,86 +7852,120 @@ var elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
 var author$project$Main$viewMain = function (model) {
 	var handler = function (selectedValue) {
 		return author$project$Main$ChangeArea(selectedValue);
 	};
-	return model.viewErrorPage ? A2(
-		elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				elm$html$Html$text(model.errorMessage)
-			])) : A2(
-		elm$html$Html$main_,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
+	var _n0 = model.viewState;
+	switch (_n0.$) {
+		case 'SystemError':
+			return A2(
 				elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text(model.apiVersion)
-					])),
-				A2(
+						elm$html$Html$text(model.errorMessage)
+					]));
+		case 'PrepareData':
+			return A2(
 				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('alert')
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('※ 白山市公式のアプリではありません。')
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('area')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
 						elm$html$Html$div,
+						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('select-area')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$label,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$for('area')
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('地域')
-									])),
-								A2(
-								elm$html$Html$select,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$id('area'),
-										author$project$Main$onChange(handler)
-									]),
-								A2(elm$core$List$map, author$project$Main$viewRegion, model.regions))
+								elm$html$Html$text('準備中')
 							])),
 						A2(
-						elm$html$Html$a,
+						elm$html$Html$img,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
+								elm$html$Html$Attributes$class('loading-icon'),
+								elm$html$Html$Attributes$src('image/ball-triangle.svg')
+							]),
+						_List_Nil)
+					]));
+		default:
+			return A2(
+				elm$html$Html$main_,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(model.apiVersion)
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('alert')
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('地域が不明な方はこちらで確認してください')
-							]))
-					])),
-				A2(author$project$Main$viewAreaGarbage, model.currentDate, model.areaGarbage)
-			]));
+								elm$html$Html$text('※ 白山市公式のアプリではありません。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('area')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('select-area')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$label,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$for('area')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('地域')
+											])),
+										A2(
+										elm$html$Html$select,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$id('area'),
+												author$project$Main$onChange(handler)
+											]),
+										A2(elm$core$List$map, author$project$Main$viewRegion, model.regions))
+									])),
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('地域が不明な方はこちらで確認してください')
+									]))
+							])),
+						A2(author$project$Main$viewAreaGarbage, model.currentDate, model.areaGarbage)
+					]));
+	}
 };
 var elm$html$Html$article = _VirtualDom_node('article');
 var elm$html$Html$button = _VirtualDom_node('button');

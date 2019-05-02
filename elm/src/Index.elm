@@ -100,7 +100,7 @@ decodeGarbage =
 
 
 type alias Model =
-    { viewErrorPage : Bool
+    { viewState : ViewState
     , errorMessage : String
     , time : Time.Posix
     , dispDate : DispDate
@@ -139,7 +139,7 @@ type alias Garbage =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { viewErrorPage = False
+    ( { viewState = PrepareData
       , errorMessage = ""
       , time = Time.millisToPosix 0
       , dispDate = ""
@@ -173,6 +173,12 @@ type Msg
     | GotSavedApiVersion String
 
 
+type ViewState
+    = PrepareData
+    | SystemError
+    | DataOk
+
+
 type ApiVersionState
     = NoChange
     | RequireRegion String
@@ -188,7 +194,7 @@ update msg model =
             )
 
         DataError errorMessage ->
-            ( { model | viewErrorPage = True, errorMessage = errorMessage }
+            ( { model | viewState = SystemError, errorMessage = errorMessage }
             , Cmd.none
             )
 
@@ -231,7 +237,11 @@ update msg model =
             in
             case apiVersionState of
                 RequireRegion webApiVersion ->
-                    ( { model | apiVersion = webApiVersion }
+                    ( { model
+                        | apiVersion = webApiVersion
+
+                            , viewState = DataOk
+                      }
                     , getRegions ()
                     )
 
@@ -318,27 +328,34 @@ viewMain model =
         handler selectedValue =
             ChangeArea selectedValue
     in
-    if model.viewErrorPage then
-        div [] [ text model.errorMessage ]
+    case model.viewState of
+        SystemError ->
+            div [] [ text model.errorMessage ]
 
-    else
-        main_ []
-            [ div [] [ text model.apiVersion ]
-            , div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
-            , div [ class "area" ]
-                [ div [ class "select-area" ]
-                    [ label
-                        [ for "area" ]
-                        [ text "地域" ]
-                    , select [ id "area", onChange handler ]
-                        (List.map viewRegion model.regions)
-                    ]
-                , a
-                    [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html" ]
-                    [ text "地域が不明な方はこちらで確認してください" ]
+        PrepareData ->
+            div []
+                [ div [] [ text "準備中" ]
+                , img [ class "loading-icon", src "image/ball-triangle.svg" ] []
                 ]
-            , viewAreaGarbage model.currentDate model.areaGarbage
-            ]
+
+        DataOk ->
+            main_ []
+                [ div [] [ text model.apiVersion ]
+                , div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
+                , div [ class "area" ]
+                    [ div [ class "select-area" ]
+                        [ label
+                            [ for "area" ]
+                            [ text "地域" ]
+                        , select [ id "area", onChange handler ]
+                            (List.map viewRegion model.regions)
+                        ]
+                    , a
+                        [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html" ]
+                        [ text "地域が不明な方はこちらで確認してください" ]
+                    ]
+                , viewAreaGarbage model.currentDate model.areaGarbage
+                ]
 
 
 viewRegion : Region -> Html Msg
