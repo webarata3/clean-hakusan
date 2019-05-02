@@ -100,7 +100,9 @@ decodeGarbage =
 
 
 type alias Model =
-    { time : Time.Posix
+    { viewErrorPage : Bool
+    , errorMessage : String
+    , time : Time.Posix
     , dispDate : DispDate
     , currentDate : YyyymmddDate
     , apiVersion : String
@@ -137,7 +139,9 @@ type alias Garbage =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { time = Time.millisToPosix 0
+    ( { viewErrorPage = False
+      , errorMessage = ""
+      , time = Time.millisToPosix 0
       , dispDate = ""
       , currentDate = ""
       , apiVersion = ""
@@ -159,7 +163,8 @@ subscriptions model =
 
 
 type Msg
-    = LoadingArea
+    = DataError String
+    | LoadingArea
     | SetCurrentDate Time.Posix
     | GotWebApiVersion (Result Http.Error String)
     | GotRegions (Result Http.Error String)
@@ -168,11 +173,22 @@ type Msg
     | GotSavedApiVersion String
 
 
+type ApiVersionState
+    = NoChange
+    | RequireRegion String
+    | GetError String
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         LoadingArea ->
             ( { model | apiVersion = "" }
+            , Cmd.none
+            )
+
+        DataError errorMessage ->
+            ( { model | viewErrorPage = True, errorMessage = errorMessage }
             , Cmd.none
             )
 
@@ -201,22 +217,32 @@ update msg model =
                 result =
                     decodeString (field "apiVersion" string) resp
 
-                apiVersion =
+                apiVersionState =
                     case result of
-                        Ok version ->
-                            version
+                        Ok webApiVersion ->
+                            if webApiVersion > model.apiVersion then
+                                RequireRegion webApiVersion
 
-                        Err _ ->
-                            "error"
+                            else
+                                NoChange
+
+                        Err error ->
+                            GetError (CommonUtil.jsonError error)
             in
-            ( { model | apiVersion = apiVersion }
-            , getRegions ()
-            )
+            case apiVersionState of
+                RequireRegion webApiVersion ->
+                    ( { model | apiVersion = webApiVersion }
+                    , getRegions ()
+                    )
 
-        GotWebApiVersion (Err message) ->
-            ( { model | apiVersion = Debug.toString message }
-            , Cmd.none
-            )
+                NoChange ->
+                    ( model, Cmd.none )
+
+                GetError errorMessage ->
+                    update (DataError errorMessage) model
+
+        GotWebApiVersion (Err error) ->
+            update (DataError (CommonUtil.httpError error)) model
 
         GotRegions (Ok resp) ->
             let
@@ -277,16 +303,26 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    let
-        handler selectedValue =
-            ChangeArea selectedValue
-    in
     article [ id "app" ]
         [ Html.header []
             [ h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
             , div [ class "menu" ] [ button [ class "" ] [] ]
             ]
-        , main_ []
+        , viewMain model
+        ]
+
+
+viewMain : Model -> Html Msg
+viewMain model =
+    let
+        handler selectedValue =
+            ChangeArea selectedValue
+    in
+    if model.viewErrorPage then
+        div [] [ text model.errorMessage ]
+
+    else
+        main_ []
             [ div [] [ text model.apiVersion ]
             , div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
             , div [ class "area" ]
@@ -303,7 +339,6 @@ view model =
                 ]
             , viewAreaGarbage model.currentDate model.areaGarbage
             ]
-        ]
 
 
 viewRegion : Region -> Html Msg

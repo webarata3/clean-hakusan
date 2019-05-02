@@ -1,6 +1,8 @@
-module CommonUtil exposing (dispHowManyDays, howManyDaysCss, nextDate)
+module CommonUtil exposing (dispHowManyDays, howManyDaysCss, httpError, jsonError, nextDate)
 
 import CommonTime exposing (YyyymmddDate)
+import Http
+import Json.Decode
 
 
 nextDate : YyyymmddDate -> List YyyymmddDate -> String
@@ -43,3 +45,27 @@ howManyDaysCss howManyDays =
 
         _ ->
             "garbage-schedule"
+
+
+jsonError : Json.Decode.Error -> String
+jsonError error =
+    "Json Error"
+
+
+httpError : Http.Error -> String
+httpError error =
+    case error of
+        Http.BadUrl message ->
+            message
+
+        Http.Timeout ->
+            "サーバから応答がない"
+
+        Http.NetworkError ->
+            "ネットワークにつながらない"
+
+        Http.BadStatus statusCode ->
+            "ステータスコード" ++ String.fromInt statusCode
+
+        Http.BadBody message ->
+            message

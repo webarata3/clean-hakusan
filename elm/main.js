@@ -5064,8 +5064,10 @@ var author$project$Main$init = function (_n0) {
 			areaNo: '',
 			currentDate: '',
 			dispDate: '',
+			errorMessage: '',
 			regions: _List_Nil,
-			time: elm$time$Time$millisToPosix(0)
+			time: elm$time$Time$millisToPosix(0),
+			viewErrorPage: false
 		},
 		author$project$Main$getSavedApiVersion(_Utils_Tuple0));
 };
@@ -5815,8 +5817,38 @@ var author$project$CommonTime$posixToIntDate = function (time) {
 		time);
 	return {day: day, month: month, year: year};
 };
+var author$project$CommonUtil$httpError = function (error) {
+	switch (error.$) {
+		case 'BadUrl':
+			var message = error.a;
+			return message;
+		case 'Timeout':
+			return 'サーバから応答がない';
+		case 'NetworkError':
+			return 'ネットワークにつながらない';
+		case 'BadStatus':
+			var statusCode = error.a;
+			return 'ステータスコード' + elm$core$String$fromInt(statusCode);
+		default:
+			var message = error.a;
+			return message;
+	}
+};
+var author$project$CommonUtil$jsonError = function (error) {
+	return 'Json Error';
+};
+var author$project$Main$DataError = function (a) {
+	return {$: 'DataError', a: a};
+};
+var author$project$Main$GetError = function (a) {
+	return {$: 'GetError', a: a};
+};
 var author$project$Main$GotWebApiVersion = function (a) {
 	return {$: 'GotWebApiVersion', a: a};
+};
+var author$project$Main$NoChange = {$: 'NoChange'};
+var author$project$Main$RequireRegion = function (a) {
+	return {$: 'RequireRegion', a: a};
 };
 var author$project$Main$SetCurrentDate = function (a) {
 	return {$: 'SetCurrentDate', a: a};
@@ -6777,136 +6809,160 @@ var elm$time$Time$Offset = function (a) {
 var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
 var author$project$Main$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'LoadingArea':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{apiVersion: ''}),
-					elm$core$Platform$Cmd$none);
-			case 'SetCurrentDate':
-				var time = msg.a;
-				var intDate = author$project$CommonTime$posixToIntDate(time);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							currentDate: author$project$CommonTime$intDateToYyyymmddDate(intDate),
-							dispDate: author$project$CommonTime$intDateToDispDate(intDate)
-						}),
-					elm$core$Platform$Cmd$none);
-			case 'GotSavedApiVersion':
-				var apiVersion = msg.a;
-				return _Utils_Tuple2(
-					model,
-					elm$http$Http$get(
-						{
-							expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
-							url: '/src/api/version.json'
-						}));
-			case 'GotWebApiVersion':
-				if (msg.a.$ === 'Ok') {
-					var resp = msg.a.a;
-					var result = A2(
-						elm$json$Json$Decode$decodeString,
-						A2(elm$json$Json$Decode$field, 'apiVersion', elm$json$Json$Decode$string),
-						resp);
-					var apiVersion = function () {
-						if (result.$ === 'Ok') {
-							var version = result.a;
-							return version;
-						} else {
-							return 'error';
-						}
-					}();
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 'LoadingArea':
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{apiVersion: apiVersion}),
-						author$project$Main$getRegions(_Utils_Tuple0));
-				} else {
-					var message = msg.a.a;
+							{apiVersion: ''}),
+						elm$core$Platform$Cmd$none);
+				case 'DataError':
+					var errorMessage = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{errorMessage: errorMessage, viewErrorPage: true}),
+						elm$core$Platform$Cmd$none);
+				case 'SetCurrentDate':
+					var time = msg.a;
+					var intDate = author$project$CommonTime$posixToIntDate(time);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								apiVersion: elm$core$Debug$toString(message)
+								currentDate: author$project$CommonTime$intDateToYyyymmddDate(intDate),
+								dispDate: author$project$CommonTime$intDateToDispDate(intDate)
 							}),
 						elm$core$Platform$Cmd$none);
-				}
-			case 'GotRegions':
-				if (msg.a.$ === 'Ok') {
-					var resp = msg.a.a;
-					var regionResult = A2(
-						elm$json$Json$Decode$decodeString,
-						A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
-						resp);
-					var regions = function () {
-						if (regionResult.$ === 'Ok') {
-							var result = regionResult.a;
-							return result;
-						} else {
-							var message = regionResult.a;
-							return _List_fromArray(
-								[
-									{
-									areas: _List_Nil,
-									regionName: elm$core$Debug$toString(message)
-								}
-								]);
-						}
-					}();
+				case 'GotSavedApiVersion':
+					var apiVersion = msg.a;
 					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{regions: regions}),
-						A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
-				} else {
-					var message = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								apiVersion: author$project$Main$httpErr(message)
-							}),
-						elm$core$Platform$Cmd$none);
-				}
-			case 'GotAreaGarbage':
-				if (msg.a.$ === 'Ok') {
-					var resp = msg.a.a;
-					var areaGarbageResult = A2(elm$json$Json$Decode$decodeString, author$project$Main$decodeAreaGarbage, resp);
-					var areaGarbage = function () {
-						if (areaGarbageResult.$ === 'Ok') {
-							var result = areaGarbageResult.a;
-							return result;
-						} else {
-							var message = areaGarbageResult.a;
-							var t = A2(elm$core$Debug$log, '', message);
-							return {areaName: '', areaNo: '', garbages: _List_Nil};
-						}
-					}();
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{areaGarbage: areaGarbage}),
-						elm$core$Platform$Cmd$none);
-				} else {
-					var message = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								apiVersion: author$project$Main$httpErr(message)
-							}),
-						elm$core$Platform$Cmd$none);
-				}
-			default:
-				var areaNo = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
 						model,
-						{areaNo: areaNo}),
-					author$project$Main$getAreaGarbage(areaNo));
+						elm$http$Http$get(
+							{
+								expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
+								url: '/src/api/version.json'
+							}));
+				case 'GotWebApiVersion':
+					if (msg.a.$ === 'Ok') {
+						var resp = msg.a.a;
+						var result = A2(
+							elm$json$Json$Decode$decodeString,
+							A2(elm$json$Json$Decode$field, 'apiVersion', elm$json$Json$Decode$string),
+							resp);
+						var apiVersionState = function () {
+							if (result.$ === 'Ok') {
+								var webApiVersion = result.a;
+								return (_Utils_cmp(webApiVersion, model.apiVersion) > 0) ? author$project$Main$RequireRegion(webApiVersion) : author$project$Main$NoChange;
+							} else {
+								var error = result.a;
+								return author$project$Main$GetError(
+									author$project$CommonUtil$jsonError(error));
+							}
+						}();
+						switch (apiVersionState.$) {
+							case 'RequireRegion':
+								var webApiVersion = apiVersionState.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{apiVersion: webApiVersion}),
+									author$project$Main$getRegions(_Utils_Tuple0));
+							case 'NoChange':
+								return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+							default:
+								var errorMessage = apiVersionState.a;
+								var $temp$msg = author$project$Main$DataError(errorMessage),
+									$temp$model = model;
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+						}
+					} else {
+						var error = msg.a.a;
+						var $temp$msg = author$project$Main$DataError(
+							author$project$CommonUtil$httpError(error)),
+							$temp$model = model;
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
+					}
+				case 'GotRegions':
+					if (msg.a.$ === 'Ok') {
+						var resp = msg.a.a;
+						var regionResult = A2(
+							elm$json$Json$Decode$decodeString,
+							A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
+							resp);
+						var regions = function () {
+							if (regionResult.$ === 'Ok') {
+								var result = regionResult.a;
+								return result;
+							} else {
+								var message = regionResult.a;
+								return _List_fromArray(
+									[
+										{
+										areas: _List_Nil,
+										regionName: elm$core$Debug$toString(message)
+									}
+									]);
+							}
+						}();
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{regions: regions}),
+							A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
+					} else {
+						var message = msg.a.a;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									apiVersion: author$project$Main$httpErr(message)
+								}),
+							elm$core$Platform$Cmd$none);
+					}
+				case 'GotAreaGarbage':
+					if (msg.a.$ === 'Ok') {
+						var resp = msg.a.a;
+						var areaGarbageResult = A2(elm$json$Json$Decode$decodeString, author$project$Main$decodeAreaGarbage, resp);
+						var areaGarbage = function () {
+							if (areaGarbageResult.$ === 'Ok') {
+								var result = areaGarbageResult.a;
+								return result;
+							} else {
+								var message = areaGarbageResult.a;
+								var t = A2(elm$core$Debug$log, '', message);
+								return {areaName: '', areaNo: '', garbages: _List_Nil};
+							}
+						}();
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{areaGarbage: areaGarbage}),
+							elm$core$Platform$Cmd$none);
+					} else {
+						var message = msg.a.a;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									apiVersion: author$project$Main$httpErr(message)
+								}),
+							elm$core$Platform$Cmd$none);
+					}
+				default:
+					var areaNo = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{areaNo: areaNo}),
+						author$project$Main$getAreaGarbage(areaNo));
+			}
 		}
 	});
 var author$project$Main$ChangeArea = function (a) {
@@ -7781,10 +7837,6 @@ var author$project$Main$viewRegion = function (region) {
 		A2(elm$core$List$map, author$project$Main$viewArea, region.areas));
 };
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$article = _VirtualDom_node('article');
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$header = _VirtualDom_node('header');
 var elm$html$Html$label = _VirtualDom_node('label');
 var elm$html$Html$main_ = _VirtualDom_node('main');
 var elm$html$Html$select = _VirtualDom_node('select');
@@ -7796,10 +7848,92 @@ var elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
-var author$project$Main$view = function (model) {
+var author$project$Main$viewMain = function (model) {
 	var handler = function (selectedValue) {
 		return author$project$Main$ChangeArea(selectedValue);
 	};
+	return model.viewErrorPage ? A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$text(model.errorMessage)
+			])) : A2(
+		elm$html$Html$main_,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(model.apiVersion)
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('alert')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('※ 白山市公式のアプリではありません。')
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('area')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('select-area')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$label,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$for('area')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('地域')
+									])),
+								A2(
+								elm$html$Html$select,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$id('area'),
+										author$project$Main$onChange(handler)
+									]),
+								A2(elm$core$List$map, author$project$Main$viewRegion, model.regions))
+							])),
+						A2(
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('地域が不明な方はこちらで確認してください')
+							]))
+					])),
+				A2(author$project$Main$viewAreaGarbage, model.currentDate, model.areaGarbage)
+			]));
+};
+var elm$html$Html$article = _VirtualDom_node('article');
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$header = _VirtualDom_node('header');
+var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$article,
 		_List_fromArray(
@@ -7840,76 +7974,7 @@ var author$project$Main$view = function (model) {
 								_List_Nil)
 							]))
 					])),
-				A2(
-				elm$html$Html$main_,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text(model.apiVersion)
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('alert')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('※ 白山市公式のアプリではありません。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('area')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('select-area')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$label,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$for('area')
-											]),
-										_List_fromArray(
-											[
-												elm$html$Html$text('地域')
-											])),
-										A2(
-										elm$html$Html$select,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$id('area'),
-												author$project$Main$onChange(handler)
-											]),
-										A2(elm$core$List$map, author$project$Main$viewRegion, model.regions))
-									])),
-								A2(
-								elm$html$Html$a,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('地域が不明な方はこちらで確認してください')
-									]))
-							])),
-						A2(author$project$Main$viewAreaGarbage, model.currentDate, model.areaGarbage)
-					]))
+				author$project$Main$viewMain(model)
 			]));
 };
 var elm$browser$Browser$External = function (a) {
