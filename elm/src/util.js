@@ -13,11 +13,23 @@
     app.ports.completeSaveApiVersion.send(true);
   });
 
-  const REGIONS = 'regions';
+  const REGIONS = 'regions'
 
   app.ports.getSavedRegions.subscribe(() => {
     const regionsJson = localStorage[REGIONS];
     app.ports.retGetSavedRegions.send(regionsJson || '');
+  });
+
+  app.ports.saveRegions.subscribe(jsonResions => {
+    localStorage[REGIONS] = jsonResions
+    app.ports.completeSaveRegions.send(true);
+  });
+
+  const AREA_GARBAGE = 'area_garbage'
+
+  app.ports.getSavedAreaGarbage.subscribe(areaNo => {
+    const areaGarbage = localStorage[`${AREA_GARBAGE}-${areaNo}`]
+    app.ports.retGetSavedAreaGarbage.send(areaGarbage || '');
   });
 
 })(app)
