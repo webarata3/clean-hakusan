@@ -64,8 +64,14 @@ viewMain model =
     in
     case model.viewState of
         SystemError ->
-            main_ []
-                [ div [] [ text model.errorMessage ]
+            main_
+                [ class "error" ]
+                [ div [ class "error-message" ] [ text "エラーが発生しました。" ]
+                , div [ class "error-message" ] [ text "動かない場合には、再読み込みしてみてください。" ]
+                , div [ class "error-message" ] [ text "報告して頂ける場合には、下の理由をお知らせください。" ]
+                , div [ id "reason", class "message" ] [ text ("理由: " ++ model.errorMessage) ]
+                , button [ id "errorMessageButton", onClick CopyText ]
+                    [ text "メッセージをコピー" ]
                 ]
 
         PrepareData ->

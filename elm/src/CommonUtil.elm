@@ -52,20 +52,20 @@ jsonError error =
     "Json Error"
 
 
-httpError : Http.Error -> String
-httpError error =
+httpError : String -> Http.Error -> String
+httpError url error =
     case error of
         Http.BadUrl message ->
-            message
+            url ++ " " ++ message
 
         Http.Timeout ->
-            "サーバから応答がない"
+            url ++ " " ++ "サーバから応答がない"
 
         Http.NetworkError ->
-            "ネットワークにつながらない"
+            url ++ " " ++ "ネットワークにつながらない"
 
         Http.BadStatus statusCode ->
-            "ステータスコード" ++ String.fromInt statusCode
+            url ++ " " ++ "ステータスコード" ++ String.fromInt statusCode
 
         Http.BadBody message ->
-            message
+            url ++ " " ++ message

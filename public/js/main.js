@@ -5251,6 +5251,7 @@ var author$project$AppView$viewHeader = A2(
 var author$project$AppModel$ChangeArea = function (a) {
 	return {$: 'ChangeArea', a: a};
 };
+var author$project$AppModel$CopyText = {$: 'CopyText'};
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6341,6 +6342,12 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$AppView$viewMain = function (model) {
 	var handler = function (selectedValue) {
 		return author$project$AppModel$ChangeArea(selectedValue);
@@ -6350,15 +6357,63 @@ var author$project$AppView$viewMain = function (model) {
 		case 'SystemError':
 			return A2(
 				elm$html$Html$main_,
-				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('error')
+					]),
 				_List_fromArray(
 					[
 						A2(
 						elm$html$Html$div,
-						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text(model.errorMessage)
+								elm$html$Html$Attributes$class('error-message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('エラーが発生しました。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('error-message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('動かない場合には、再読み込みしてみてください。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('error-message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('報告して頂ける場合には、下の理由をお知らせください。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$id('reason'),
+								elm$html$Html$Attributes$class('message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('理由: ' + model.errorMessage)
+							])),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$id('errorMessageButton'),
+								elm$html$Html$Events$onClick(author$project$AppModel$CopyText)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('メッセージをコピー')
 							]))
 					]));
 		case 'PrepareData':
@@ -7184,27 +7239,34 @@ var author$project$CommonTime$posixToIntDate = function (time) {
 		time);
 	return {day: day, month: month, year: year};
 };
-var author$project$CommonUtil$httpError = function (error) {
-	switch (error.$) {
-		case 'BadUrl':
-			var message = error.a;
-			return message;
-		case 'Timeout':
-			return 'サーバから応答がない';
-		case 'NetworkError':
-			return 'ネットワークにつながらない';
-		case 'BadStatus':
-			var statusCode = error.a;
-			return 'ステータスコード' + elm$core$String$fromInt(statusCode);
-		default:
-			var message = error.a;
-			return message;
-	}
-};
+var author$project$CommonUtil$httpError = F2(
+	function (url, error) {
+		switch (error.$) {
+			case 'BadUrl':
+				var message = error.a;
+				return url + (' ' + message);
+			case 'Timeout':
+				return url + (' ' + 'サーバから応答がない');
+			case 'NetworkError':
+				return url + (' ' + 'ネットワークにつながらない');
+			case 'BadStatus':
+				var statusCode = error.a;
+				return url + (' ' + ('ステータスコード' + elm$core$String$fromInt(statusCode)));
+			default:
+				var message = error.a;
+				return url + (' ' + message);
+		}
+	});
 var author$project$CommonUtil$jsonError = function (error) {
 	return 'Json Error';
 };
 var author$project$Main$apiBaseUrl = '/api';
+var elm$json$Json$Encode$null = _Json_encodeNull;
+var author$project$Main$copyText = _Platform_outgoingPort(
+	'copyText',
+	function ($) {
+		return elm$json$Json$Encode$null;
+	});
 var author$project$AppModel$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
 		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
@@ -8131,6 +8193,10 @@ var author$project$Main$update = F2(
 							model,
 							{errorMessage: errorMessage, viewState: author$project$AppModel$SystemError}),
 						elm$core$Platform$Cmd$none);
+				case 'CopyText':
+					return _Utils_Tuple2(
+						model,
+						author$project$Main$copyText(_Utils_Tuple0));
 				case 'SetCurrentDate':
 					var time = msg.a;
 					var intDate = author$project$CommonTime$posixToIntDate(time);
@@ -8141,7 +8207,7 @@ var author$project$Main$update = F2(
 								currentDate: author$project$CommonTime$intDateToYyyymmddDate(intDate),
 								dispDate: author$project$CommonTime$intDateToDispDate(intDate)
 							}),
-						elm$core$Platform$Cmd$none);
+						author$project$Main$loadLocalStorage('areaNo'));
 				case 'LoadedLocalStorage':
 					var localStorageValue = msg.a;
 					var _n1 = A2(elm$core$Debug$log, '分岐', localStorageValue.key);
@@ -8248,7 +8314,7 @@ var author$project$Main$update = F2(
 						var error = msg.a.a;
 						if (model.apiVersion === '') {
 							var $temp$msg = author$project$AppModel$DataError(
-								author$project$CommonUtil$httpError(error)),
+								A2(author$project$CommonUtil$httpError, '[API VERSION]', error)),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -8300,7 +8366,7 @@ var author$project$Main$update = F2(
 					} else {
 						var error = msg.a.a;
 						var $temp$msg = author$project$AppModel$DataError(
-							author$project$CommonUtil$httpError(error)),
+							A2(author$project$CommonUtil$httpError, '[REGIONS]', error)),
 							$temp$model = model;
 						msg = $temp$msg;
 						model = $temp$model;
@@ -8329,7 +8395,7 @@ var author$project$Main$update = F2(
 					} else {
 						var error = msg.a.a;
 						var $temp$msg = author$project$AppModel$DataError(
-							author$project$CommonUtil$httpError(error)),
+							A2(author$project$CommonUtil$httpError, '[AREA GARBAGE]', error)),
 							$temp$model = model;
 						msg = $temp$msg;
 						model = $temp$model;

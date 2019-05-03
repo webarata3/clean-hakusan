@@ -53,6 +53,7 @@ type alias Garbage =
 type Msg
     = DataError String
     | Loading
+    | CopyText
     | SetCurrentDate Time.Posix
     | LoadedLocalStorage LoadLocalStorageValue
     | LocalStorageSaved String

@@ -1,4 +1,4 @@
-port module Main exposing (apiBaseUrl, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update)
+port module Main exposing (apiBaseUrl, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update)
 
 import AppModel exposing (..)
 import AppView exposing (..)
@@ -23,6 +23,9 @@ port saveLocalStorage : LoadLocalStorageValue -> Cmd msg
 
 
 port localStorageSaved : (String -> msg) -> Sub msg
+
+
+port copyText : () -> Cmd msg
 
 
 main : Program () Model Msg
@@ -170,6 +173,9 @@ update msg model =
             , Cmd.none
             )
 
+        CopyText ->
+            ( model, copyText () )
+
         SetCurrentDate time ->
             let
                 intDate =
@@ -281,7 +287,7 @@ update msg model =
         GotWebApiVersion (Err error) ->
             -- Webから取れず、localStorageにもなければエラー
             if model.apiVersion == "" then
-                update (DataError (CommonUtil.httpError error)) model
+                update (DataError (CommonUtil.httpError "[API VERSION]" error)) model
 
             else
                 -- localStorageにデータがあればそれを使う
@@ -324,7 +330,7 @@ update msg model =
                     update (DataError error) model
 
         GotWebRegions (Err error) ->
-            update (DataError (CommonUtil.httpError error)) model
+            update (DataError (CommonUtil.httpError "[REGIONS]" error)) model
 
         GotWebAreaGarbage (Ok resp) ->
             let
@@ -346,7 +352,7 @@ update msg model =
                     update (DataError error) model
 
         GotWebAreaGarbage (Err error) ->
-            update (DataError (CommonUtil.httpError error)) model
+            update (DataError (CommonUtil.httpError "[AREA GARBAGE]" error)) model
 
         GotSavedAreaGarbage jsonAreaGarbage ->
             let
