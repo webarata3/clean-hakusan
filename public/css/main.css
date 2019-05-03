@@ -68,7 +68,7 @@ main {
 
 /********** menu **********/
 button {
-  background: url(image/menu.svg) center center no-repeat;
+  background: url(../image/menu.svg) center center no-repeat;
 }
 
 .modal {
@@ -206,7 +206,7 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: url(image/arrow.png) 99% 50% no-repeat, linear-gradient(to bottom, #fff 0%, #efebe1 100%);
+  background: url(../image/arrow.png) 99% 50% no-repeat, linear-gradient(to bottom, #fff 0%, #efebe1 100%);
   background-size: 20px, 100%;
   border: 1px solid #999;
   flex: 1;
