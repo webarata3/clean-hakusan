@@ -5,9 +5,6 @@ import AppView exposing (..)
 import Browser
 import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
 import CommonUtil
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
 import Http exposing (..)
 import Json.Decode exposing (Decoder, decodeString, field, list, string)
 import Task
