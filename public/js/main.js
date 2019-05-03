@@ -4568,8 +4568,8 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$PrepareData = {$: 'PrepareData'};
-var author$project$Main$SetCurrentDate = function (a) {
+var author$project$AppModel$PrepareData = {$: 'PrepareData'};
+var author$project$AppModel$SetCurrentDate = function (a) {
 	return {$: 'SetCurrentDate', a: a};
 };
 var elm$core$Basics$False = {$: 'False'};
@@ -5226,14 +5226,14 @@ var author$project$Main$init = function (_n0) {
 			isVersionChange: false,
 			regions: _List_Nil,
 			time: elm$time$Time$millisToPosix(0),
-			viewState: author$project$Main$PrepareData
+			viewState: author$project$AppModel$PrepareData
 		},
-		A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
+		A2(elm$core$Task$perform, author$project$AppModel$SetCurrentDate, elm$time$Time$now));
 };
-var author$project$Main$LoadedLocalStorage = function (a) {
+var author$project$AppModel$LoadedLocalStorage = function (a) {
 	return {$: 'LoadedLocalStorage', a: a};
 };
-var author$project$Main$LocalStorageSaved = function (a) {
+var author$project$AppModel$LocalStorageSaved = function (a) {
 	return {$: 'LocalStorageSaved', a: a};
 };
 var elm$json$Json$Decode$string = _Json_decodeString;
@@ -5260,10 +5260,38 @@ var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				author$project$Main$retLoadLocalStorage(author$project$Main$LoadedLocalStorage),
-				author$project$Main$localStorageSaved(author$project$Main$LocalStorageSaved)
+				author$project$Main$retLoadLocalStorage(author$project$AppModel$LoadedLocalStorage),
+				author$project$Main$localStorageSaved(author$project$AppModel$LocalStorageSaved)
 			]));
 };
+var author$project$AppModel$ChangeArea = function (a) {
+	return {$: 'ChangeArea', a: a};
+};
+var author$project$AppModel$DataError = function (a) {
+	return {$: 'DataError', a: a};
+};
+var author$project$AppModel$DataOk = {$: 'DataOk'};
+var author$project$AppModel$GetError = function (a) {
+	return {$: 'GetError', a: a};
+};
+var author$project$AppModel$GotSavedApiVersion = function (a) {
+	return {$: 'GotSavedApiVersion', a: a};
+};
+var author$project$AppModel$GotSavedAreaGarbage = function (a) {
+	return {$: 'GotSavedAreaGarbage', a: a};
+};
+var author$project$AppModel$GotSavedRegions = function (a) {
+	return {$: 'GotSavedRegions', a: a};
+};
+var author$project$AppModel$GotWebApiVersion = function (a) {
+	return {$: 'GotWebApiVersion', a: a};
+};
+var author$project$AppModel$NoChange = {$: 'NoChange'};
+var author$project$AppModel$RequireRegion = function (a) {
+	return {$: 'RequireRegion', a: a};
+};
+var author$project$AppModel$SystemError = {$: 'SystemError'};
+var author$project$AppModel$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var author$project$CommonTime$intDateToDispDate = function (intDate) {
 	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + '日'))));
 };
@@ -5948,40 +5976,12 @@ var author$project$CommonUtil$httpError = function (error) {
 var author$project$CommonUtil$jsonError = function (error) {
 	return 'Json Error';
 };
-var author$project$Main$ChangeArea = function (a) {
-	return {$: 'ChangeArea', a: a};
-};
-var author$project$Main$DataError = function (a) {
-	return {$: 'DataError', a: a};
-};
-var author$project$Main$DataOk = {$: 'DataOk'};
-var author$project$Main$GetError = function (a) {
-	return {$: 'GetError', a: a};
-};
-var author$project$Main$GotSavedApiVersion = function (a) {
-	return {$: 'GotSavedApiVersion', a: a};
-};
-var author$project$Main$GotSavedAreaGarbage = function (a) {
-	return {$: 'GotSavedAreaGarbage', a: a};
-};
-var author$project$Main$GotSavedRegions = function (a) {
-	return {$: 'GotSavedRegions', a: a};
-};
-var author$project$Main$GotWebApiVersion = function (a) {
-	return {$: 'GotWebApiVersion', a: a};
-};
-var author$project$Main$NoChange = {$: 'NoChange'};
-var author$project$Main$RequireRegion = function (a) {
-	return {$: 'RequireRegion', a: a};
-};
-var author$project$Main$SystemError = {$: 'SystemError'};
-var author$project$Main$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var author$project$Main$apiBaseUrl = '/api';
-var author$project$Main$AreaGarbage = F3(
+var author$project$AppModel$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
 		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
 	});
-var author$project$Main$Garbage = F2(
+var author$project$AppModel$Garbage = F2(
 	function (garbageTitles, garbageDates) {
 		return {garbageDates: garbageDates, garbageTitles: garbageTitles};
 	});
@@ -5989,7 +5989,7 @@ var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var author$project$Main$decodeGarbage = A3(
 	elm$json$Json$Decode$map2,
-	author$project$Main$Garbage,
+	author$project$AppModel$Garbage,
 	A2(
 		elm$json$Json$Decode$field,
 		'garbageTitles',
@@ -6002,7 +6002,7 @@ var author$project$Main$decodeGarbages = elm$json$Json$Decode$list(author$projec
 var elm$json$Json$Decode$map3 = _Json_map3;
 var author$project$Main$decodeAreaGarbage = A4(
 	elm$json$Json$Decode$map3,
-	author$project$Main$AreaGarbage,
+	author$project$AppModel$AreaGarbage,
 	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
@@ -6018,23 +6018,23 @@ var author$project$Main$getAreaGarbage = function (areaGarbageJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$Main$Region = F2(
+var author$project$AppModel$Region = F2(
 	function (regionName, areas) {
 		return {areas: areas, regionName: regionName};
 	});
-var author$project$Main$Area = F2(
+var author$project$AppModel$Area = F2(
 	function (areaNo, areaName) {
 		return {areaName: areaName, areaNo: areaNo};
 	});
 var author$project$Main$decodeArea = A3(
 	elm$json$Json$Decode$map2,
-	author$project$Main$Area,
+	author$project$AppModel$Area,
 	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
 var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
 var author$project$Main$decodeRegion = A3(
 	elm$json$Json$Decode$map2,
-	author$project$Main$Region,
+	author$project$AppModel$Region,
 	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
 var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
@@ -6052,7 +6052,7 @@ var author$project$Main$getRegions = function (regionJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$Main$GotWebAreaGarbage = function (a) {
+var author$project$AppModel$GotWebAreaGarbage = function (a) {
 	return {$: 'GotWebAreaGarbage', a: a};
 };
 var elm$core$Basics$composeR = F3(
@@ -6848,16 +6848,16 @@ var elm$http$Http$get = function (r) {
 var author$project$Main$getWebJsonAreaGarbage = function (areaNo) {
 	return elm$http$Http$get(
 		{
-			expect: elm$http$Http$expectString(author$project$Main$GotWebAreaGarbage),
+			expect: elm$http$Http$expectString(author$project$AppModel$GotWebAreaGarbage),
 			url: author$project$Main$apiBaseUrl + ('/' + (areaNo + '.json'))
 		});
 };
-var author$project$Main$GotWebRegions = function (a) {
+var author$project$AppModel$GotWebRegions = function (a) {
 	return {$: 'GotWebRegions', a: a};
 };
 var author$project$Main$getWebJsonRegions = elm$http$Http$get(
 	{
-		expect: elm$http$Http$expectString(author$project$Main$GotWebRegions),
+		expect: elm$http$Http$expectString(author$project$AppModel$GotWebRegions),
 		url: author$project$Main$apiBaseUrl + '/regions.json'
 	});
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -6909,7 +6909,7 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{errorMessage: errorMessage, viewState: author$project$Main$SystemError}),
+							{errorMessage: errorMessage, viewState: author$project$AppModel$SystemError}),
 						elm$core$Platform$Cmd$none);
 				case 'SetCurrentDate':
 					var time = msg.a;
@@ -6934,19 +6934,19 @@ var author$project$Main$update = F2(
 									{areaNo: areaNo}),
 								author$project$Main$loadLocalStorage('apiVersion'));
 						case 'apiVersion':
-							var $temp$msg = author$project$Main$GotSavedApiVersion(localStorageValue.value),
+							var $temp$msg = author$project$AppModel$GotSavedApiVersion(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						case 'regions':
-							var $temp$msg = author$project$Main$GotSavedRegions(localStorageValue.value),
+							var $temp$msg = author$project$AppModel$GotSavedRegions(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						default:
-							var $temp$msg = author$project$Main$GotSavedAreaGarbage(localStorageValue.value),
+							var $temp$msg = author$project$AppModel$GotSavedAreaGarbage(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -6960,7 +6960,7 @@ var author$project$Main$update = F2(
 							{apiVersion: json}),
 						elm$http$Http$get(
 							{
-								expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
+								expect: elm$http$Http$expectString(author$project$AppModel$GotWebApiVersion),
 								url: author$project$Main$apiBaseUrl + '/version.json'
 							}));
 				case 'LocalStorageSaved':
@@ -6969,13 +6969,13 @@ var author$project$Main$update = F2(
 						case 'apiVersion':
 							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 						case 'regions':
-							var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
+							var $temp$msg = author$project$AppModel$ChangeArea(model.areaNo),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						case 'areaNo':
-							var $temp$msg = author$project$Main$ViewAreaGarbage,
+							var $temp$msg = author$project$AppModel$ViewAreaGarbage,
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -6996,10 +6996,10 @@ var author$project$Main$update = F2(
 							function () {
 								if (jsonApiVersion.$ === 'Ok') {
 									var webApiVersion = jsonApiVersion.a;
-									return ((model.apiVersion === '') || (_Utils_cmp(webApiVersion, model.apiVersion) > 0)) ? author$project$Main$RequireRegion(webApiVersion) : author$project$Main$NoChange;
+									return ((model.apiVersion === '') || (_Utils_cmp(webApiVersion, model.apiVersion) > 0)) ? author$project$AppModel$RequireRegion(webApiVersion) : author$project$AppModel$NoChange;
 								} else {
 									var error = jsonApiVersion.a;
-									return author$project$Main$GetError(
+									return author$project$AppModel$GetError(
 										author$project$CommonUtil$jsonError(error));
 								}
 							}());
@@ -7009,7 +7009,7 @@ var author$project$Main$update = F2(
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
-										{apiVersion: webApiVersion, isVersionChange: true, viewState: author$project$Main$DataOk}),
+										{apiVersion: webApiVersion, isVersionChange: true, viewState: author$project$AppModel$DataOk}),
 									author$project$Main$saveLocalStorage(
 										{key: 'apiVersion', value: webApiVersion}));
 							case 'NoChange':
@@ -7018,7 +7018,7 @@ var author$project$Main$update = F2(
 									author$project$Main$loadLocalStorage('regions'));
 							default:
 								var errorMessage = apiVersionState.a;
-								var $temp$msg = author$project$Main$DataError(errorMessage),
+								var $temp$msg = author$project$AppModel$DataError(errorMessage),
 									$temp$model = model;
 								msg = $temp$msg;
 								model = $temp$model;
@@ -7027,14 +7027,14 @@ var author$project$Main$update = F2(
 					} else {
 						var error = msg.a.a;
 						if (model.apiVersion === '') {
-							var $temp$msg = author$project$Main$DataError(
+							var $temp$msg = author$project$AppModel$DataError(
 								author$project$CommonUtil$httpError(error)),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						} else {
-							var $temp$msg = author$project$Main$GotSavedRegions('regions'),
+							var $temp$msg = author$project$AppModel$GotSavedRegions('regions'),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -7046,10 +7046,10 @@ var author$project$Main$update = F2(
 					var regionsResult = author$project$Main$getRegions(jsonRegions);
 					if (regionsResult.$ === 'Ok') {
 						var regions = regionsResult.a;
-						var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
+						var $temp$msg = author$project$AppModel$ChangeArea(model.areaNo),
 							$temp$model = _Utils_update(
 							model,
-							{regions: regions, viewState: author$project$Main$DataOk});
+							{regions: regions, viewState: author$project$AppModel$DataOk});
 						msg = $temp$msg;
 						model = $temp$model;
 						continue update;
@@ -7066,12 +7066,12 @@ var author$project$Main$update = F2(
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{regions: regions, viewState: author$project$Main$DataOk}),
+									{regions: regions, viewState: author$project$AppModel$DataOk}),
 								author$project$Main$saveLocalStorage(
 									{key: 'regions', value: resp}));
 						} else {
 							var error = regionsResult.a;
-							var $temp$msg = author$project$Main$DataError(error),
+							var $temp$msg = author$project$AppModel$DataError(error),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -7079,7 +7079,7 @@ var author$project$Main$update = F2(
 						}
 					} else {
 						var error = msg.a.a;
-						var $temp$msg = author$project$Main$DataError(
+						var $temp$msg = author$project$AppModel$DataError(
 							author$project$CommonUtil$httpError(error)),
 							$temp$model = model;
 						msg = $temp$msg;
@@ -7100,7 +7100,7 @@ var author$project$Main$update = F2(
 									{key: 'areaGarbage-' + model.areaNo, value: resp}));
 						} else {
 							var error = areaGarbageResult.a;
-							var $temp$msg = author$project$Main$DataError(error),
+							var $temp$msg = author$project$AppModel$DataError(error),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -7108,7 +7108,7 @@ var author$project$Main$update = F2(
 						}
 					} else {
 						var error = msg.a.a;
-						var $temp$msg = author$project$Main$DataError(
+						var $temp$msg = author$project$AppModel$DataError(
 							author$project$CommonUtil$httpError(error)),
 							$temp$model = model;
 						msg = $temp$msg;
@@ -7342,7 +7342,7 @@ var author$project$Main$viewHeader = A2(
 					elm$html$Html$button,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('header-button')
+							elm$html$Html$Attributes$class('')
 						]),
 					_List_Nil)
 				]))
@@ -8222,7 +8222,7 @@ var elm$html$Html$Attributes$src = function (url) {
 };
 var author$project$Main$viewMain = function (model) {
 	var handler = function (selectedValue) {
-		return author$project$Main$ChangeArea(selectedValue);
+		return author$project$AppModel$ChangeArea(selectedValue);
 	};
 	var _n0 = model.viewState;
 	switch (_n0.$) {

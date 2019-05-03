@@ -1,5 +1,6 @@
-port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, Model, Msg(..), Region, ViewState(..), apiBaseUrl, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, onChange, retLoadLocalStorage, saveLocalStorage, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewMain, viewRegion)
+port module Main exposing (apiBaseUrl, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, onChange, retLoadLocalStorage, saveLocalStorage, subscriptions, update, view, viewArea, viewAreaGarbage, viewFooter, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewHeader, viewLine, viewMain, viewRegion)
 
+import AppModel exposing (..)
 import Browser
 import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
 import CommonUtil
@@ -129,55 +130,6 @@ getAreaGarbage areaGarbageJson =
             Err (CommonUtil.jsonError error)
 
 
-
--- MODEL
-
-
-type alias Model =
-    { viewState : ViewState
-    , errorMessage : String
-    , isVersionChange : Bool
-    , time : Time.Posix
-    , dispDate : DispDate
-    , currentDate : YyyymmddDate
-    , apiVersion : String
-    , areaNo : String
-    , regions : List Region
-    , areaGarbage : AreaGarbage
-    }
-
-
-type alias LoadLocalStorageValue =
-    { key : String
-    , value : String
-    }
-
-
-type alias Region =
-    { regionName : String
-    , areas : List Area
-    }
-
-
-type alias Area =
-    { areaNo : String
-    , areaName : String
-    }
-
-
-type alias AreaGarbage =
-    { areaNo : String
-    , areaName : String
-    , garbages : List Garbage
-    }
-
-
-type alias Garbage =
-    { garbageTitles : List String
-    , garbageDates : List YyyymmddDate
-    }
-
-
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { viewState = PrepareData
@@ -205,34 +157,6 @@ subscriptions model =
 
 
 -- UPDATE
-
-
-type Msg
-    = DataError String
-    | Loading
-    | SetCurrentDate Time.Posix
-    | LoadedLocalStorage LoadLocalStorageValue
-    | LocalStorageSaved String
-    | GotSavedApiVersion String
-    | GotWebApiVersion (Result Http.Error String)
-    | GotSavedRegions String
-    | GotWebRegions (Result Http.Error String)
-    | GotSavedAreaGarbage String
-    | GotWebAreaGarbage (Result Http.Error String)
-    | ChangeArea String
-    | ViewAreaGarbage
-
-
-type ViewState
-    = PrepareData
-    | SystemError
-    | DataOk
-
-
-type ApiVersionState
-    = NoChange
-    | RequireRegion String
-    | GetError String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
