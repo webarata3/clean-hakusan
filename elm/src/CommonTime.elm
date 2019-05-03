@@ -66,7 +66,6 @@ toMonthNumber month =
 
 
 {-| 数字の月をTime.Monthで定義されている月に置き換える
-TODO 1〜12以外の数字の場合にはどうするか。。。
 
     numberToMonth 1 == Time.Jan
 
