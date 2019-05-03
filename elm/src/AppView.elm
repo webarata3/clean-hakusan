@@ -64,12 +64,17 @@ viewMain model =
     in
     case model.viewState of
         SystemError ->
-            div [] [ text model.errorMessage ]
+            main_ []
+                [ div [] [ text model.errorMessage ]
+                ]
 
         PrepareData ->
-            div []
-                [ div [] [ text "準備中" ]
-                , img [ class "loading-icon", src "image/ball-triangle.svg" ] []
+            main_
+                [ class "loading" ]
+                [ div [ class "message" ] [ text "読み込み中。" ]
+                , div [ class "message" ] [ text "動かない場合には、再読み込みしてみてください。" ]
+                , div []
+                    [ img [ class "loading-icon", src "image/ball-triangle.svg" ] [] ]
                 ]
 
         DataOk ->

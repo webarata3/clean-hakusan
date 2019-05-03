@@ -6349,15 +6349,7 @@ var author$project$AppView$viewMain = function (model) {
 	switch (_n0.$) {
 		case 'SystemError':
 			return A2(
-				elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text(model.errorMessage)
-					]));
-		case 'PrepareData':
-			return A2(
-				elm$html$Html$div,
+				elm$html$Html$main_,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -6366,16 +6358,52 @@ var author$project$AppView$viewMain = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('準備中')
-							])),
+								elm$html$Html$text(model.errorMessage)
+							]))
+					]));
+		case 'PrepareData':
+			return A2(
+				elm$html$Html$main_,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('loading')
+					]),
+				_List_fromArray(
+					[
 						A2(
-						elm$html$Html$img,
+						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('loading-icon'),
-								elm$html$Html$Attributes$src('image/ball-triangle.svg')
+								elm$html$Html$Attributes$class('message')
 							]),
-						_List_Nil)
+						_List_fromArray(
+							[
+								elm$html$Html$text('読み込み中。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('動かない場合には、再読み込みしてみてください。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$img,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('loading-icon'),
+										elm$html$Html$Attributes$src('image/ball-triangle.svg')
+									]),
+								_List_Nil)
+							]))
 					]));
 		default:
 			return A2(
@@ -8113,7 +8141,7 @@ var author$project$Main$update = F2(
 								currentDate: author$project$CommonTime$intDateToYyyymmddDate(intDate),
 								dispDate: author$project$CommonTime$intDateToDispDate(intDate)
 							}),
-						author$project$Main$loadLocalStorage('areaNo'));
+						elm$core$Platform$Cmd$none);
 				case 'LoadedLocalStorage':
 					var localStorageValue = msg.a;
 					var _n1 = A2(elm$core$Debug$log, '分岐', localStorageValue.key);
