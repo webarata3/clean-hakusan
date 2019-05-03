@@ -7342,7 +7342,7 @@ var author$project$Main$viewHeader = A2(
 					elm$html$Html$button,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('')
+							elm$html$Html$Attributes$class('header-button')
 						]),
 					_List_Nil)
 				]))

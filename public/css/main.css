@@ -127,7 +127,7 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   right: -150px;
 }
 
-.headerButton {
+.header-button {
   width: 24px;
   height: 24px;
   margin-right: 16px;
@@ -138,6 +138,7 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   border: none;
   outline: none;
   cursor: pointer;
+  background: url(../image/menu.svg) 50% no-repeat;
 }
 
 .fa-external-link {
