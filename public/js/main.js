@@ -7003,7 +7003,9 @@ var author$project$Main$update = F2(
 					var key = msg.a;
 					switch (key) {
 						case 'apiVersion':
-							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+							return _Utils_Tuple2(
+								model,
+								author$project$Main$loadLocalStorage('regions'));
 						case 'regions':
 							var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
 								$temp$model = model;

@@ -348,7 +348,7 @@ update msg model =
         LocalStorageSaved key ->
             case key of
                 "apiVersion" ->
-                    ( model, Cmd.none )
+                    ( model, loadLocalStorage "regions" )
 
                 "regions" ->
                     update (ChangeArea model.areaNo) model
