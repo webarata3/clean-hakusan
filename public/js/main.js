@@ -80,271 +80,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -493,6 +228,87 @@ var _JsArray_appendN = F3(function(n, dest, source)
     }
 
     return result;
+});
+
+
+
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
 });
 
 
@@ -789,6 +605,381 @@ function _Debug_regionToString(region)
 		return 'on line ' + region.start.line;
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
+}
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
+}
+
+
+
+// TASKS
+
+function _Scheduler_succeed(value)
+{
+	return {
+		$: 0,
+		a: value
+	};
+}
+
+function _Scheduler_fail(error)
+{
+	return {
+		$: 1,
+		a: error
+	};
+}
+
+function _Scheduler_binding(callback)
+{
+	return {
+		$: 2,
+		b: callback,
+		c: null
+	};
+}
+
+var _Scheduler_andThen = F2(function(callback, task)
+{
+	return {
+		$: 3,
+		b: callback,
+		d: task
+	};
+});
+
+var _Scheduler_onError = F2(function(callback, task)
+{
+	return {
+		$: 4,
+		b: callback,
+		d: task
+	};
+});
+
+function _Scheduler_receive(callback)
+{
+	return {
+		$: 5,
+		b: callback
+	};
+}
+
+
+// PROCESSES
+
+var _Scheduler_guid = 0;
+
+function _Scheduler_rawSpawn(task)
+{
+	var proc = {
+		$: 0,
+		e: _Scheduler_guid++,
+		f: task,
+		g: null,
+		h: []
+	};
+
+	_Scheduler_enqueue(proc);
+
+	return proc;
+}
+
+function _Scheduler_spawn(task)
+{
+	return _Scheduler_binding(function(callback) {
+		callback(_Scheduler_succeed(_Scheduler_rawSpawn(task)));
+	});
+}
+
+function _Scheduler_rawSend(proc, msg)
+{
+	proc.h.push(msg);
+	_Scheduler_enqueue(proc);
+}
+
+var _Scheduler_send = F2(function(proc, msg)
+{
+	return _Scheduler_binding(function(callback) {
+		_Scheduler_rawSend(proc, msg);
+		callback(_Scheduler_succeed(_Utils_Tuple0));
+	});
+});
+
+function _Scheduler_kill(proc)
+{
+	return _Scheduler_binding(function(callback) {
+		var task = proc.f;
+		if (task.$ === 2 && task.c)
+		{
+			task.c();
+		}
+
+		proc.f = null;
+
+		callback(_Scheduler_succeed(_Utils_Tuple0));
+	});
+}
+
+
+/* STEP PROCESSES
+
+type alias Process =
+  { $ : tag
+  , id : unique_id
+  , root : Task
+  , stack : null | { $: SUCCEED | FAIL, a: callback, b: stack }
+  , mailbox : [msg]
+  }
+
+*/
+
+
+var _Scheduler_working = false;
+var _Scheduler_queue = [];
+
+
+function _Scheduler_enqueue(proc)
+{
+	_Scheduler_queue.push(proc);
+	if (_Scheduler_working)
+	{
+		return;
+	}
+	_Scheduler_working = true;
+	while (proc = _Scheduler_queue.shift())
+	{
+		_Scheduler_step(proc);
+	}
+	_Scheduler_working = false;
+}
+
+
+function _Scheduler_step(proc)
+{
+	while (proc.f)
+	{
+		var rootTag = proc.f.$;
+		if (rootTag === 0 || rootTag === 1)
+		{
+			while (proc.g && proc.g.$ !== rootTag)
+			{
+				proc.g = proc.g.i;
+			}
+			if (!proc.g)
+			{
+				return;
+			}
+			proc.f = proc.g.b(proc.f.a);
+			proc.g = proc.g.i;
+		}
+		else if (rootTag === 2)
+		{
+			proc.f.c = proc.f.b(function(newRoot) {
+				proc.f = newRoot;
+				_Scheduler_enqueue(proc);
+			});
+			return;
+		}
+		else if (rootTag === 5)
+		{
+			if (proc.h.length === 0)
+			{
+				return;
+			}
+			proc.f = proc.f.b(proc.h.shift());
+		}
+		else // if (rootTag === 3 || rootTag === 4)
+		{
+			proc.g = {
+				$: rootTag === 3 ? 0 : 1,
+				b: proc.f.b,
+				i: proc.g
+			};
+			proc.f = proc.f.d;
+		}
+	}
 }
 
 
@@ -1644,197 +1835,6 @@ var _Json_encodeNull = _Json_wrap(null);
 
 
 
-// TASKS
-
-function _Scheduler_succeed(value)
-{
-	return {
-		$: 0,
-		a: value
-	};
-}
-
-function _Scheduler_fail(error)
-{
-	return {
-		$: 1,
-		a: error
-	};
-}
-
-function _Scheduler_binding(callback)
-{
-	return {
-		$: 2,
-		b: callback,
-		c: null
-	};
-}
-
-var _Scheduler_andThen = F2(function(callback, task)
-{
-	return {
-		$: 3,
-		b: callback,
-		d: task
-	};
-});
-
-var _Scheduler_onError = F2(function(callback, task)
-{
-	return {
-		$: 4,
-		b: callback,
-		d: task
-	};
-});
-
-function _Scheduler_receive(callback)
-{
-	return {
-		$: 5,
-		b: callback
-	};
-}
-
-
-// PROCESSES
-
-var _Scheduler_guid = 0;
-
-function _Scheduler_rawSpawn(task)
-{
-	var proc = {
-		$: 0,
-		e: _Scheduler_guid++,
-		f: task,
-		g: null,
-		h: []
-	};
-
-	_Scheduler_enqueue(proc);
-
-	return proc;
-}
-
-function _Scheduler_spawn(task)
-{
-	return _Scheduler_binding(function(callback) {
-		callback(_Scheduler_succeed(_Scheduler_rawSpawn(task)));
-	});
-}
-
-function _Scheduler_rawSend(proc, msg)
-{
-	proc.h.push(msg);
-	_Scheduler_enqueue(proc);
-}
-
-var _Scheduler_send = F2(function(proc, msg)
-{
-	return _Scheduler_binding(function(callback) {
-		_Scheduler_rawSend(proc, msg);
-		callback(_Scheduler_succeed(_Utils_Tuple0));
-	});
-});
-
-function _Scheduler_kill(proc)
-{
-	return _Scheduler_binding(function(callback) {
-		var task = proc.f;
-		if (task.$ === 2 && task.c)
-		{
-			task.c();
-		}
-
-		proc.f = null;
-
-		callback(_Scheduler_succeed(_Utils_Tuple0));
-	});
-}
-
-
-/* STEP PROCESSES
-
-type alias Process =
-  { $ : tag
-  , id : unique_id
-  , root : Task
-  , stack : null | { $: SUCCEED | FAIL, a: callback, b: stack }
-  , mailbox : [msg]
-  }
-
-*/
-
-
-var _Scheduler_working = false;
-var _Scheduler_queue = [];
-
-
-function _Scheduler_enqueue(proc)
-{
-	_Scheduler_queue.push(proc);
-	if (_Scheduler_working)
-	{
-		return;
-	}
-	_Scheduler_working = true;
-	while (proc = _Scheduler_queue.shift())
-	{
-		_Scheduler_step(proc);
-	}
-	_Scheduler_working = false;
-}
-
-
-function _Scheduler_step(proc)
-{
-	while (proc.f)
-	{
-		var rootTag = proc.f.$;
-		if (rootTag === 0 || rootTag === 1)
-		{
-			while (proc.g && proc.g.$ !== rootTag)
-			{
-				proc.g = proc.g.i;
-			}
-			if (!proc.g)
-			{
-				return;
-			}
-			proc.f = proc.g.b(proc.f.a);
-			proc.g = proc.g.i;
-		}
-		else if (rootTag === 2)
-		{
-			proc.f.c = proc.f.b(function(newRoot) {
-				proc.f = newRoot;
-				_Scheduler_enqueue(proc);
-			});
-			return;
-		}
-		else if (rootTag === 5)
-		{
-			if (proc.h.length === 0)
-			{
-				return;
-			}
-			proc.f = proc.f.b(proc.h.shift());
-		}
-		else // if (rootTag === 3 || rootTag === 4)
-		{
-			proc.g = {
-				$: rootTag === 3 ? 0 : 1,
-				b: proc.f.b,
-				i: proc.g
-			};
-			proc.f = proc.f.d;
-		}
-	}
-}
-
-
-
 function _Process_sleep(time)
 {
 	return _Scheduler_binding(function(callback) {
@@ -2312,6 +2312,264 @@ function _Platform_mergeExportsDebug(moduleName, obj, exports)
 	}
 }
 
+
+
+function _Time_now(millisToPosix)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(millisToPosix(Date.now())));
+	});
+}
+
+var _Time_setInterval = F2(function(interval, task)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
+		return function() { clearInterval(id); };
+	});
+});
+
+function _Time_here()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(
+			A2(elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
+		));
+	});
+}
+
+
+function _Time_getZoneName()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		try
+		{
+			var name = elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		}
+		catch (e)
+		{
+			var name = elm$time$Time$Offset(new Date().getTimezoneOffset());
+		}
+		callback(_Scheduler_succeed(name));
+	});
+}
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
+// SEND REQUEST
+
+var _Http_toTask = F3(function(router, toTask, request)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		function done(response) {
+			callback(toTask(request.expect.a(response)));
+		}
+
+		var xhr = new XMLHttpRequest();
+		xhr.addEventListener('error', function() { done(elm$http$Http$NetworkError_); });
+		xhr.addEventListener('timeout', function() { done(elm$http$Http$Timeout_); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.expect.b, xhr)); });
+		elm$core$Maybe$isJust(request.tracker) && _Http_track(router, xhr, request.tracker.a);
+
+		try {
+			xhr.open(request.method, request.url, true);
+		} catch (e) {
+			return done(elm$http$Http$BadUrl_(request.url));
+		}
+
+		_Http_configureRequest(xhr, request);
+
+		request.body.a && xhr.setRequestHeader('Content-Type', request.body.a);
+		xhr.send(request.body.b);
+
+		return function() { xhr.c = true; xhr.abort(); };
+	});
+});
+
+
+// CONFIGURE
+
+function _Http_configureRequest(xhr, request)
+{
+	for (var headers = request.headers; headers.b; headers = headers.b) // WHILE_CONS
+	{
+		xhr.setRequestHeader(headers.a.a, headers.a.b);
+	}
+	xhr.timeout = request.timeout.a || 0;
+	xhr.responseType = request.expect.d;
+	xhr.withCredentials = request.allowCookiesFromOtherDomains;
+}
+
+
+// RESPONSES
+
+function _Http_toResponse(toBody, xhr)
+{
+	return A2(
+		200 <= xhr.status && xhr.status < 300 ? elm$http$Http$GoodStatus_ : elm$http$Http$BadStatus_,
+		_Http_toMetadata(xhr),
+		toBody(xhr.response)
+	);
+}
+
+
+// METADATA
+
+function _Http_toMetadata(xhr)
+{
+	return {
+		url: xhr.responseURL,
+		statusCode: xhr.status,
+		statusText: xhr.statusText,
+		headers: _Http_parseHeaders(xhr.getAllResponseHeaders())
+	};
+}
+
+
+// HEADERS
+
+function _Http_parseHeaders(rawHeaders)
+{
+	if (!rawHeaders)
+	{
+		return elm$core$Dict$empty;
+	}
+
+	var headers = elm$core$Dict$empty;
+	var headerPairs = rawHeaders.split('\r\n');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf(': ');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3(elm$core$Dict$update, key, function(oldValue) {
+				return elm$core$Maybe$Just(elm$core$Maybe$isJust(oldValue)
+					? value + ', ' + oldValue.a
+					: value
+				);
+			}, headers);
+		}
+	}
+	return headers;
+}
+
+
+// EXPECT
+
+var _Http_expect = F3(function(type, toBody, toValue)
+{
+	return {
+		$: 0,
+		d: type,
+		b: toBody,
+		a: toValue
+	};
+});
+
+var _Http_mapExpect = F2(function(func, expect)
+{
+	return {
+		$: 0,
+		d: expect.d,
+		b: expect.b,
+		a: function(x) { return func(expect.a(x)); }
+	};
+});
+
+function _Http_toDataView(arrayBuffer)
+{
+	return new DataView(arrayBuffer);
+}
+
+
+// BODY and PARTS
+
+var _Http_emptyBody = { $: 0 };
+var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
+
+function _Http_toFormData(parts)
+{
+	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
+	{
+		var part = parts.a;
+		formData.append(part.a, part.b);
+	}
+	return formData;
+}
+
+var _Http_bytesToBlob = F2(function(mime, bytes)
+{
+	return new Blob([bytes], { type: mime });
+});
+
+
+// PROGRESS
+
+function _Http_track(router, xhr, tracker)
+{
+	// TODO check out lengthComputable on loadstart event
+
+	xhr.upload.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Sending({
+			sent: event.loaded,
+			size: event.total
+		}))));
+	});
+	xhr.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Receiving({
+			received: event.loaded,
+			size: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
+		}))));
+	});
+}
 
 
 
@@ -3872,264 +4130,6 @@ function _VirtualDom_dekey(keyedNode)
 
 
 
-function _Time_now(millisToPosix)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		callback(_Scheduler_succeed(millisToPosix(Date.now())));
-	});
-}
-
-var _Time_setInterval = F2(function(interval, task)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
-		return function() { clearInterval(id); };
-	});
-});
-
-function _Time_here()
-{
-	return _Scheduler_binding(function(callback)
-	{
-		callback(_Scheduler_succeed(
-			A2(elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
-		));
-	});
-}
-
-
-function _Time_getZoneName()
-{
-	return _Scheduler_binding(function(callback)
-	{
-		try
-		{
-			var name = elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
-		}
-		catch (e)
-		{
-			var name = elm$time$Time$Offset(new Date().getTimezoneOffset());
-		}
-		callback(_Scheduler_succeed(name));
-	});
-}
-
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-
-
-
-// SEND REQUEST
-
-var _Http_toTask = F3(function(router, toTask, request)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		function done(response) {
-			callback(toTask(request.expect.a(response)));
-		}
-
-		var xhr = new XMLHttpRequest();
-		xhr.addEventListener('error', function() { done(elm$http$Http$NetworkError_); });
-		xhr.addEventListener('timeout', function() { done(elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.expect.b, xhr)); });
-		elm$core$Maybe$isJust(request.tracker) && _Http_track(router, xhr, request.tracker.a);
-
-		try {
-			xhr.open(request.method, request.url, true);
-		} catch (e) {
-			return done(elm$http$Http$BadUrl_(request.url));
-		}
-
-		_Http_configureRequest(xhr, request);
-
-		request.body.a && xhr.setRequestHeader('Content-Type', request.body.a);
-		xhr.send(request.body.b);
-
-		return function() { xhr.c = true; xhr.abort(); };
-	});
-});
-
-
-// CONFIGURE
-
-function _Http_configureRequest(xhr, request)
-{
-	for (var headers = request.headers; headers.b; headers = headers.b) // WHILE_CONS
-	{
-		xhr.setRequestHeader(headers.a.a, headers.a.b);
-	}
-	xhr.timeout = request.timeout.a || 0;
-	xhr.responseType = request.expect.d;
-	xhr.withCredentials = request.allowCookiesFromOtherDomains;
-}
-
-
-// RESPONSES
-
-function _Http_toResponse(toBody, xhr)
-{
-	return A2(
-		200 <= xhr.status && xhr.status < 300 ? elm$http$Http$GoodStatus_ : elm$http$Http$BadStatus_,
-		_Http_toMetadata(xhr),
-		toBody(xhr.response)
-	);
-}
-
-
-// METADATA
-
-function _Http_toMetadata(xhr)
-{
-	return {
-		url: xhr.responseURL,
-		statusCode: xhr.status,
-		statusText: xhr.statusText,
-		headers: _Http_parseHeaders(xhr.getAllResponseHeaders())
-	};
-}
-
-
-// HEADERS
-
-function _Http_parseHeaders(rawHeaders)
-{
-	if (!rawHeaders)
-	{
-		return elm$core$Dict$empty;
-	}
-
-	var headers = elm$core$Dict$empty;
-	var headerPairs = rawHeaders.split('\r\n');
-	for (var i = headerPairs.length; i--; )
-	{
-		var headerPair = headerPairs[i];
-		var index = headerPair.indexOf(': ');
-		if (index > 0)
-		{
-			var key = headerPair.substring(0, index);
-			var value = headerPair.substring(index + 2);
-
-			headers = A3(elm$core$Dict$update, key, function(oldValue) {
-				return elm$core$Maybe$Just(elm$core$Maybe$isJust(oldValue)
-					? value + ', ' + oldValue.a
-					: value
-				);
-			}, headers);
-		}
-	}
-	return headers;
-}
-
-
-// EXPECT
-
-var _Http_expect = F3(function(type, toBody, toValue)
-{
-	return {
-		$: 0,
-		d: type,
-		b: toBody,
-		a: toValue
-	};
-});
-
-var _Http_mapExpect = F2(function(func, expect)
-{
-	return {
-		$: 0,
-		d: expect.d,
-		b: expect.b,
-		a: function(x) { return func(expect.a(x)); }
-	};
-});
-
-function _Http_toDataView(arrayBuffer)
-{
-	return new DataView(arrayBuffer);
-}
-
-
-// BODY and PARTS
-
-var _Http_emptyBody = { $: 0 };
-var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
-
-function _Http_toFormData(parts)
-{
-	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
-	{
-		var part = parts.a;
-		formData.append(part.a, part.b);
-	}
-	return formData;
-}
-
-var _Http_bytesToBlob = F2(function(mime, bytes)
-{
-	return new Blob([bytes], { type: mime });
-});
-
-
-// PROGRESS
-
-function _Http_track(router, xhr, tracker)
-{
-	// TODO check out lengthComputable on loadstart event
-
-	xhr.upload.addEventListener('progress', function(event) {
-		if (xhr.c) { return; }
-		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Sending({
-			sent: event.loaded,
-			size: event.total
-		}))));
-	});
-	xhr.addEventListener('progress', function(event) {
-		if (xhr.c) { return; }
-		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Receiving({
-			received: event.loaded,
-			size: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
-		}))));
-	});
-}
-
-
 
 // ELEMENT
 
@@ -4568,26 +4568,45 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Main$PrepareData = {$: 'PrepareData'};
+var author$project$Main$SetCurrentDate = function (a) {
+	return {$: 'SetCurrentDate', a: a};
+};
+var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
-		return true;
-	} else {
-		return false;
-	}
+var elm$core$Task$Perform = function (a) {
+	return {$: 'Perform', a: a};
 };
-var elm$core$Array$branchFactor = 32;
-var elm$core$Array$Array_elm_builtin = F4(
-	function (a, b, c, d) {
-		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
 	});
 var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
+var elm$core$List$cons = _List_cons;
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+};
+var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4613,7 +4632,6 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
-var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -4641,48 +4659,10 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
-	});
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
-};
-var elm$core$Basics$ceiling = _Basics_ceiling;
-var elm$core$Basics$fdiv = _Basics_fdiv;
-var elm$core$Basics$logBase = F2(
-	function (base, number) {
-		return _Basics_log(number) / _Basics_log(base);
-	});
-var elm$core$Basics$toFloat = _Basics_toFloat;
-var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
-	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
-var elm$core$Elm$JsArray$empty = _JsArray_empty;
-var elm$core$Array$empty = A4(elm$core$Array$Array_elm_builtin, 0, elm$core$Array$shiftStep, elm$core$Elm$JsArray$empty, elm$core$Elm$JsArray$empty);
-var elm$core$Array$Leaf = function (a) {
-	return {$: 'Leaf', a: a};
-};
-var elm$core$Array$SubTree = function (a) {
-	return {$: 'SubTree', a: a};
-};
-var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
+var elm$core$Task$succeed = _Scheduler_succeed;
+var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
+var elm$core$Basics$add = _Basics_add;
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
 	function (func, acc, list) {
 		foldl:
@@ -4705,6 +4685,143 @@ var elm$core$List$foldl = F3(
 var elm$core$List$reverse = function (list) {
 	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
 };
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var elm$core$Task$andThen = _Scheduler_andThen;
+var elm$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return elm$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var elm$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return A2(
+					elm$core$Task$andThen,
+					function (b) {
+						return elm$core$Task$succeed(
+							A2(func, a, b));
+					},
+					taskB);
+			},
+			taskA);
+	});
+var elm$core$Task$sequence = function (tasks) {
+	return A3(
+		elm$core$List$foldr,
+		elm$core$Task$map2(elm$core$List$cons),
+		elm$core$Task$succeed(_List_Nil),
+		tasks);
+};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Result$isOk = function (result) {
+	if (result.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var elm$core$Array$branchFactor = 32;
+var elm$core$Array$Array_elm_builtin = F4(
+	function (a, b, c, d) {
+		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+	});
+var elm$core$Basics$ceiling = _Basics_ceiling;
+var elm$core$Basics$fdiv = _Basics_fdiv;
+var elm$core$Basics$logBase = F2(
+	function (base, number) {
+		return _Basics_log(number) / _Basics_log(base);
+	});
+var elm$core$Basics$toFloat = _Basics_toFloat;
+var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
+	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
+var elm$core$Elm$JsArray$empty = _JsArray_empty;
+var elm$core$Array$empty = A4(elm$core$Array$Array_elm_builtin, 0, elm$core$Array$shiftStep, elm$core$Elm$JsArray$empty, elm$core$Elm$JsArray$empty);
+var elm$core$Array$Leaf = function (a) {
+	return {$: 'Leaf', a: a};
+};
+var elm$core$Array$SubTree = function (a) {
+	return {$: 'SubTree', a: a};
+};
+var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
 var elm$core$Array$compressNodes = F2(
 	function (nodes, acc) {
 		compressNodes:
@@ -4727,10 +4844,6 @@ var elm$core$Array$compressNodes = F2(
 			}
 		}
 	});
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
 var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
@@ -4752,13 +4865,11 @@ var elm$core$Array$treeFromBuilder = F2(
 			}
 		}
 	});
-var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$apL = F2(
 	function (f, x) {
 		return f(x);
 	});
 var elm$core$Basics$floor = _Basics_floor;
-var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
@@ -5046,1571 +5157,6 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 			}
 		}
 	});
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$footer = _VirtualDom_node('footer');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$html$Html$span = _VirtualDom_node('span');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$ul = _VirtualDom_node('ul');
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var author$project$AppView$viewFooter = A2(
-	elm$html$Html$footer,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('copyright')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text('©2019 '),
-					A2(
-					elm$html$Html$a,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$href('https://webarata3.link')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Shinichi ARATA（webarata3）')
-						]))
-				])),
-			A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('sns')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$ul,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$li,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$a,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$href('https://twitter.com/webarata3')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$span,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('fab fa-twitter')
-												]),
-											_List_Nil)
-										]))
-								])),
-							A2(
-							elm$html$Html$li,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$a,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$href('https://facebook.com/arata.shinichi')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$span,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('fab fa-facebook')
-												]),
-											_List_Nil)
-										]))
-								])),
-							A2(
-							elm$html$Html$li,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$a,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$href('https://github.com/webarata3')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$span,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('fab fa-github')
-												]),
-											_List_Nil)
-										]))
-								])),
-							A2(
-							elm$html$Html$li,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$a,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$href('https://ja.stackoverflow.com/users/2214/webarata3?tab=profile')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$span,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('fab fa-stack-overflow')
-												]),
-											_List_Nil)
-										]))
-								]))
-						]))
-				]))
-		]));
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$header = _VirtualDom_node('header');
-var author$project$AppView$viewHeader = A2(
-	elm$html$Html$header,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			elm$html$Html$h1,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('header-title')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text('白山市ごみ収集日程')
-				])),
-			A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('menu')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('header-button')
-						]),
-					_List_Nil)
-				]))
-		]));
-var author$project$AppModel$ChangeArea = function (a) {
-	return {$: 'ChangeArea', a: a};
-};
-var author$project$AppModel$CopyText = {$: 'CopyText'};
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
-var elm$json$Json$Decode$string = _Json_decodeString;
-var elm$html$Html$Events$targetValue = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	elm$json$Json$Decode$string);
-var author$project$AppView$onChange = function (handler) {
-	return A2(
-		elm$html$Html$Events$on,
-		'change',
-		A2(elm$json$Json$Decode$map, handler, elm$html$Html$Events$targetValue));
-};
-var elm$time$Time$Apr = {$: 'Apr'};
-var elm$time$Time$Aug = {$: 'Aug'};
-var elm$time$Time$Dec = {$: 'Dec'};
-var elm$time$Time$Feb = {$: 'Feb'};
-var elm$time$Time$Jan = {$: 'Jan'};
-var elm$time$Time$Jul = {$: 'Jul'};
-var elm$time$Time$Jun = {$: 'Jun'};
-var elm$time$Time$Mar = {$: 'Mar'};
-var elm$time$Time$May = {$: 'May'};
-var elm$time$Time$Nov = {$: 'Nov'};
-var elm$time$Time$Oct = {$: 'Oct'};
-var elm$time$Time$Sep = {$: 'Sep'};
-var author$project$CommonTime$numberToMonth = function (month) {
-	switch (month) {
-		case 1:
-			return elm$time$Time$Jan;
-		case 2:
-			return elm$time$Time$Feb;
-		case 3:
-			return elm$time$Time$Mar;
-		case 4:
-			return elm$time$Time$Apr;
-		case 5:
-			return elm$time$Time$May;
-		case 6:
-			return elm$time$Time$Jun;
-		case 7:
-			return elm$time$Time$Jul;
-		case 8:
-			return elm$time$Time$Aug;
-		case 9:
-			return elm$time$Time$Sep;
-		case 10:
-			return elm$time$Time$Oct;
-		case 11:
-			return elm$time$Time$Nov;
-		case 12:
-			return elm$time$Time$Dec;
-		default:
-			return elm$time$Time$Dec;
-	}
-};
-var elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
-var justinmimbs$time_extra$Time$Extra$Parts = F7(
-	function (year, month, day, hour, minute, second, millisecond) {
-		return {day: day, hour: hour, millisecond: millisecond, minute: minute, month: month, second: second, year: year};
-	});
-var elm$core$Basics$clamp = F3(
-	function (low, high, number) {
-		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
-	});
-var justinmimbs$date$Date$RD = function (a) {
-	return {$: 'RD', a: a};
-};
-var elm$core$Basics$modBy = _Basics_modBy;
-var elm$core$Basics$neq = _Utils_notEqual;
-var justinmimbs$date$Date$isLeapYear = function (y) {
-	return ((!A2(elm$core$Basics$modBy, 4, y)) && A2(elm$core$Basics$modBy, 100, y)) || (!A2(elm$core$Basics$modBy, 400, y));
-};
-var justinmimbs$date$Date$daysBeforeMonth = F2(
-	function (y, m) {
-		var leapDays = justinmimbs$date$Date$isLeapYear(y) ? 1 : 0;
-		switch (m.$) {
-			case 'Jan':
-				return 0;
-			case 'Feb':
-				return 31;
-			case 'Mar':
-				return 59 + leapDays;
-			case 'Apr':
-				return 90 + leapDays;
-			case 'May':
-				return 120 + leapDays;
-			case 'Jun':
-				return 151 + leapDays;
-			case 'Jul':
-				return 181 + leapDays;
-			case 'Aug':
-				return 212 + leapDays;
-			case 'Sep':
-				return 243 + leapDays;
-			case 'Oct':
-				return 273 + leapDays;
-			case 'Nov':
-				return 304 + leapDays;
-			default:
-				return 334 + leapDays;
-		}
-	});
-var justinmimbs$date$Date$floorDiv = F2(
-	function (a, b) {
-		return elm$core$Basics$floor(a / b);
-	});
-var justinmimbs$date$Date$daysBeforeYear = function (y1) {
-	var y = y1 - 1;
-	var leapYears = (A2(justinmimbs$date$Date$floorDiv, y, 4) - A2(justinmimbs$date$Date$floorDiv, y, 100)) + A2(justinmimbs$date$Date$floorDiv, y, 400);
-	return (365 * y) + leapYears;
-};
-var justinmimbs$date$Date$daysInMonth = F2(
-	function (y, m) {
-		switch (m.$) {
-			case 'Jan':
-				return 31;
-			case 'Feb':
-				return justinmimbs$date$Date$isLeapYear(y) ? 29 : 28;
-			case 'Mar':
-				return 31;
-			case 'Apr':
-				return 30;
-			case 'May':
-				return 31;
-			case 'Jun':
-				return 30;
-			case 'Jul':
-				return 31;
-			case 'Aug':
-				return 31;
-			case 'Sep':
-				return 30;
-			case 'Oct':
-				return 31;
-			case 'Nov':
-				return 30;
-			default:
-				return 31;
-		}
-	});
-var justinmimbs$date$Date$fromCalendarDate = F3(
-	function (y, m, d) {
-		return justinmimbs$date$Date$RD(
-			(justinmimbs$date$Date$daysBeforeYear(y) + A2(justinmimbs$date$Date$daysBeforeMonth, y, m)) + A3(
-				elm$core$Basics$clamp,
-				1,
-				A2(justinmimbs$date$Date$daysInMonth, y, m),
-				d));
-	});
-var elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var elm$time$Time$millisToPosix = elm$time$Time$Posix;
-var justinmimbs$date$Date$toRataDie = function (_n0) {
-	var rd = _n0.a;
-	return rd;
-};
-var justinmimbs$time_extra$Time$Extra$dateToMillis = function (date) {
-	var daysSinceEpoch = justinmimbs$date$Date$toRataDie(date) - 719163;
-	return daysSinceEpoch * 86400000;
-};
-var elm$time$Time$posixToMillis = function (_n0) {
-	var millis = _n0.a;
-	return millis;
-};
-var elm$time$Time$flooredDiv = F2(
-	function (numerator, denominator) {
-		return elm$core$Basics$floor(numerator / denominator);
-	});
-var elm$time$Time$toAdjustedMinutesHelp = F3(
-	function (defaultOffset, posixMinutes, eras) {
-		toAdjustedMinutesHelp:
-		while (true) {
-			if (!eras.b) {
-				return posixMinutes + defaultOffset;
-			} else {
-				var era = eras.a;
-				var olderEras = eras.b;
-				if (_Utils_cmp(era.start, posixMinutes) < 0) {
-					return posixMinutes + era.offset;
-				} else {
-					var $temp$defaultOffset = defaultOffset,
-						$temp$posixMinutes = posixMinutes,
-						$temp$eras = olderEras;
-					defaultOffset = $temp$defaultOffset;
-					posixMinutes = $temp$posixMinutes;
-					eras = $temp$eras;
-					continue toAdjustedMinutesHelp;
-				}
-			}
-		}
-	});
-var elm$time$Time$toAdjustedMinutes = F2(
-	function (_n0, time) {
-		var defaultOffset = _n0.a;
-		var eras = _n0.b;
-		return A3(
-			elm$time$Time$toAdjustedMinutesHelp,
-			defaultOffset,
-			A2(
-				elm$time$Time$flooredDiv,
-				elm$time$Time$posixToMillis(time),
-				60000),
-			eras);
-	});
-var elm$core$Basics$ge = _Utils_ge;
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var elm$time$Time$toCivil = function (minutes) {
-	var rawDay = A2(elm$time$Time$flooredDiv, minutes, 60 * 24) + 719468;
-	var era = (((rawDay >= 0) ? rawDay : (rawDay - 146096)) / 146097) | 0;
-	var dayOfEra = rawDay - (era * 146097);
-	var yearOfEra = ((((dayOfEra - ((dayOfEra / 1460) | 0)) + ((dayOfEra / 36524) | 0)) - ((dayOfEra / 146096) | 0)) / 365) | 0;
-	var dayOfYear = dayOfEra - (((365 * yearOfEra) + ((yearOfEra / 4) | 0)) - ((yearOfEra / 100) | 0));
-	var mp = (((5 * dayOfYear) + 2) / 153) | 0;
-	var month = mp + ((mp < 10) ? 3 : (-9));
-	var year = yearOfEra + (era * 400);
-	return {
-		day: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
-		month: month,
-		year: year + ((month <= 2) ? 1 : 0)
-	};
-};
-var elm$time$Time$toDay = F2(
-	function (zone, time) {
-		return elm$time$Time$toCivil(
-			A2(elm$time$Time$toAdjustedMinutes, zone, time)).day;
-	});
-var elm$time$Time$toMonth = F2(
-	function (zone, time) {
-		var _n0 = elm$time$Time$toCivil(
-			A2(elm$time$Time$toAdjustedMinutes, zone, time)).month;
-		switch (_n0) {
-			case 1:
-				return elm$time$Time$Jan;
-			case 2:
-				return elm$time$Time$Feb;
-			case 3:
-				return elm$time$Time$Mar;
-			case 4:
-				return elm$time$Time$Apr;
-			case 5:
-				return elm$time$Time$May;
-			case 6:
-				return elm$time$Time$Jun;
-			case 7:
-				return elm$time$Time$Jul;
-			case 8:
-				return elm$time$Time$Aug;
-			case 9:
-				return elm$time$Time$Sep;
-			case 10:
-				return elm$time$Time$Oct;
-			case 11:
-				return elm$time$Time$Nov;
-			default:
-				return elm$time$Time$Dec;
-		}
-	});
-var elm$time$Time$toYear = F2(
-	function (zone, time) {
-		return elm$time$Time$toCivil(
-			A2(elm$time$Time$toAdjustedMinutes, zone, time)).year;
-	});
-var justinmimbs$date$Date$fromPosix = F2(
-	function (zone, posix) {
-		return A3(
-			justinmimbs$date$Date$fromCalendarDate,
-			A2(elm$time$Time$toYear, zone, posix),
-			A2(elm$time$Time$toMonth, zone, posix),
-			A2(elm$time$Time$toDay, zone, posix));
-	});
-var elm$time$Time$toHour = F2(
-	function (zone, time) {
-		return A2(
-			elm$core$Basics$modBy,
-			24,
-			A2(
-				elm$time$Time$flooredDiv,
-				A2(elm$time$Time$toAdjustedMinutes, zone, time),
-				60));
-	});
-var elm$time$Time$toMillis = F2(
-	function (_n0, time) {
-		return A2(
-			elm$core$Basics$modBy,
-			1000,
-			elm$time$Time$posixToMillis(time));
-	});
-var elm$time$Time$toMinute = F2(
-	function (zone, time) {
-		return A2(
-			elm$core$Basics$modBy,
-			60,
-			A2(elm$time$Time$toAdjustedMinutes, zone, time));
-	});
-var elm$time$Time$toSecond = F2(
-	function (_n0, time) {
-		return A2(
-			elm$core$Basics$modBy,
-			60,
-			A2(
-				elm$time$Time$flooredDiv,
-				elm$time$Time$posixToMillis(time),
-				1000));
-	});
-var justinmimbs$time_extra$Time$Extra$timeFromClock = F4(
-	function (hour, minute, second, millisecond) {
-		return (((hour * 3600000) + (minute * 60000)) + (second * 1000)) + millisecond;
-	});
-var justinmimbs$time_extra$Time$Extra$timeFromPosix = F2(
-	function (zone, posix) {
-		return A4(
-			justinmimbs$time_extra$Time$Extra$timeFromClock,
-			A2(elm$time$Time$toHour, zone, posix),
-			A2(elm$time$Time$toMinute, zone, posix),
-			A2(elm$time$Time$toSecond, zone, posix),
-			A2(elm$time$Time$toMillis, zone, posix));
-	});
-var justinmimbs$time_extra$Time$Extra$toOffset = F2(
-	function (zone, posix) {
-		var millis = elm$time$Time$posixToMillis(posix);
-		var localMillis = justinmimbs$time_extra$Time$Extra$dateToMillis(
-			A2(justinmimbs$date$Date$fromPosix, zone, posix)) + A2(justinmimbs$time_extra$Time$Extra$timeFromPosix, zone, posix);
-		return ((localMillis - millis) / 60000) | 0;
-	});
-var justinmimbs$time_extra$Time$Extra$posixFromDateTime = F3(
-	function (zone, date, time) {
-		var millis = justinmimbs$time_extra$Time$Extra$dateToMillis(date) + time;
-		var offset0 = A2(
-			justinmimbs$time_extra$Time$Extra$toOffset,
-			zone,
-			elm$time$Time$millisToPosix(millis));
-		var posix1 = elm$time$Time$millisToPosix(millis - (offset0 * 60000));
-		var offset1 = A2(justinmimbs$time_extra$Time$Extra$toOffset, zone, posix1);
-		if (_Utils_eq(offset0, offset1)) {
-			return posix1;
-		} else {
-			var posix2 = elm$time$Time$millisToPosix(millis - (offset1 * 60000));
-			var offset2 = A2(justinmimbs$time_extra$Time$Extra$toOffset, zone, posix2);
-			return _Utils_eq(offset1, offset2) ? posix2 : posix1;
-		}
-	});
-var justinmimbs$time_extra$Time$Extra$partsToPosix = F2(
-	function (zone, _n0) {
-		var year = _n0.year;
-		var month = _n0.month;
-		var day = _n0.day;
-		var hour = _n0.hour;
-		var minute = _n0.minute;
-		var second = _n0.second;
-		var millisecond = _n0.millisecond;
-		return A3(
-			justinmimbs$time_extra$Time$Extra$posixFromDateTime,
-			zone,
-			A3(justinmimbs$date$Date$fromCalendarDate, year, month, day),
-			A4(
-				justinmimbs$time_extra$Time$Extra$timeFromClock,
-				A3(elm$core$Basics$clamp, 0, 23, hour),
-				A3(elm$core$Basics$clamp, 0, 59, minute),
-				A3(elm$core$Basics$clamp, 0, 59, second),
-				A3(elm$core$Basics$clamp, 0, 999, millisecond)));
-	});
-var author$project$CommonTime$intDateToPosix = function (intDate) {
-	return A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(
-			justinmimbs$time_extra$Time$Extra$Parts,
-			intDate.year,
-			author$project$CommonTime$numberToMonth(intDate.month),
-			intDate.day,
-			0,
-			0,
-			0,
-			0));
-};
-var elm$core$String$slice = _String_slice;
-var elm$core$String$toInt = _String_toInt;
-var author$project$CommonTime$sliceToInt = F3(
-	function (dateString, begin, end) {
-		var _n0 = elm$core$String$toInt(
-			A3(elm$core$String$slice, begin, end, dateString));
-		if (_n0.$ === 'Just') {
-			var value = _n0.a;
-			return value;
-		} else {
-			return 0;
-		}
-	});
-var author$project$CommonTime$yyyymmddDateToIntDate = function (yyyymmddDate) {
-	var sliceToInt2 = author$project$CommonTime$sliceToInt(yyyymmddDate);
-	return {
-		day: A2(sliceToInt2, 6, 8),
-		month: A2(sliceToInt2, 4, 6),
-		year: A2(sliceToInt2, 0, 4)
-	};
-};
-var justinmimbs$time_extra$Time$Extra$Day = {$: 'Day'};
-var elm$core$Basics$truncate = _Basics_truncate;
-var justinmimbs$time_extra$Time$Extra$Millisecond = {$: 'Millisecond'};
-var justinmimbs$time_extra$Time$Extra$Month = {$: 'Month'};
-var justinmimbs$time_extra$Time$Extra$Week = {$: 'Week'};
-var justinmimbs$date$Date$Day = {$: 'Day'};
-var justinmimbs$date$Date$Friday = {$: 'Friday'};
-var justinmimbs$date$Date$Monday = {$: 'Monday'};
-var justinmimbs$date$Date$Month = {$: 'Month'};
-var justinmimbs$date$Date$Quarter = {$: 'Quarter'};
-var justinmimbs$date$Date$Saturday = {$: 'Saturday'};
-var justinmimbs$date$Date$Sunday = {$: 'Sunday'};
-var justinmimbs$date$Date$Thursday = {$: 'Thursday'};
-var justinmimbs$date$Date$Tuesday = {$: 'Tuesday'};
-var justinmimbs$date$Date$Wednesday = {$: 'Wednesday'};
-var justinmimbs$date$Date$Week = {$: 'Week'};
-var justinmimbs$date$Date$Year = {$: 'Year'};
-var elm$time$Time$Fri = {$: 'Fri'};
-var elm$time$Time$Mon = {$: 'Mon'};
-var elm$time$Time$Sat = {$: 'Sat'};
-var elm$time$Time$Sun = {$: 'Sun'};
-var elm$time$Time$Thu = {$: 'Thu'};
-var elm$time$Time$Tue = {$: 'Tue'};
-var elm$time$Time$Wed = {$: 'Wed'};
-var justinmimbs$date$Date$weekdayNumber = function (_n0) {
-	var rd = _n0.a;
-	var _n1 = A2(elm$core$Basics$modBy, 7, rd);
-	if (!_n1) {
-		return 7;
-	} else {
-		var n = _n1;
-		return n;
-	}
-};
-var justinmimbs$date$Date$weekdayToNumber = function (wd) {
-	switch (wd.$) {
-		case 'Mon':
-			return 1;
-		case 'Tue':
-			return 2;
-		case 'Wed':
-			return 3;
-		case 'Thu':
-			return 4;
-		case 'Fri':
-			return 5;
-		case 'Sat':
-			return 6;
-		default:
-			return 7;
-	}
-};
-var justinmimbs$date$Date$daysSincePreviousWeekday = F2(
-	function (wd, date) {
-		return A2(
-			elm$core$Basics$modBy,
-			7,
-			(justinmimbs$date$Date$weekdayNumber(date) + 7) - justinmimbs$date$Date$weekdayToNumber(wd));
-	});
-var justinmimbs$date$Date$firstOfMonth = F2(
-	function (y, m) {
-		return justinmimbs$date$Date$RD(
-			(justinmimbs$date$Date$daysBeforeYear(y) + A2(justinmimbs$date$Date$daysBeforeMonth, y, m)) + 1);
-	});
-var justinmimbs$date$Date$firstOfYear = function (y) {
-	return justinmimbs$date$Date$RD(
-		justinmimbs$date$Date$daysBeforeYear(y) + 1);
-};
-var elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
-var justinmimbs$date$Date$monthToNumber = function (m) {
-	switch (m.$) {
-		case 'Jan':
-			return 1;
-		case 'Feb':
-			return 2;
-		case 'Mar':
-			return 3;
-		case 'Apr':
-			return 4;
-		case 'May':
-			return 5;
-		case 'Jun':
-			return 6;
-		case 'Jul':
-			return 7;
-		case 'Aug':
-			return 8;
-		case 'Sep':
-			return 9;
-		case 'Oct':
-			return 10;
-		case 'Nov':
-			return 11;
-		default:
-			return 12;
-	}
-};
-var justinmimbs$date$Date$numberToMonth = function (mn) {
-	var _n0 = A2(elm$core$Basics$max, 1, mn);
-	switch (_n0) {
-		case 1:
-			return elm$time$Time$Jan;
-		case 2:
-			return elm$time$Time$Feb;
-		case 3:
-			return elm$time$Time$Mar;
-		case 4:
-			return elm$time$Time$Apr;
-		case 5:
-			return elm$time$Time$May;
-		case 6:
-			return elm$time$Time$Jun;
-		case 7:
-			return elm$time$Time$Jul;
-		case 8:
-			return elm$time$Time$Aug;
-		case 9:
-			return elm$time$Time$Sep;
-		case 10:
-			return elm$time$Time$Oct;
-		case 11:
-			return elm$time$Time$Nov;
-		default:
-			return elm$time$Time$Dec;
-	}
-};
-var justinmimbs$date$Date$toCalendarDateHelp = F3(
-	function (y, m, d) {
-		toCalendarDateHelp:
-		while (true) {
-			var monthDays = A2(justinmimbs$date$Date$daysInMonth, y, m);
-			var mn = justinmimbs$date$Date$monthToNumber(m);
-			if ((mn < 12) && (_Utils_cmp(d, monthDays) > 0)) {
-				var $temp$y = y,
-					$temp$m = justinmimbs$date$Date$numberToMonth(mn + 1),
-					$temp$d = d - monthDays;
-				y = $temp$y;
-				m = $temp$m;
-				d = $temp$d;
-				continue toCalendarDateHelp;
-			} else {
-				return {day: d, month: m, year: y};
-			}
-		}
-	});
-var justinmimbs$date$Date$divWithRemainder = F2(
-	function (a, b) {
-		return _Utils_Tuple2(
-			A2(justinmimbs$date$Date$floorDiv, a, b),
-			A2(elm$core$Basics$modBy, b, a));
-	});
-var justinmimbs$date$Date$year = function (_n0) {
-	var rd = _n0.a;
-	var _n1 = A2(justinmimbs$date$Date$divWithRemainder, rd, 146097);
-	var n400 = _n1.a;
-	var r400 = _n1.b;
-	var _n2 = A2(justinmimbs$date$Date$divWithRemainder, r400, 36524);
-	var n100 = _n2.a;
-	var r100 = _n2.b;
-	var _n3 = A2(justinmimbs$date$Date$divWithRemainder, r100, 1461);
-	var n4 = _n3.a;
-	var r4 = _n3.b;
-	var _n4 = A2(justinmimbs$date$Date$divWithRemainder, r4, 365);
-	var n1 = _n4.a;
-	var r1 = _n4.b;
-	var n = (!r1) ? 0 : 1;
-	return ((((n400 * 400) + (n100 * 100)) + (n4 * 4)) + n1) + n;
-};
-var justinmimbs$date$Date$toOrdinalDate = function (_n0) {
-	var rd = _n0.a;
-	var y = justinmimbs$date$Date$year(
-		justinmimbs$date$Date$RD(rd));
-	return {
-		ordinalDay: rd - justinmimbs$date$Date$daysBeforeYear(y),
-		year: y
-	};
-};
-var justinmimbs$date$Date$toCalendarDate = function (_n0) {
-	var rd = _n0.a;
-	var date = justinmimbs$date$Date$toOrdinalDate(
-		justinmimbs$date$Date$RD(rd));
-	return A3(justinmimbs$date$Date$toCalendarDateHelp, date.year, elm$time$Time$Jan, date.ordinalDay);
-};
-var justinmimbs$date$Date$month = A2(
-	elm$core$Basics$composeR,
-	justinmimbs$date$Date$toCalendarDate,
-	function ($) {
-		return $.month;
-	});
-var justinmimbs$date$Date$monthToQuarter = function (m) {
-	return ((justinmimbs$date$Date$monthToNumber(m) + 2) / 3) | 0;
-};
-var justinmimbs$date$Date$quarter = A2(elm$core$Basics$composeR, justinmimbs$date$Date$month, justinmimbs$date$Date$monthToQuarter);
-var justinmimbs$date$Date$quarterToMonth = function (q) {
-	return justinmimbs$date$Date$numberToMonth((q * 3) - 2);
-};
-var justinmimbs$date$Date$floor = F2(
-	function (interval, date) {
-		var rd = date.a;
-		switch (interval.$) {
-			case 'Year':
-				return justinmimbs$date$Date$firstOfYear(
-					justinmimbs$date$Date$year(date));
-			case 'Quarter':
-				return A2(
-					justinmimbs$date$Date$firstOfMonth,
-					justinmimbs$date$Date$year(date),
-					justinmimbs$date$Date$quarterToMonth(
-						justinmimbs$date$Date$quarter(date)));
-			case 'Month':
-				return A2(
-					justinmimbs$date$Date$firstOfMonth,
-					justinmimbs$date$Date$year(date),
-					justinmimbs$date$Date$month(date));
-			case 'Week':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Mon, date));
-			case 'Monday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Mon, date));
-			case 'Tuesday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Tue, date));
-			case 'Wednesday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Wed, date));
-			case 'Thursday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Thu, date));
-			case 'Friday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Fri, date));
-			case 'Saturday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Sat, date));
-			case 'Sunday':
-				return justinmimbs$date$Date$RD(
-					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Sun, date));
-			default:
-				return date;
-		}
-	});
-var justinmimbs$time_extra$Time$Extra$floorDate = F3(
-	function (dateInterval, zone, posix) {
-		return A3(
-			justinmimbs$time_extra$Time$Extra$posixFromDateTime,
-			zone,
-			A2(
-				justinmimbs$date$Date$floor,
-				dateInterval,
-				A2(justinmimbs$date$Date$fromPosix, zone, posix)),
-			0);
-	});
-var justinmimbs$time_extra$Time$Extra$floor = F3(
-	function (interval, zone, posix) {
-		switch (interval.$) {
-			case 'Millisecond':
-				return posix;
-			case 'Second':
-				return A3(
-					justinmimbs$time_extra$Time$Extra$posixFromDateTime,
-					zone,
-					A2(justinmimbs$date$Date$fromPosix, zone, posix),
-					A4(
-						justinmimbs$time_extra$Time$Extra$timeFromClock,
-						A2(elm$time$Time$toHour, zone, posix),
-						A2(elm$time$Time$toMinute, zone, posix),
-						A2(elm$time$Time$toSecond, zone, posix),
-						0));
-			case 'Minute':
-				return A3(
-					justinmimbs$time_extra$Time$Extra$posixFromDateTime,
-					zone,
-					A2(justinmimbs$date$Date$fromPosix, zone, posix),
-					A4(
-						justinmimbs$time_extra$Time$Extra$timeFromClock,
-						A2(elm$time$Time$toHour, zone, posix),
-						A2(elm$time$Time$toMinute, zone, posix),
-						0,
-						0));
-			case 'Hour':
-				return A3(
-					justinmimbs$time_extra$Time$Extra$posixFromDateTime,
-					zone,
-					A2(justinmimbs$date$Date$fromPosix, zone, posix),
-					A4(
-						justinmimbs$time_extra$Time$Extra$timeFromClock,
-						A2(elm$time$Time$toHour, zone, posix),
-						0,
-						0,
-						0));
-			case 'Day':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Day, zone, posix);
-			case 'Month':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Month, zone, posix);
-			case 'Year':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Year, zone, posix);
-			case 'Quarter':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Quarter, zone, posix);
-			case 'Week':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Week, zone, posix);
-			case 'Monday':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Monday, zone, posix);
-			case 'Tuesday':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Tuesday, zone, posix);
-			case 'Wednesday':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Wednesday, zone, posix);
-			case 'Thursday':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Thursday, zone, posix);
-			case 'Friday':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Friday, zone, posix);
-			case 'Saturday':
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Saturday, zone, posix);
-			default:
-				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Sunday, zone, posix);
-		}
-	});
-var justinmimbs$time_extra$Time$Extra$toFractionalDay = F2(
-	function (zone, posix) {
-		return A2(justinmimbs$time_extra$Time$Extra$timeFromPosix, zone, posix) / 86400000;
-	});
-var justinmimbs$time_extra$Time$Extra$toMonths = F2(
-	function (zone, posix) {
-		var wholeMonths = (12 * (A2(elm$time$Time$toYear, zone, posix) - 1)) + (justinmimbs$date$Date$monthToNumber(
-			A2(elm$time$Time$toMonth, zone, posix)) - 1);
-		var fractionalMonth = (A2(elm$time$Time$toDay, zone, posix) + A2(justinmimbs$time_extra$Time$Extra$toFractionalDay, zone, posix)) / 100;
-		return wholeMonths + fractionalMonth;
-	});
-var justinmimbs$time_extra$Time$Extra$toRataDieMoment = F2(
-	function (zone, posix) {
-		return justinmimbs$date$Date$toRataDie(
-			A2(justinmimbs$date$Date$fromPosix, zone, posix)) + A2(justinmimbs$time_extra$Time$Extra$toFractionalDay, zone, posix);
-	});
-var justinmimbs$time_extra$Time$Extra$diff = F4(
-	function (interval, zone, posix1, posix2) {
-		diff:
-		while (true) {
-			switch (interval.$) {
-				case 'Millisecond':
-					return elm$time$Time$posixToMillis(posix2) - elm$time$Time$posixToMillis(posix1);
-				case 'Second':
-					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Millisecond, zone, posix1, posix2) / 1000) | 0;
-				case 'Minute':
-					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Millisecond, zone, posix1, posix2) / 60000) | 0;
-				case 'Hour':
-					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Millisecond, zone, posix1, posix2) / 3600000) | 0;
-				case 'Day':
-					return (A2(justinmimbs$time_extra$Time$Extra$toRataDieMoment, zone, posix2) - A2(justinmimbs$time_extra$Time$Extra$toRataDieMoment, zone, posix1)) | 0;
-				case 'Month':
-					return (A2(justinmimbs$time_extra$Time$Extra$toMonths, zone, posix2) - A2(justinmimbs$time_extra$Time$Extra$toMonths, zone, posix1)) | 0;
-				case 'Year':
-					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Month, zone, posix1, posix2) / 12) | 0;
-				case 'Quarter':
-					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Month, zone, posix1, posix2) / 3) | 0;
-				case 'Week':
-					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Day, zone, posix1, posix2) / 7) | 0;
-				default:
-					var weekday = interval;
-					var $temp$interval = justinmimbs$time_extra$Time$Extra$Week,
-						$temp$zone = zone,
-						$temp$posix1 = A3(justinmimbs$time_extra$Time$Extra$floor, weekday, zone, posix1),
-						$temp$posix2 = A3(justinmimbs$time_extra$Time$Extra$floor, weekday, zone, posix2);
-					interval = $temp$interval;
-					zone = $temp$zone;
-					posix1 = $temp$posix1;
-					posix2 = $temp$posix2;
-					continue diff;
-			}
-		}
-	});
-var author$project$CommonTime$diffDayYyyymmddDate = F2(
-	function (yyyymmddDate1, yyyymmddDate2) {
-		var intDate2 = author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate2);
-		var intDate1 = author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate1);
-		return A4(
-			justinmimbs$time_extra$Time$Extra$diff,
-			justinmimbs$time_extra$Time$Extra$Day,
-			elm$time$Time$utc,
-			author$project$CommonTime$intDateToPosix(intDate1),
-			author$project$CommonTime$intDateToPosix(intDate2));
-	});
-var author$project$CommonTime$intDateToDayOfWeek = function (intDate) {
-	var y = intDate.year;
-	var m = intDate.month;
-	var d = intDate.day;
-	var days = ((((((365 * y) + ((y / 4) | 0)) - ((y / 100) | 0)) + ((y / 400) | 0)) + (((306 * (m + 1)) / 10) | 0)) + d) - 428;
-	var dayOfWeek = days % 7;
-	switch (dayOfWeek) {
-		case 0:
-			return '日';
-		case 1:
-			return '月';
-		case 2:
-			return '火';
-		case 3:
-			return '水';
-		case 4:
-			return '木';
-		case 5:
-			return '金';
-		case 6:
-			return '土';
-		default:
-			return '？';
-	}
-};
-var author$project$CommonTime$intDateToDispDate = function (intDate) {
-	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + ('日' + ('(' + (author$project$CommonTime$intDateToDayOfWeek(intDate) + ')')))))));
-};
-var author$project$CommonTime$yyyymmddDateToDispDate = function (yyyymmddDate) {
-	return author$project$CommonTime$intDateToDispDate(
-		author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate));
-};
-var author$project$CommonUtil$dispHowManyDays = function (howManyDays) {
-	switch (howManyDays) {
-		case 0:
-			return '今日';
-		case 1:
-			return '明日';
-		case 2:
-			return '明後日';
-		default:
-			return elm$core$String$fromInt(howManyDays) + '日後';
-	}
-};
-var author$project$CommonUtil$howManyDaysCss = function (howManyDays) {
-	switch (howManyDays) {
-		case 0:
-			return 'garbage-schedule today';
-		case 1:
-			return 'garbage-schedule tomorrow';
-		case 2:
-			return 'garbage-schedule day-after-tomorrow';
-		default:
-			return 'garbage-schedule';
-	}
-};
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return elm$core$Maybe$Just(x);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var author$project$CommonUtil$nextDate = F2(
-	function (currentDate, garbageDates) {
-		var _n0 = elm$core$List$head(
-			A2(
-				elm$core$List$filter,
-				function (d) {
-					return _Utils_cmp(d, currentDate) > -1;
-				},
-				garbageDates));
-		if (_n0.$ === 'Just') {
-			var date = _n0.a;
-			return date;
-		} else {
-			return '';
-		}
-	});
-var author$project$AppView$viewGarbageDates = F2(
-	function (currentDate, garbageDates) {
-		var nextGarbageDate = A2(author$project$CommonUtil$nextDate, currentDate, garbageDates);
-		var howManyDays = A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate);
-		var dispDays = author$project$CommonUtil$dispHowManyDays(
-			A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate));
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class(
-					author$project$CommonUtil$howManyDaysCss(howManyDays))
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('garbage-how-many-days')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text(dispDays)
-						])),
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('garbage-next-date')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text(
-							author$project$CommonTime$yyyymmddDateToDispDate(nextGarbageDate))
-						]))
-				]));
-	});
-var author$project$AppView$viewLine = function (value) {
-	return A2(
-		elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				elm$html$Html$text(value)
-			]));
-};
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var author$project$AppView$viewGarbageTitles = function (garbageTitles) {
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('garbage-title')
-			]),
-		A2(elm$core$List$map, author$project$AppView$viewLine, garbageTitles));
-};
-var author$project$AppView$viewGarbage = F2(
-	function (currentDate, garbage) {
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('garbage-item')
-				]),
-			_List_fromArray(
-				[
-					author$project$AppView$viewGarbageTitles(garbage.garbageTitles),
-					A2(author$project$AppView$viewGarbageDates, currentDate, garbage.garbageDates)
-				]));
-	});
-var elm$core$Debug$log = _Debug_log;
-var author$project$AppView$viewGarbages = F2(
-	function (currentDate, garbages) {
-		var viewGarbage2 = author$project$AppView$viewGarbage(currentDate);
-		var t = A2(elm$core$Debug$log, '2', garbages);
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('garbages')
-				]),
-			A2(elm$core$List$map, viewGarbage2, garbages));
-	});
-var author$project$AppView$viewAreaGarbage = F2(
-	function (currentDate, areaGarbage) {
-		var t = A2(elm$core$Debug$log, '1', areaGarbage.areaNo);
-		return A2(author$project$AppView$viewGarbages, currentDate, areaGarbage.garbages);
-	});
-var elm$html$Html$option = _VirtualDom_node('option');
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
-var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
-var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
-var author$project$AppView$viewArea = F2(
-	function (areaNo, area) {
-		return A2(
-			elm$html$Html$option,
-			_Utils_eq(areaNo, area.areaNo) ? _List_fromArray(
-				[
-					elm$html$Html$Attributes$value(area.areaNo),
-					elm$html$Html$Attributes$selected(true)
-				]) : _List_fromArray(
-				[
-					elm$html$Html$Attributes$value(area.areaNo),
-					elm$html$Html$Attributes$selected(false)
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text(area.areaName)
-				]));
-	});
-var elm$html$Html$optgroup = _VirtualDom_node('optgroup');
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
-var author$project$AppView$viewRegion = F2(
-	function (areaNo, region) {
-		return A2(
-			elm$html$Html$optgroup,
-			_List_fromArray(
-				[
-					A2(elm$html$Html$Attributes$attribute, 'label', region.regionName)
-				]),
-			A2(
-				elm$core$List$map,
-				author$project$AppView$viewArea(areaNo),
-				region.areas));
-	});
-var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$label = _VirtualDom_node('label');
-var elm$html$Html$main_ = _VirtualDom_node('main');
-var elm$html$Html$select = _VirtualDom_node('select');
-var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
-var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
-var elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var author$project$AppView$viewMain = function (model) {
-	var handler = function (selectedValue) {
-		return author$project$AppModel$ChangeArea(selectedValue);
-	};
-	var _n0 = model.viewState;
-	switch (_n0.$) {
-		case 'SystemError':
-			return A2(
-				elm$html$Html$main_,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('error')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('error-message')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('エラーが発生しました。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('error-message')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('動かない場合には、再読み込みしてみてください。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('error-message')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('報告して頂ける場合には、下の理由をお知らせください。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$id('reason'),
-								elm$html$Html$Attributes$class('message')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('理由: ' + model.errorMessage)
-							])),
-						A2(
-						elm$html$Html$button,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$id('errorMessageButton'),
-								elm$html$Html$Events$onClick(author$project$AppModel$CopyText)
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('メッセージをコピー')
-							]))
-					]));
-		case 'PrepareData':
-			return A2(
-				elm$html$Html$main_,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('loading')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('message')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('読み込み中。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('message')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('動かない場合には、再読み込みしてみてください。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$img,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('loading-icon'),
-										elm$html$Html$Attributes$src('image/ball-triangle.svg')
-									]),
-								_List_Nil)
-							]))
-					]));
-		default:
-			return A2(
-				elm$html$Html$main_,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('alert')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('※ 白山市公式のアプリではありません。')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('area')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('select-area')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$label,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$for('area')
-											]),
-										_List_fromArray(
-											[
-												elm$html$Html$text('地域')
-											])),
-										A2(
-										elm$html$Html$select,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$id('area'),
-												author$project$AppView$onChange(handler)
-											]),
-										A2(
-											elm$core$List$map,
-											author$project$AppView$viewRegion(model.areaNo),
-											model.regions))
-									])),
-								A2(
-								elm$html$Html$a,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('地域が不明な方はこちらで確認してください')
-									]))
-							])),
-						A2(author$project$AppView$viewAreaGarbage, model.currentDate, model.areaGarbage)
-					]));
-	}
-};
-var elm$html$Html$article = _VirtualDom_node('article');
-var author$project$AppView$view = function (model) {
-	return A2(
-		elm$html$Html$article,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$id('app')
-			]),
-		_List_fromArray(
-			[
-				author$project$AppView$viewHeader,
-				author$project$AppView$viewMain(model),
-				author$project$AppView$viewFooter
-			]));
-};
-var author$project$AppModel$PrepareData = {$: 'PrepareData'};
-var author$project$AppModel$SetCurrentDate = function (a) {
-	return {$: 'SetCurrentDate', a: a};
-};
-var elm$core$Task$Perform = function (a) {
-	return {$: 'Perform', a: a};
-};
-var elm$core$Task$succeed = _Scheduler_succeed;
-var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$Task$andThen = _Scheduler_andThen;
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$map2 = F3(
-	function (func, taskA, taskB) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return A2(
-					elm$core$Task$andThen,
-					function (b) {
-						return elm$core$Task$succeed(
-							A2(func, a, b));
-					},
-					taskB);
-			},
-			taskA);
-	});
-var elm$core$Task$sequence = function (tasks) {
-	return A3(
-		elm$core$List$foldr,
-		elm$core$Task$map2(elm$core$List$cons),
-		elm$core$Task$succeed(_List_Nil),
-		tasks);
-};
 var elm$core$Platform$sendToApp = _Platform_sendToApp;
 var elm$core$Task$spawnCmd = F2(
 	function (router, _n0) {
@@ -6652,12 +5198,20 @@ var elm$core$Task$perform = F2(
 			elm$core$Task$Perform(
 				A2(elm$core$Task$map, toMessage, task)));
 	});
+var elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var elm$time$Time$millisToPosix = elm$time$Time$Posix;
 var elm$time$Time$Name = function (a) {
 	return {$: 'Name', a: a};
 };
 var elm$time$Time$Offset = function (a) {
 	return {$: 'Offset', a: a};
 };
+var elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
 var elm$time$Time$customZone = elm$time$Time$Zone;
 var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
 var author$project$Main$init = function (_n0) {
@@ -6672,18 +5226,21 @@ var author$project$Main$init = function (_n0) {
 			isVersionChange: false,
 			regions: _List_Nil,
 			time: elm$time$Time$millisToPosix(0),
-			viewState: author$project$AppModel$PrepareData
+			viewState: author$project$Main$PrepareData
 		},
-		A2(elm$core$Task$perform, author$project$AppModel$SetCurrentDate, elm$time$Time$now));
+		A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
 };
-var author$project$AppModel$LoadedLocalStorage = function (a) {
+var author$project$Main$LoadedLocalStorage = function (a) {
 	return {$: 'LoadedLocalStorage', a: a};
 };
-var author$project$AppModel$LocalStorageSaved = function (a) {
+var author$project$Main$LocalStorageSaved = function (a) {
 	return {$: 'LocalStorageSaved', a: a};
 };
+var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$Main$localStorageSaved = _Platform_incomingPort('localStorageSaved', elm$json$Json$Decode$string);
 var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$succeed = _Json_succeed;
 var author$project$Main$retLoadLocalStorage = _Platform_incomingPort(
 	'retLoadLocalStorage',
 	A2(
@@ -6703,35 +5260,38 @@ var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				author$project$Main$retLoadLocalStorage(author$project$AppModel$LoadedLocalStorage),
-				author$project$Main$localStorageSaved(author$project$AppModel$LocalStorageSaved)
+				author$project$Main$retLoadLocalStorage(author$project$Main$LoadedLocalStorage),
+				author$project$Main$localStorageSaved(author$project$Main$LocalStorageSaved)
 			]));
 };
-var author$project$AppModel$DataError = function (a) {
-	return {$: 'DataError', a: a};
+var author$project$CommonTime$intDateToDayOfWeek = function (intDate) {
+	var y = intDate.year;
+	var m = intDate.month;
+	var d = intDate.day;
+	var days = ((((((365 * y) + ((y / 4) | 0)) - ((y / 100) | 0)) + ((y / 400) | 0)) + (((306 * (m + 1)) / 10) | 0)) + d) - 428;
+	var dayOfWeek = days % 7;
+	switch (dayOfWeek) {
+		case 0:
+			return '日';
+		case 1:
+			return '月';
+		case 2:
+			return '火';
+		case 3:
+			return '水';
+		case 4:
+			return '木';
+		case 5:
+			return '金';
+		case 6:
+			return '土';
+		default:
+			return '？';
+	}
 };
-var author$project$AppModel$DataOk = {$: 'DataOk'};
-var author$project$AppModel$GetError = function (a) {
-	return {$: 'GetError', a: a};
+var author$project$CommonTime$intDateToDispDate = function (intDate) {
+	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + ('日' + ('(' + (author$project$CommonTime$intDateToDayOfWeek(intDate) + ')')))))));
 };
-var author$project$AppModel$GotSavedApiVersion = function (a) {
-	return {$: 'GotSavedApiVersion', a: a};
-};
-var author$project$AppModel$GotSavedAreaGarbage = function (a) {
-	return {$: 'GotSavedAreaGarbage', a: a};
-};
-var author$project$AppModel$GotSavedRegions = function (a) {
-	return {$: 'GotSavedRegions', a: a};
-};
-var author$project$AppModel$GotWebApiVersion = function (a) {
-	return {$: 'GotWebApiVersion', a: a};
-};
-var author$project$AppModel$NoChange = {$: 'NoChange'};
-var author$project$AppModel$RequireRegion = function (a) {
-	return {$: 'RequireRegion', a: a};
-};
-var author$project$AppModel$SystemError = {$: 'SystemError'};
-var author$project$AppModel$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var elm$core$String$cons = _String_cons;
 var elm$core$String$fromChar = function (_char) {
 	return A2(elm$core$String$cons, _char, '');
@@ -6804,6 +5364,122 @@ var author$project$CommonTime$toMonthNumber = function (month) {
 			return 12;
 	}
 };
+var elm$time$Time$flooredDiv = F2(
+	function (numerator, denominator) {
+		return elm$core$Basics$floor(numerator / denominator);
+	});
+var elm$time$Time$posixToMillis = function (_n0) {
+	var millis = _n0.a;
+	return millis;
+};
+var elm$time$Time$toAdjustedMinutesHelp = F3(
+	function (defaultOffset, posixMinutes, eras) {
+		toAdjustedMinutesHelp:
+		while (true) {
+			if (!eras.b) {
+				return posixMinutes + defaultOffset;
+			} else {
+				var era = eras.a;
+				var olderEras = eras.b;
+				if (_Utils_cmp(era.start, posixMinutes) < 0) {
+					return posixMinutes + era.offset;
+				} else {
+					var $temp$defaultOffset = defaultOffset,
+						$temp$posixMinutes = posixMinutes,
+						$temp$eras = olderEras;
+					defaultOffset = $temp$defaultOffset;
+					posixMinutes = $temp$posixMinutes;
+					eras = $temp$eras;
+					continue toAdjustedMinutesHelp;
+				}
+			}
+		}
+	});
+var elm$time$Time$toAdjustedMinutes = F2(
+	function (_n0, time) {
+		var defaultOffset = _n0.a;
+		var eras = _n0.b;
+		return A3(
+			elm$time$Time$toAdjustedMinutesHelp,
+			defaultOffset,
+			A2(
+				elm$time$Time$flooredDiv,
+				elm$time$Time$posixToMillis(time),
+				60000),
+			eras);
+	});
+var elm$core$Basics$ge = _Utils_ge;
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$time$Time$toCivil = function (minutes) {
+	var rawDay = A2(elm$time$Time$flooredDiv, minutes, 60 * 24) + 719468;
+	var era = (((rawDay >= 0) ? rawDay : (rawDay - 146096)) / 146097) | 0;
+	var dayOfEra = rawDay - (era * 146097);
+	var yearOfEra = ((((dayOfEra - ((dayOfEra / 1460) | 0)) + ((dayOfEra / 36524) | 0)) - ((dayOfEra / 146096) | 0)) / 365) | 0;
+	var dayOfYear = dayOfEra - (((365 * yearOfEra) + ((yearOfEra / 4) | 0)) - ((yearOfEra / 100) | 0));
+	var mp = (((5 * dayOfYear) + 2) / 153) | 0;
+	var month = mp + ((mp < 10) ? 3 : (-9));
+	var year = yearOfEra + (era * 400);
+	return {
+		day: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		month: month,
+		year: year + ((month <= 2) ? 1 : 0)
+	};
+};
+var elm$time$Time$toDay = F2(
+	function (zone, time) {
+		return elm$time$Time$toCivil(
+			A2(elm$time$Time$toAdjustedMinutes, zone, time)).day;
+	});
+var elm$time$Time$Apr = {$: 'Apr'};
+var elm$time$Time$Aug = {$: 'Aug'};
+var elm$time$Time$Dec = {$: 'Dec'};
+var elm$time$Time$Feb = {$: 'Feb'};
+var elm$time$Time$Jan = {$: 'Jan'};
+var elm$time$Time$Jul = {$: 'Jul'};
+var elm$time$Time$Jun = {$: 'Jun'};
+var elm$time$Time$Mar = {$: 'Mar'};
+var elm$time$Time$May = {$: 'May'};
+var elm$time$Time$Nov = {$: 'Nov'};
+var elm$time$Time$Oct = {$: 'Oct'};
+var elm$time$Time$Sep = {$: 'Sep'};
+var elm$time$Time$toMonth = F2(
+	function (zone, time) {
+		var _n0 = elm$time$Time$toCivil(
+			A2(elm$time$Time$toAdjustedMinutes, zone, time)).month;
+		switch (_n0) {
+			case 1:
+				return elm$time$Time$Jan;
+			case 2:
+				return elm$time$Time$Feb;
+			case 3:
+				return elm$time$Time$Mar;
+			case 4:
+				return elm$time$Time$Apr;
+			case 5:
+				return elm$time$Time$May;
+			case 6:
+				return elm$time$Time$Jun;
+			case 7:
+				return elm$time$Time$Jul;
+			case 8:
+				return elm$time$Time$Aug;
+			case 9:
+				return elm$time$Time$Sep;
+			case 10:
+				return elm$time$Time$Oct;
+			case 11:
+				return elm$time$Time$Nov;
+			default:
+				return elm$time$Time$Dec;
+		}
+	});
+var elm$time$Time$toYear = F2(
+	function (zone, time) {
+		return elm$time$Time$toCivil(
+			A2(elm$time$Time$toAdjustedMinutes, zone, time)).year;
+	});
 var justinmimbs$timezone_data$TimeZone$maxYear = 2037;
 var justinmimbs$timezone_data$TimeZone$minYear = 1970;
 var elm$core$Tuple$second = function (_n0) {
@@ -6851,7 +5527,19 @@ var elm$core$List$concatMap = F2(
 		return elm$core$List$concat(
 			A2(elm$core$List$map, f, list));
 	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
 var elm$core$List$sortBy = _List_sortBy;
+var elm$core$Basics$modBy = _Basics_modBy;
 var justinmimbs$timezone_data$RataDie$weekdayNumber = function (rd) {
 	var _n0 = A2(elm$core$Basics$modBy, 7, rd);
 	if (!_n0) {
@@ -6892,6 +5580,7 @@ var justinmimbs$timezone_data$RataDie$ceilingWeekday = F2(
 		var floored = A2(justinmimbs$timezone_data$RataDie$floorWeekday, weekday, rd);
 		return _Utils_eq(rd, floored) ? rd : (floored + 7);
 	});
+var elm$core$Basics$neq = _Utils_notEqual;
 var justinmimbs$timezone_data$RataDie$isLeapYear = function (y) {
 	return ((!A2(elm$core$Basics$modBy, 4, y)) && A2(elm$core$Basics$modBy, 100, y)) || (!A2(elm$core$Basics$modBy, 400, y));
 };
@@ -7285,6 +5974,34 @@ var author$project$CommonUtil$httpError = F2(
 var author$project$CommonUtil$jsonError = function (error) {
 	return 'Json Error';
 };
+var author$project$Main$ChangeArea = function (a) {
+	return {$: 'ChangeArea', a: a};
+};
+var author$project$Main$DataError = function (a) {
+	return {$: 'DataError', a: a};
+};
+var author$project$Main$DataOk = {$: 'DataOk'};
+var author$project$Main$GetError = function (a) {
+	return {$: 'GetError', a: a};
+};
+var author$project$Main$GotSavedApiVersion = function (a) {
+	return {$: 'GotSavedApiVersion', a: a};
+};
+var author$project$Main$GotSavedAreaGarbage = function (a) {
+	return {$: 'GotSavedAreaGarbage', a: a};
+};
+var author$project$Main$GotSavedRegions = function (a) {
+	return {$: 'GotSavedRegions', a: a};
+};
+var author$project$Main$GotWebApiVersion = function (a) {
+	return {$: 'GotWebApiVersion', a: a};
+};
+var author$project$Main$NoChange = {$: 'NoChange'};
+var author$project$Main$RequireRegion = function (a) {
+	return {$: 'RequireRegion', a: a};
+};
+var author$project$Main$SystemError = {$: 'SystemError'};
+var author$project$Main$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var author$project$Main$apiBaseUrl = '/api';
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Main$copyText = _Platform_outgoingPort(
@@ -7292,18 +6009,19 @@ var author$project$Main$copyText = _Platform_outgoingPort(
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var author$project$AppModel$AreaGarbage = F3(
+var author$project$Main$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
 		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
 	});
-var author$project$AppModel$Garbage = F2(
+var author$project$Main$Garbage = F2(
 	function (garbageTitles, garbageDates) {
 		return {garbageDates: garbageDates, garbageTitles: garbageTitles};
 	});
 var elm$json$Json$Decode$list = _Json_decodeList;
+var elm$json$Json$Decode$map2 = _Json_map2;
 var author$project$Main$decodeGarbage = A3(
 	elm$json$Json$Decode$map2,
-	author$project$AppModel$Garbage,
+	author$project$Main$Garbage,
 	A2(
 		elm$json$Json$Decode$field,
 		'garbageTitles',
@@ -7316,7 +6034,7 @@ var author$project$Main$decodeGarbages = elm$json$Json$Decode$list(author$projec
 var elm$json$Json$Decode$map3 = _Json_map3;
 var author$project$Main$decodeAreaGarbage = A4(
 	elm$json$Json$Decode$map3,
-	author$project$AppModel$AreaGarbage,
+	author$project$Main$AreaGarbage,
 	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
@@ -7332,23 +6050,23 @@ var author$project$Main$getAreaGarbage = function (areaGarbageJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$AppModel$Region = F2(
+var author$project$Main$Region = F2(
 	function (regionName, areas) {
 		return {areas: areas, regionName: regionName};
 	});
-var author$project$AppModel$Area = F2(
+var author$project$Main$Area = F2(
 	function (areaNo, areaName) {
 		return {areaName: areaName, areaNo: areaNo};
 	});
 var author$project$Main$decodeArea = A3(
 	elm$json$Json$Decode$map2,
-	author$project$AppModel$Area,
+	author$project$Main$Area,
 	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
 var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
 var author$project$Main$decodeRegion = A3(
 	elm$json$Json$Decode$map2,
-	author$project$AppModel$Region,
+	author$project$Main$Region,
 	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
 var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
@@ -7366,9 +6084,14 @@ var author$project$Main$getRegions = function (regionJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$AppModel$GotWebAreaGarbage = function (a) {
+var author$project$Main$GotWebAreaGarbage = function (a) {
 	return {$: 'GotWebAreaGarbage', a: a};
 };
+var elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var elm$core$Basics$compare = _Utils_compare;
@@ -8157,18 +6880,19 @@ var elm$http$Http$get = function (r) {
 var author$project$Main$getWebJsonAreaGarbage = function (areaNo) {
 	return elm$http$Http$get(
 		{
-			expect: elm$http$Http$expectString(author$project$AppModel$GotWebAreaGarbage),
+			expect: elm$http$Http$expectString(author$project$Main$GotWebAreaGarbage),
 			url: author$project$Main$apiBaseUrl + ('/' + (areaNo + '.json'))
 		});
 };
-var author$project$AppModel$GotWebRegions = function (a) {
+var author$project$Main$GotWebRegions = function (a) {
 	return {$: 'GotWebRegions', a: a};
 };
 var author$project$Main$getWebJsonRegions = elm$http$Http$get(
 	{
-		expect: elm$http$Http$expectString(author$project$AppModel$GotWebRegions),
+		expect: elm$http$Http$expectString(author$project$Main$GotWebRegions),
 		url: author$project$Main$apiBaseUrl + '/regions.json'
 	});
+var elm$json$Json$Encode$string = _Json_wrap;
 var author$project$Main$loadLocalStorage = _Platform_outgoingPort('loadLocalStorage', elm$json$Json$Encode$string);
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
@@ -8197,6 +6921,7 @@ var author$project$Main$saveLocalStorage = _Platform_outgoingPort(
 					elm$json$Json$Encode$string($.value))
 				]));
 	});
+var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$core$String$startsWith = _String_startsWith;
@@ -8216,7 +6941,7 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{errorMessage: errorMessage, viewState: author$project$AppModel$SystemError}),
+							{errorMessage: errorMessage, viewState: author$project$Main$SystemError}),
 						elm$core$Platform$Cmd$none);
 				case 'CopyText':
 					return _Utils_Tuple2(
@@ -8245,19 +6970,19 @@ var author$project$Main$update = F2(
 									{areaNo: areaNo}),
 								author$project$Main$loadLocalStorage('apiVersion'));
 						case 'apiVersion':
-							var $temp$msg = author$project$AppModel$GotSavedApiVersion(localStorageValue.value),
+							var $temp$msg = author$project$Main$GotSavedApiVersion(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						case 'regions':
-							var $temp$msg = author$project$AppModel$GotSavedRegions(localStorageValue.value),
+							var $temp$msg = author$project$Main$GotSavedRegions(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						default:
-							var $temp$msg = author$project$AppModel$GotSavedAreaGarbage(localStorageValue.value),
+							var $temp$msg = author$project$Main$GotSavedAreaGarbage(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -8271,7 +6996,7 @@ var author$project$Main$update = F2(
 							{apiVersion: json}),
 						elm$http$Http$get(
 							{
-								expect: elm$http$Http$expectString(author$project$AppModel$GotWebApiVersion),
+								expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
 								url: author$project$Main$apiBaseUrl + '/version.json'
 							}));
 				case 'LocalStorageSaved':
@@ -8280,13 +7005,13 @@ var author$project$Main$update = F2(
 						case 'apiVersion':
 							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 						case 'regions':
-							var $temp$msg = author$project$AppModel$ChangeArea(model.areaNo),
+							var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						case 'areaNo':
-							var $temp$msg = author$project$AppModel$ViewAreaGarbage,
+							var $temp$msg = author$project$Main$ViewAreaGarbage,
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -8307,10 +7032,10 @@ var author$project$Main$update = F2(
 							function () {
 								if (jsonApiVersion.$ === 'Ok') {
 									var webApiVersion = jsonApiVersion.a;
-									return ((model.apiVersion === '') || (_Utils_cmp(webApiVersion, model.apiVersion) > 0)) ? author$project$AppModel$RequireRegion(webApiVersion) : author$project$AppModel$NoChange;
+									return ((model.apiVersion === '') || (_Utils_cmp(webApiVersion, model.apiVersion) > 0)) ? author$project$Main$RequireRegion(webApiVersion) : author$project$Main$NoChange;
 								} else {
 									var error = jsonApiVersion.a;
-									return author$project$AppModel$GetError(
+									return author$project$Main$GetError(
 										author$project$CommonUtil$jsonError(error));
 								}
 							}());
@@ -8320,7 +7045,7 @@ var author$project$Main$update = F2(
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
-										{apiVersion: webApiVersion, isVersionChange: true, viewState: author$project$AppModel$DataOk}),
+										{apiVersion: webApiVersion, isVersionChange: true, viewState: author$project$Main$DataOk}),
 									author$project$Main$saveLocalStorage(
 										{key: 'apiVersion', value: webApiVersion}));
 							case 'NoChange':
@@ -8329,7 +7054,7 @@ var author$project$Main$update = F2(
 									author$project$Main$loadLocalStorage('regions'));
 							default:
 								var errorMessage = apiVersionState.a;
-								var $temp$msg = author$project$AppModel$DataError(errorMessage),
+								var $temp$msg = author$project$Main$DataError(errorMessage),
 									$temp$model = model;
 								msg = $temp$msg;
 								model = $temp$model;
@@ -8338,14 +7063,14 @@ var author$project$Main$update = F2(
 					} else {
 						var error = msg.a.a;
 						if (model.apiVersion === '') {
-							var $temp$msg = author$project$AppModel$DataError(
+							var $temp$msg = author$project$Main$DataError(
 								A2(author$project$CommonUtil$httpError, '[API VERSION]', error)),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						} else {
-							var $temp$msg = author$project$AppModel$GotSavedRegions('regions'),
+							var $temp$msg = author$project$Main$GotSavedRegions('regions'),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -8357,10 +7082,10 @@ var author$project$Main$update = F2(
 					var regionsResult = author$project$Main$getRegions(jsonRegions);
 					if (regionsResult.$ === 'Ok') {
 						var regions = regionsResult.a;
-						var $temp$msg = author$project$AppModel$ChangeArea(model.areaNo),
+						var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
 							$temp$model = _Utils_update(
 							model,
-							{regions: regions, viewState: author$project$AppModel$DataOk});
+							{regions: regions, viewState: author$project$Main$DataOk});
 						msg = $temp$msg;
 						model = $temp$model;
 						continue update;
@@ -8377,12 +7102,12 @@ var author$project$Main$update = F2(
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{regions: regions, viewState: author$project$AppModel$DataOk}),
+									{regions: regions, viewState: author$project$Main$DataOk}),
 								author$project$Main$saveLocalStorage(
 									{key: 'regions', value: resp}));
 						} else {
 							var error = regionsResult.a;
-							var $temp$msg = author$project$AppModel$DataError(error),
+							var $temp$msg = author$project$Main$DataError(error),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -8390,7 +7115,7 @@ var author$project$Main$update = F2(
 						}
 					} else {
 						var error = msg.a.a;
-						var $temp$msg = author$project$AppModel$DataError(
+						var $temp$msg = author$project$Main$DataError(
 							A2(author$project$CommonUtil$httpError, '[REGIONS]', error)),
 							$temp$model = model;
 						msg = $temp$msg;
@@ -8411,7 +7136,7 @@ var author$project$Main$update = F2(
 									{key: 'areaGarbage-' + model.areaNo, value: resp}));
 						} else {
 							var error = areaGarbageResult.a;
-							var $temp$msg = author$project$AppModel$DataError(error),
+							var $temp$msg = author$project$Main$DataError(error),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
@@ -8419,7 +7144,7 @@ var author$project$Main$update = F2(
 						}
 					} else {
 						var error = msg.a.a;
-						var $temp$msg = author$project$AppModel$DataError(
+						var $temp$msg = author$project$Main$DataError(
 							A2(author$project$CommonUtil$httpError, '[AREA GARBAGE]', error)),
 							$temp$model = model;
 						msg = $temp$msg;
@@ -8459,6 +7184,1281 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$footer = _VirtualDom_node('footer');
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var author$project$Main$viewFooter = A2(
+	elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('copyright')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('©2019 '),
+					A2(
+					elm$html$Html$a,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$href('https://webarata3.link')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Shinichi ARATA（webarata3）')
+						]))
+				])),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('sns')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$ul,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://twitter.com/webarata3')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-twitter')
+												]),
+											_List_Nil)
+										]))
+								])),
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://facebook.com/arata.shinichi')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-facebook')
+												]),
+											_List_Nil)
+										]))
+								])),
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://github.com/webarata3')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-github')
+												]),
+											_List_Nil)
+										]))
+								])),
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://ja.stackoverflow.com/users/2214/webarata3?tab=profile')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-stack-overflow')
+												]),
+											_List_Nil)
+										]))
+								]))
+						]))
+				]))
+		]));
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$header = _VirtualDom_node('header');
+var author$project$Main$viewHeader = A2(
+	elm$html$Html$header,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$h1,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('header-title')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('白山市ごみ収集日程')
+				])),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('menu')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('header-button')
+						]),
+					_List_Nil)
+				]))
+		]));
+var author$project$Main$CopyText = {$: 'CopyText'};
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
+var elm$html$Html$Events$targetValue = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	elm$json$Json$Decode$string);
+var author$project$Main$onChange = function (handler) {
+	return A2(
+		elm$html$Html$Events$on,
+		'change',
+		A2(elm$json$Json$Decode$map, handler, elm$html$Html$Events$targetValue));
+};
+var author$project$CommonTime$numberToMonth = function (month) {
+	switch (month) {
+		case 1:
+			return elm$time$Time$Jan;
+		case 2:
+			return elm$time$Time$Feb;
+		case 3:
+			return elm$time$Time$Mar;
+		case 4:
+			return elm$time$Time$Apr;
+		case 5:
+			return elm$time$Time$May;
+		case 6:
+			return elm$time$Time$Jun;
+		case 7:
+			return elm$time$Time$Jul;
+		case 8:
+			return elm$time$Time$Aug;
+		case 9:
+			return elm$time$Time$Sep;
+		case 10:
+			return elm$time$Time$Oct;
+		case 11:
+			return elm$time$Time$Nov;
+		case 12:
+			return elm$time$Time$Dec;
+		default:
+			return elm$time$Time$Dec;
+	}
+};
+var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
+var justinmimbs$time_extra$Time$Extra$Parts = F7(
+	function (year, month, day, hour, minute, second, millisecond) {
+		return {day: day, hour: hour, millisecond: millisecond, minute: minute, month: month, second: second, year: year};
+	});
+var elm$core$Basics$clamp = F3(
+	function (low, high, number) {
+		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
+	});
+var justinmimbs$date$Date$RD = function (a) {
+	return {$: 'RD', a: a};
+};
+var justinmimbs$date$Date$isLeapYear = function (y) {
+	return ((!A2(elm$core$Basics$modBy, 4, y)) && A2(elm$core$Basics$modBy, 100, y)) || (!A2(elm$core$Basics$modBy, 400, y));
+};
+var justinmimbs$date$Date$daysBeforeMonth = F2(
+	function (y, m) {
+		var leapDays = justinmimbs$date$Date$isLeapYear(y) ? 1 : 0;
+		switch (m.$) {
+			case 'Jan':
+				return 0;
+			case 'Feb':
+				return 31;
+			case 'Mar':
+				return 59 + leapDays;
+			case 'Apr':
+				return 90 + leapDays;
+			case 'May':
+				return 120 + leapDays;
+			case 'Jun':
+				return 151 + leapDays;
+			case 'Jul':
+				return 181 + leapDays;
+			case 'Aug':
+				return 212 + leapDays;
+			case 'Sep':
+				return 243 + leapDays;
+			case 'Oct':
+				return 273 + leapDays;
+			case 'Nov':
+				return 304 + leapDays;
+			default:
+				return 334 + leapDays;
+		}
+	});
+var justinmimbs$date$Date$floorDiv = F2(
+	function (a, b) {
+		return elm$core$Basics$floor(a / b);
+	});
+var justinmimbs$date$Date$daysBeforeYear = function (y1) {
+	var y = y1 - 1;
+	var leapYears = (A2(justinmimbs$date$Date$floorDiv, y, 4) - A2(justinmimbs$date$Date$floorDiv, y, 100)) + A2(justinmimbs$date$Date$floorDiv, y, 400);
+	return (365 * y) + leapYears;
+};
+var justinmimbs$date$Date$daysInMonth = F2(
+	function (y, m) {
+		switch (m.$) {
+			case 'Jan':
+				return 31;
+			case 'Feb':
+				return justinmimbs$date$Date$isLeapYear(y) ? 29 : 28;
+			case 'Mar':
+				return 31;
+			case 'Apr':
+				return 30;
+			case 'May':
+				return 31;
+			case 'Jun':
+				return 30;
+			case 'Jul':
+				return 31;
+			case 'Aug':
+				return 31;
+			case 'Sep':
+				return 30;
+			case 'Oct':
+				return 31;
+			case 'Nov':
+				return 30;
+			default:
+				return 31;
+		}
+	});
+var justinmimbs$date$Date$fromCalendarDate = F3(
+	function (y, m, d) {
+		return justinmimbs$date$Date$RD(
+			(justinmimbs$date$Date$daysBeforeYear(y) + A2(justinmimbs$date$Date$daysBeforeMonth, y, m)) + A3(
+				elm$core$Basics$clamp,
+				1,
+				A2(justinmimbs$date$Date$daysInMonth, y, m),
+				d));
+	});
+var justinmimbs$date$Date$toRataDie = function (_n0) {
+	var rd = _n0.a;
+	return rd;
+};
+var justinmimbs$time_extra$Time$Extra$dateToMillis = function (date) {
+	var daysSinceEpoch = justinmimbs$date$Date$toRataDie(date) - 719163;
+	return daysSinceEpoch * 86400000;
+};
+var justinmimbs$date$Date$fromPosix = F2(
+	function (zone, posix) {
+		return A3(
+			justinmimbs$date$Date$fromCalendarDate,
+			A2(elm$time$Time$toYear, zone, posix),
+			A2(elm$time$Time$toMonth, zone, posix),
+			A2(elm$time$Time$toDay, zone, posix));
+	});
+var elm$time$Time$toHour = F2(
+	function (zone, time) {
+		return A2(
+			elm$core$Basics$modBy,
+			24,
+			A2(
+				elm$time$Time$flooredDiv,
+				A2(elm$time$Time$toAdjustedMinutes, zone, time),
+				60));
+	});
+var elm$time$Time$toMillis = F2(
+	function (_n0, time) {
+		return A2(
+			elm$core$Basics$modBy,
+			1000,
+			elm$time$Time$posixToMillis(time));
+	});
+var elm$time$Time$toMinute = F2(
+	function (zone, time) {
+		return A2(
+			elm$core$Basics$modBy,
+			60,
+			A2(elm$time$Time$toAdjustedMinutes, zone, time));
+	});
+var elm$time$Time$toSecond = F2(
+	function (_n0, time) {
+		return A2(
+			elm$core$Basics$modBy,
+			60,
+			A2(
+				elm$time$Time$flooredDiv,
+				elm$time$Time$posixToMillis(time),
+				1000));
+	});
+var justinmimbs$time_extra$Time$Extra$timeFromClock = F4(
+	function (hour, minute, second, millisecond) {
+		return (((hour * 3600000) + (minute * 60000)) + (second * 1000)) + millisecond;
+	});
+var justinmimbs$time_extra$Time$Extra$timeFromPosix = F2(
+	function (zone, posix) {
+		return A4(
+			justinmimbs$time_extra$Time$Extra$timeFromClock,
+			A2(elm$time$Time$toHour, zone, posix),
+			A2(elm$time$Time$toMinute, zone, posix),
+			A2(elm$time$Time$toSecond, zone, posix),
+			A2(elm$time$Time$toMillis, zone, posix));
+	});
+var justinmimbs$time_extra$Time$Extra$toOffset = F2(
+	function (zone, posix) {
+		var millis = elm$time$Time$posixToMillis(posix);
+		var localMillis = justinmimbs$time_extra$Time$Extra$dateToMillis(
+			A2(justinmimbs$date$Date$fromPosix, zone, posix)) + A2(justinmimbs$time_extra$Time$Extra$timeFromPosix, zone, posix);
+		return ((localMillis - millis) / 60000) | 0;
+	});
+var justinmimbs$time_extra$Time$Extra$posixFromDateTime = F3(
+	function (zone, date, time) {
+		var millis = justinmimbs$time_extra$Time$Extra$dateToMillis(date) + time;
+		var offset0 = A2(
+			justinmimbs$time_extra$Time$Extra$toOffset,
+			zone,
+			elm$time$Time$millisToPosix(millis));
+		var posix1 = elm$time$Time$millisToPosix(millis - (offset0 * 60000));
+		var offset1 = A2(justinmimbs$time_extra$Time$Extra$toOffset, zone, posix1);
+		if (_Utils_eq(offset0, offset1)) {
+			return posix1;
+		} else {
+			var posix2 = elm$time$Time$millisToPosix(millis - (offset1 * 60000));
+			var offset2 = A2(justinmimbs$time_extra$Time$Extra$toOffset, zone, posix2);
+			return _Utils_eq(offset1, offset2) ? posix2 : posix1;
+		}
+	});
+var justinmimbs$time_extra$Time$Extra$partsToPosix = F2(
+	function (zone, _n0) {
+		var year = _n0.year;
+		var month = _n0.month;
+		var day = _n0.day;
+		var hour = _n0.hour;
+		var minute = _n0.minute;
+		var second = _n0.second;
+		var millisecond = _n0.millisecond;
+		return A3(
+			justinmimbs$time_extra$Time$Extra$posixFromDateTime,
+			zone,
+			A3(justinmimbs$date$Date$fromCalendarDate, year, month, day),
+			A4(
+				justinmimbs$time_extra$Time$Extra$timeFromClock,
+				A3(elm$core$Basics$clamp, 0, 23, hour),
+				A3(elm$core$Basics$clamp, 0, 59, minute),
+				A3(elm$core$Basics$clamp, 0, 59, second),
+				A3(elm$core$Basics$clamp, 0, 999, millisecond)));
+	});
+var author$project$CommonTime$intDateToPosix = function (intDate) {
+	return A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(
+			justinmimbs$time_extra$Time$Extra$Parts,
+			intDate.year,
+			author$project$CommonTime$numberToMonth(intDate.month),
+			intDate.day,
+			0,
+			0,
+			0,
+			0));
+};
+var elm$core$String$slice = _String_slice;
+var elm$core$String$toInt = _String_toInt;
+var author$project$CommonTime$sliceToInt = F3(
+	function (dateString, begin, end) {
+		var _n0 = elm$core$String$toInt(
+			A3(elm$core$String$slice, begin, end, dateString));
+		if (_n0.$ === 'Just') {
+			var value = _n0.a;
+			return value;
+		} else {
+			return 0;
+		}
+	});
+var author$project$CommonTime$yyyymmddDateToIntDate = function (yyyymmddDate) {
+	var sliceToInt2 = author$project$CommonTime$sliceToInt(yyyymmddDate);
+	return {
+		day: A2(sliceToInt2, 6, 8),
+		month: A2(sliceToInt2, 4, 6),
+		year: A2(sliceToInt2, 0, 4)
+	};
+};
+var justinmimbs$time_extra$Time$Extra$Day = {$: 'Day'};
+var elm$core$Basics$truncate = _Basics_truncate;
+var justinmimbs$time_extra$Time$Extra$Millisecond = {$: 'Millisecond'};
+var justinmimbs$time_extra$Time$Extra$Month = {$: 'Month'};
+var justinmimbs$time_extra$Time$Extra$Week = {$: 'Week'};
+var justinmimbs$date$Date$Day = {$: 'Day'};
+var justinmimbs$date$Date$Friday = {$: 'Friday'};
+var justinmimbs$date$Date$Monday = {$: 'Monday'};
+var justinmimbs$date$Date$Month = {$: 'Month'};
+var justinmimbs$date$Date$Quarter = {$: 'Quarter'};
+var justinmimbs$date$Date$Saturday = {$: 'Saturday'};
+var justinmimbs$date$Date$Sunday = {$: 'Sunday'};
+var justinmimbs$date$Date$Thursday = {$: 'Thursday'};
+var justinmimbs$date$Date$Tuesday = {$: 'Tuesday'};
+var justinmimbs$date$Date$Wednesday = {$: 'Wednesday'};
+var justinmimbs$date$Date$Week = {$: 'Week'};
+var justinmimbs$date$Date$Year = {$: 'Year'};
+var elm$time$Time$Fri = {$: 'Fri'};
+var elm$time$Time$Mon = {$: 'Mon'};
+var elm$time$Time$Sat = {$: 'Sat'};
+var elm$time$Time$Sun = {$: 'Sun'};
+var elm$time$Time$Thu = {$: 'Thu'};
+var elm$time$Time$Tue = {$: 'Tue'};
+var elm$time$Time$Wed = {$: 'Wed'};
+var justinmimbs$date$Date$weekdayNumber = function (_n0) {
+	var rd = _n0.a;
+	var _n1 = A2(elm$core$Basics$modBy, 7, rd);
+	if (!_n1) {
+		return 7;
+	} else {
+		var n = _n1;
+		return n;
+	}
+};
+var justinmimbs$date$Date$weekdayToNumber = function (wd) {
+	switch (wd.$) {
+		case 'Mon':
+			return 1;
+		case 'Tue':
+			return 2;
+		case 'Wed':
+			return 3;
+		case 'Thu':
+			return 4;
+		case 'Fri':
+			return 5;
+		case 'Sat':
+			return 6;
+		default:
+			return 7;
+	}
+};
+var justinmimbs$date$Date$daysSincePreviousWeekday = F2(
+	function (wd, date) {
+		return A2(
+			elm$core$Basics$modBy,
+			7,
+			(justinmimbs$date$Date$weekdayNumber(date) + 7) - justinmimbs$date$Date$weekdayToNumber(wd));
+	});
+var justinmimbs$date$Date$firstOfMonth = F2(
+	function (y, m) {
+		return justinmimbs$date$Date$RD(
+			(justinmimbs$date$Date$daysBeforeYear(y) + A2(justinmimbs$date$Date$daysBeforeMonth, y, m)) + 1);
+	});
+var justinmimbs$date$Date$firstOfYear = function (y) {
+	return justinmimbs$date$Date$RD(
+		justinmimbs$date$Date$daysBeforeYear(y) + 1);
+};
+var justinmimbs$date$Date$monthToNumber = function (m) {
+	switch (m.$) {
+		case 'Jan':
+			return 1;
+		case 'Feb':
+			return 2;
+		case 'Mar':
+			return 3;
+		case 'Apr':
+			return 4;
+		case 'May':
+			return 5;
+		case 'Jun':
+			return 6;
+		case 'Jul':
+			return 7;
+		case 'Aug':
+			return 8;
+		case 'Sep':
+			return 9;
+		case 'Oct':
+			return 10;
+		case 'Nov':
+			return 11;
+		default:
+			return 12;
+	}
+};
+var justinmimbs$date$Date$numberToMonth = function (mn) {
+	var _n0 = A2(elm$core$Basics$max, 1, mn);
+	switch (_n0) {
+		case 1:
+			return elm$time$Time$Jan;
+		case 2:
+			return elm$time$Time$Feb;
+		case 3:
+			return elm$time$Time$Mar;
+		case 4:
+			return elm$time$Time$Apr;
+		case 5:
+			return elm$time$Time$May;
+		case 6:
+			return elm$time$Time$Jun;
+		case 7:
+			return elm$time$Time$Jul;
+		case 8:
+			return elm$time$Time$Aug;
+		case 9:
+			return elm$time$Time$Sep;
+		case 10:
+			return elm$time$Time$Oct;
+		case 11:
+			return elm$time$Time$Nov;
+		default:
+			return elm$time$Time$Dec;
+	}
+};
+var justinmimbs$date$Date$toCalendarDateHelp = F3(
+	function (y, m, d) {
+		toCalendarDateHelp:
+		while (true) {
+			var monthDays = A2(justinmimbs$date$Date$daysInMonth, y, m);
+			var mn = justinmimbs$date$Date$monthToNumber(m);
+			if ((mn < 12) && (_Utils_cmp(d, monthDays) > 0)) {
+				var $temp$y = y,
+					$temp$m = justinmimbs$date$Date$numberToMonth(mn + 1),
+					$temp$d = d - monthDays;
+				y = $temp$y;
+				m = $temp$m;
+				d = $temp$d;
+				continue toCalendarDateHelp;
+			} else {
+				return {day: d, month: m, year: y};
+			}
+		}
+	});
+var justinmimbs$date$Date$divWithRemainder = F2(
+	function (a, b) {
+		return _Utils_Tuple2(
+			A2(justinmimbs$date$Date$floorDiv, a, b),
+			A2(elm$core$Basics$modBy, b, a));
+	});
+var justinmimbs$date$Date$year = function (_n0) {
+	var rd = _n0.a;
+	var _n1 = A2(justinmimbs$date$Date$divWithRemainder, rd, 146097);
+	var n400 = _n1.a;
+	var r400 = _n1.b;
+	var _n2 = A2(justinmimbs$date$Date$divWithRemainder, r400, 36524);
+	var n100 = _n2.a;
+	var r100 = _n2.b;
+	var _n3 = A2(justinmimbs$date$Date$divWithRemainder, r100, 1461);
+	var n4 = _n3.a;
+	var r4 = _n3.b;
+	var _n4 = A2(justinmimbs$date$Date$divWithRemainder, r4, 365);
+	var n1 = _n4.a;
+	var r1 = _n4.b;
+	var n = (!r1) ? 0 : 1;
+	return ((((n400 * 400) + (n100 * 100)) + (n4 * 4)) + n1) + n;
+};
+var justinmimbs$date$Date$toOrdinalDate = function (_n0) {
+	var rd = _n0.a;
+	var y = justinmimbs$date$Date$year(
+		justinmimbs$date$Date$RD(rd));
+	return {
+		ordinalDay: rd - justinmimbs$date$Date$daysBeforeYear(y),
+		year: y
+	};
+};
+var justinmimbs$date$Date$toCalendarDate = function (_n0) {
+	var rd = _n0.a;
+	var date = justinmimbs$date$Date$toOrdinalDate(
+		justinmimbs$date$Date$RD(rd));
+	return A3(justinmimbs$date$Date$toCalendarDateHelp, date.year, elm$time$Time$Jan, date.ordinalDay);
+};
+var justinmimbs$date$Date$month = A2(
+	elm$core$Basics$composeR,
+	justinmimbs$date$Date$toCalendarDate,
+	function ($) {
+		return $.month;
+	});
+var justinmimbs$date$Date$monthToQuarter = function (m) {
+	return ((justinmimbs$date$Date$monthToNumber(m) + 2) / 3) | 0;
+};
+var justinmimbs$date$Date$quarter = A2(elm$core$Basics$composeR, justinmimbs$date$Date$month, justinmimbs$date$Date$monthToQuarter);
+var justinmimbs$date$Date$quarterToMonth = function (q) {
+	return justinmimbs$date$Date$numberToMonth((q * 3) - 2);
+};
+var justinmimbs$date$Date$floor = F2(
+	function (interval, date) {
+		var rd = date.a;
+		switch (interval.$) {
+			case 'Year':
+				return justinmimbs$date$Date$firstOfYear(
+					justinmimbs$date$Date$year(date));
+			case 'Quarter':
+				return A2(
+					justinmimbs$date$Date$firstOfMonth,
+					justinmimbs$date$Date$year(date),
+					justinmimbs$date$Date$quarterToMonth(
+						justinmimbs$date$Date$quarter(date)));
+			case 'Month':
+				return A2(
+					justinmimbs$date$Date$firstOfMonth,
+					justinmimbs$date$Date$year(date),
+					justinmimbs$date$Date$month(date));
+			case 'Week':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Mon, date));
+			case 'Monday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Mon, date));
+			case 'Tuesday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Tue, date));
+			case 'Wednesday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Wed, date));
+			case 'Thursday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Thu, date));
+			case 'Friday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Fri, date));
+			case 'Saturday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Sat, date));
+			case 'Sunday':
+				return justinmimbs$date$Date$RD(
+					rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, elm$time$Time$Sun, date));
+			default:
+				return date;
+		}
+	});
+var justinmimbs$time_extra$Time$Extra$floorDate = F3(
+	function (dateInterval, zone, posix) {
+		return A3(
+			justinmimbs$time_extra$Time$Extra$posixFromDateTime,
+			zone,
+			A2(
+				justinmimbs$date$Date$floor,
+				dateInterval,
+				A2(justinmimbs$date$Date$fromPosix, zone, posix)),
+			0);
+	});
+var justinmimbs$time_extra$Time$Extra$floor = F3(
+	function (interval, zone, posix) {
+		switch (interval.$) {
+			case 'Millisecond':
+				return posix;
+			case 'Second':
+				return A3(
+					justinmimbs$time_extra$Time$Extra$posixFromDateTime,
+					zone,
+					A2(justinmimbs$date$Date$fromPosix, zone, posix),
+					A4(
+						justinmimbs$time_extra$Time$Extra$timeFromClock,
+						A2(elm$time$Time$toHour, zone, posix),
+						A2(elm$time$Time$toMinute, zone, posix),
+						A2(elm$time$Time$toSecond, zone, posix),
+						0));
+			case 'Minute':
+				return A3(
+					justinmimbs$time_extra$Time$Extra$posixFromDateTime,
+					zone,
+					A2(justinmimbs$date$Date$fromPosix, zone, posix),
+					A4(
+						justinmimbs$time_extra$Time$Extra$timeFromClock,
+						A2(elm$time$Time$toHour, zone, posix),
+						A2(elm$time$Time$toMinute, zone, posix),
+						0,
+						0));
+			case 'Hour':
+				return A3(
+					justinmimbs$time_extra$Time$Extra$posixFromDateTime,
+					zone,
+					A2(justinmimbs$date$Date$fromPosix, zone, posix),
+					A4(
+						justinmimbs$time_extra$Time$Extra$timeFromClock,
+						A2(elm$time$Time$toHour, zone, posix),
+						0,
+						0,
+						0));
+			case 'Day':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Day, zone, posix);
+			case 'Month':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Month, zone, posix);
+			case 'Year':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Year, zone, posix);
+			case 'Quarter':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Quarter, zone, posix);
+			case 'Week':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Week, zone, posix);
+			case 'Monday':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Monday, zone, posix);
+			case 'Tuesday':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Tuesday, zone, posix);
+			case 'Wednesday':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Wednesday, zone, posix);
+			case 'Thursday':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Thursday, zone, posix);
+			case 'Friday':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Friday, zone, posix);
+			case 'Saturday':
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Saturday, zone, posix);
+			default:
+				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Sunday, zone, posix);
+		}
+	});
+var justinmimbs$time_extra$Time$Extra$toFractionalDay = F2(
+	function (zone, posix) {
+		return A2(justinmimbs$time_extra$Time$Extra$timeFromPosix, zone, posix) / 86400000;
+	});
+var justinmimbs$time_extra$Time$Extra$toMonths = F2(
+	function (zone, posix) {
+		var wholeMonths = (12 * (A2(elm$time$Time$toYear, zone, posix) - 1)) + (justinmimbs$date$Date$monthToNumber(
+			A2(elm$time$Time$toMonth, zone, posix)) - 1);
+		var fractionalMonth = (A2(elm$time$Time$toDay, zone, posix) + A2(justinmimbs$time_extra$Time$Extra$toFractionalDay, zone, posix)) / 100;
+		return wholeMonths + fractionalMonth;
+	});
+var justinmimbs$time_extra$Time$Extra$toRataDieMoment = F2(
+	function (zone, posix) {
+		return justinmimbs$date$Date$toRataDie(
+			A2(justinmimbs$date$Date$fromPosix, zone, posix)) + A2(justinmimbs$time_extra$Time$Extra$toFractionalDay, zone, posix);
+	});
+var justinmimbs$time_extra$Time$Extra$diff = F4(
+	function (interval, zone, posix1, posix2) {
+		diff:
+		while (true) {
+			switch (interval.$) {
+				case 'Millisecond':
+					return elm$time$Time$posixToMillis(posix2) - elm$time$Time$posixToMillis(posix1);
+				case 'Second':
+					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Millisecond, zone, posix1, posix2) / 1000) | 0;
+				case 'Minute':
+					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Millisecond, zone, posix1, posix2) / 60000) | 0;
+				case 'Hour':
+					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Millisecond, zone, posix1, posix2) / 3600000) | 0;
+				case 'Day':
+					return (A2(justinmimbs$time_extra$Time$Extra$toRataDieMoment, zone, posix2) - A2(justinmimbs$time_extra$Time$Extra$toRataDieMoment, zone, posix1)) | 0;
+				case 'Month':
+					return (A2(justinmimbs$time_extra$Time$Extra$toMonths, zone, posix2) - A2(justinmimbs$time_extra$Time$Extra$toMonths, zone, posix1)) | 0;
+				case 'Year':
+					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Month, zone, posix1, posix2) / 12) | 0;
+				case 'Quarter':
+					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Month, zone, posix1, posix2) / 3) | 0;
+				case 'Week':
+					return (A4(justinmimbs$time_extra$Time$Extra$diff, justinmimbs$time_extra$Time$Extra$Day, zone, posix1, posix2) / 7) | 0;
+				default:
+					var weekday = interval;
+					var $temp$interval = justinmimbs$time_extra$Time$Extra$Week,
+						$temp$zone = zone,
+						$temp$posix1 = A3(justinmimbs$time_extra$Time$Extra$floor, weekday, zone, posix1),
+						$temp$posix2 = A3(justinmimbs$time_extra$Time$Extra$floor, weekday, zone, posix2);
+					interval = $temp$interval;
+					zone = $temp$zone;
+					posix1 = $temp$posix1;
+					posix2 = $temp$posix2;
+					continue diff;
+			}
+		}
+	});
+var author$project$CommonTime$diffDayYyyymmddDate = F2(
+	function (yyyymmddDate1, yyyymmddDate2) {
+		var intDate2 = author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate2);
+		var intDate1 = author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate1);
+		return A4(
+			justinmimbs$time_extra$Time$Extra$diff,
+			justinmimbs$time_extra$Time$Extra$Day,
+			elm$time$Time$utc,
+			author$project$CommonTime$intDateToPosix(intDate1),
+			author$project$CommonTime$intDateToPosix(intDate2));
+	});
+var author$project$CommonTime$yyyymmddDateToDispDate = function (yyyymmddDate) {
+	return author$project$CommonTime$intDateToDispDate(
+		author$project$CommonTime$yyyymmddDateToIntDate(yyyymmddDate));
+};
+var author$project$CommonUtil$dispHowManyDays = function (howManyDays) {
+	switch (howManyDays) {
+		case 0:
+			return '今日';
+		case 1:
+			return '明日';
+		case 2:
+			return '明後日';
+		default:
+			return elm$core$String$fromInt(howManyDays) + '日後';
+	}
+};
+var author$project$CommonUtil$howManyDaysCss = function (howManyDays) {
+	switch (howManyDays) {
+		case 0:
+			return 'garbage-schedule today';
+		case 1:
+			return 'garbage-schedule tomorrow';
+		case 2:
+			return 'garbage-schedule day-after-tomorrow';
+		default:
+			return 'garbage-schedule';
+	}
+};
+var elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return elm$core$Maybe$Just(x);
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$CommonUtil$nextDate = F2(
+	function (currentDate, garbageDates) {
+		var _n0 = elm$core$List$head(
+			A2(
+				elm$core$List$filter,
+				function (d) {
+					return _Utils_cmp(d, currentDate) > -1;
+				},
+				garbageDates));
+		if (_n0.$ === 'Just') {
+			var date = _n0.a;
+			return date;
+		} else {
+			return '';
+		}
+	});
+var author$project$Main$viewGarbageDates = F2(
+	function (currentDate, garbageDates) {
+		var nextGarbageDate = A2(author$project$CommonUtil$nextDate, currentDate, garbageDates);
+		var howManyDays = A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate);
+		var dispDays = author$project$CommonUtil$dispHowManyDays(
+			A2(author$project$CommonTime$diffDayYyyymmddDate, currentDate, nextGarbageDate));
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class(
+					author$project$CommonUtil$howManyDaysCss(howManyDays))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('garbage-how-many-days')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(dispDays)
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('garbage-next-date')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							author$project$CommonTime$yyyymmddDateToDispDate(nextGarbageDate))
+						]))
+				]));
+	});
+var author$project$Main$viewLine = function (value) {
+	return A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$text(value)
+			]));
+};
+var author$project$Main$viewGarbageTitles = function (garbageTitles) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('garbage-title')
+			]),
+		A2(elm$core$List$map, author$project$Main$viewLine, garbageTitles));
+};
+var author$project$Main$viewGarbage = F2(
+	function (currentDate, garbage) {
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('garbage-item')
+				]),
+			_List_fromArray(
+				[
+					author$project$Main$viewGarbageTitles(garbage.garbageTitles),
+					A2(author$project$Main$viewGarbageDates, currentDate, garbage.garbageDates)
+				]));
+	});
+var author$project$Main$viewGarbages = F2(
+	function (currentDate, garbages) {
+		var viewGarbage2 = author$project$Main$viewGarbage(currentDate);
+		var t = A2(elm$core$Debug$log, '2', garbages);
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('garbages')
+				]),
+			A2(elm$core$List$map, viewGarbage2, garbages));
+	});
+var author$project$Main$viewAreaGarbage = F2(
+	function (currentDate, areaGarbage) {
+		var t = A2(elm$core$Debug$log, '1', areaGarbage.areaNo);
+		return A2(author$project$Main$viewGarbages, currentDate, areaGarbage.garbages);
+	});
+var elm$html$Html$option = _VirtualDom_node('option');
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
+var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
+var author$project$Main$viewArea = F2(
+	function (areaNo, area) {
+		return A2(
+			elm$html$Html$option,
+			_Utils_eq(areaNo, area.areaNo) ? _List_fromArray(
+				[
+					elm$html$Html$Attributes$value(area.areaNo),
+					elm$html$Html$Attributes$selected(true)
+				]) : _List_fromArray(
+				[
+					elm$html$Html$Attributes$value(area.areaNo),
+					elm$html$Html$Attributes$selected(false)
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(area.areaName)
+				]));
+	});
+var elm$html$Html$optgroup = _VirtualDom_node('optgroup');
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var author$project$Main$viewRegion = F2(
+	function (areaNo, region) {
+		return A2(
+			elm$html$Html$optgroup,
+			_List_fromArray(
+				[
+					A2(elm$html$Html$Attributes$attribute, 'label', region.regionName)
+				]),
+			A2(
+				elm$core$List$map,
+				author$project$Main$viewArea(areaNo),
+				region.areas));
+	});
+var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$label = _VirtualDom_node('label');
+var elm$html$Html$main_ = _VirtualDom_node('main');
+var elm$html$Html$select = _VirtualDom_node('select');
+var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var author$project$Main$viewMain = function (model) {
+	var handler = function (selectedValue) {
+		return author$project$Main$ChangeArea(selectedValue);
+	};
+	var _n0 = model.viewState;
+	switch (_n0.$) {
+		case 'SystemError':
+			return A2(
+				elm$html$Html$main_,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('error')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('error-message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('エラーが発生しました。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('error-message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('動かない場合には、再読み込みしてみてください。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('error-message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('報告して頂ける場合には、下の理由をお知らせください。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$id('reason'),
+								elm$html$Html$Attributes$class('message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('理由: ' + model.errorMessage)
+							])),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$id('errorMessageButton'),
+								elm$html$Html$Events$onClick(author$project$Main$CopyText)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('メッセージをコピー')
+							]))
+					]));
+		case 'PrepareData':
+			return A2(
+				elm$html$Html$main_,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('loading')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('読み込み中。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('message')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('動かない場合には、再読み込みしてみてください。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$img,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('loading-icon'),
+										elm$html$Html$Attributes$src('image/ball-triangle.svg')
+									]),
+								_List_Nil)
+							]))
+					]));
+		default:
+			return A2(
+				elm$html$Html$main_,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('alert')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('※ 白山市公式のアプリではありません。')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('area')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('select-area')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$label,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$for('area')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('地域')
+											])),
+										A2(
+										elm$html$Html$select,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$id('area'),
+												author$project$Main$onChange(handler)
+											]),
+										A2(
+											elm$core$List$map,
+											author$project$Main$viewRegion(model.areaNo),
+											model.regions))
+									])),
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('地域が不明な方はこちらで確認してください')
+									]))
+							])),
+						A2(author$project$Main$viewAreaGarbage, model.currentDate, model.areaGarbage)
+					]));
+	}
+};
+var elm$html$Html$article = _VirtualDom_node('article');
+var author$project$Main$view = function (model) {
+	return A2(
+		elm$html$Html$article,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$id('app')
+			]),
+		_List_fromArray(
+			[
+				author$project$Main$viewHeader,
+				author$project$Main$viewMain(model),
+				author$project$Main$viewFooter
+			]));
+};
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
 };
@@ -8604,6 +8604,6 @@ var elm$url$Url$fromString = function (str) {
 };
 var elm$browser$Browser$element = _Browser_element;
 var author$project$Main$main = elm$browser$Browser$element(
-	{init: author$project$Main$init, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$AppView$view});
+	{init: author$project$Main$init, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
