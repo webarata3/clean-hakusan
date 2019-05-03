@@ -22,7 +22,7 @@ viewHeader : Html Msg
 viewHeader =
     Html.header []
         [ h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
-        , div [ class "menu" ] [ button [ class "" ] [] ]
+        , div [ class "menu" ] [ button [ class "header-button" ] [] ]
         ]
 
 
