@@ -6110,8 +6110,33 @@ var author$project$CommonTime$diffDayYyyymmddDate = F2(
 			author$project$CommonTime$intDateToPosix(intDate1),
 			author$project$CommonTime$intDateToPosix(intDate2));
 	});
+var author$project$CommonTime$intDateToDayOfWeek = function (intDate) {
+	var y = intDate.year;
+	var m = intDate.month;
+	var d = intDate.day;
+	var days = ((((((365 * y) + ((y / 4) | 0)) - ((y / 100) | 0)) + ((y / 400) | 0)) + (((306 * (m + 1)) / 10) | 0)) + d) - 428;
+	var dayOfWeek = days % 7;
+	switch (dayOfWeek) {
+		case 0:
+			return '日';
+		case 1:
+			return '月';
+		case 2:
+			return '火';
+		case 3:
+			return '水';
+		case 4:
+			return '木';
+		case 5:
+			return '金';
+		case 6:
+			return '土';
+		default:
+			return '？';
+	}
+};
 var author$project$CommonTime$intDateToDispDate = function (intDate) {
-	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + '日'))));
+	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + ('日' + ('(' + (author$project$CommonTime$intDateToDayOfWeek(intDate) + ')')))))));
 };
 var author$project$CommonTime$yyyymmddDateToDispDate = function (yyyymmddDate) {
 	return author$project$CommonTime$intDateToDispDate(

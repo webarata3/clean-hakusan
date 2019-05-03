@@ -156,6 +156,9 @@ intDateToDispDate intDate =
         ++ "月"
         ++ String.fromInt intDate.day
         ++ "日"
+        ++ "("
+        ++ intDateToDayOfWeek intDate
+        ++ ")"
 
 
 yyyymmddDateToDispDate : YyyymmddDate -> DispDate
@@ -213,3 +216,47 @@ intDateToPosix intDate =
             0
             0
         )
+
+
+intDateToDayOfWeek : IntDate -> String
+intDateToDayOfWeek intDate =
+    let
+        y =
+            intDate.year
+
+        m =
+            intDate.month
+
+        d =
+            intDate.day
+
+        days =
+            365 * y + y // 4 - y // 100 + y // 400 + 306 * (m + 1) // 10 + d - 428
+
+        dayOfWeek =
+            remainderBy 7 days
+    in
+    case dayOfWeek of
+        0 ->
+            "日"
+
+        1 ->
+            "月"
+
+        2 ->
+            "火"
+
+        3 ->
+            "水"
+
+        4 ->
+            "木"
+
+        5 ->
+            "金"
+
+        6 ->
+            "土"
+
+        _ ->
+            "？"
