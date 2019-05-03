@@ -6385,13 +6385,6 @@ var author$project$AppView$viewMain = function (model) {
 					[
 						A2(
 						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text(model.apiVersion)
-							])),
-						A2(
-						elm$html$Html$div,
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$class('alert')

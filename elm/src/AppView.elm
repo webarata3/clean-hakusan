@@ -74,8 +74,7 @@ viewMain model =
 
         DataOk ->
             main_ []
-                [ div [] [ text model.apiVersion ]
-                , div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
+                [ div [ class "alert" ] [ text "※ 白山市公式のアプリではありません。" ]
                 , div [ class "area" ]
                     [ div [ class "select-area" ]
                         [ label
