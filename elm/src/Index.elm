@@ -1,4 +1,4 @@
-port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, Model, Msg(..), Region, ViewState(..), apiBaseUrl, completeSaveApiVersion, completeSaveRegions, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getSavedApiVersion, getSavedAreaGarbage, getSavedRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, main, onChange, retGetSavedApiVersion, retGetSavedAreaGarbage, retGetSavedRegions, saveApiVersion, saveRegions, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewMain, viewRegion)
+port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, Model, Msg(..), Region, ViewState(..), apiBaseUrl, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, onChange, retLoadLocalStorage, saveLocalStorage, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewLine, viewMain, viewRegion)
 
 import Browser
 import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
@@ -14,34 +14,16 @@ import Time.Extra
 import TimeZone
 
 
-port getSavedApiVersion : () -> Cmd msg
+port loadLocalStorage : String -> Cmd msg
 
 
-port retGetSavedApiVersion : (String -> msg) -> Sub msg
+port retLoadLocalStorage : (LoadLocalStorageValue -> msg) -> Sub msg
 
 
-port saveApiVersion : String -> Cmd msg
+port saveLocalStorage : LoadLocalStorageValue -> Cmd msg
 
 
-port completeSaveApiVersion : (Bool -> msg) -> Sub msg
-
-
-port getSavedRegions : () -> Cmd msg
-
-
-port retGetSavedRegions : (String -> msg) -> Sub msg
-
-
-port saveRegions : String -> Cmd msg
-
-
-port completeSaveRegions : (Bool -> msg) -> Sub msg
-
-
-port getSavedAreaGarbage : String -> Cmd msg
-
-
-port retGetSavedAreaGarbage : (String -> msg) -> Sub msg
+port localStorageSaved : (String -> msg) -> Sub msg
 
 
 main : Program () Model Msg
@@ -165,6 +147,12 @@ type alias Model =
     }
 
 
+type alias LoadLocalStorageValue =
+    { key : String
+    , value : String
+    }
+
+
 type alias Region =
     { regionName : String
     , areas : List Area
@@ -210,11 +198,8 @@ init _ =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ retGetSavedApiVersion GotSavedApiVersion
-        , completeSaveApiVersion CompleteSaveApiVersion
-        , retGetSavedRegions GotSavedRegions
-        , completeSaveRegions CompleteSaveRegions
-        , retGetSavedAreaGarbage GotSavedAreaGarbage
+        [ retLoadLocalStorage LoadedLocalStorage
+        , localStorageSaved LocalStorageSaved
         ]
 
 
@@ -226,15 +211,16 @@ type Msg
     = DataError String
     | Loading
     | SetCurrentDate Time.Posix
-    | GotWebApiVersion (Result Http.Error String)
+    | LoadedLocalStorage LoadLocalStorageValue
+    | LocalStorageSaved String
     | GotSavedApiVersion String
-    | CompleteSaveApiVersion Bool
+    | GotWebApiVersion (Result Http.Error String)
     | GotSavedRegions String
     | GotWebRegions (Result Http.Error String)
-    | CompleteSaveRegions Bool
-    | GotWebAreaGarbage (Result Http.Error String)
     | GotSavedAreaGarbage String
+    | GotWebAreaGarbage (Result Http.Error String)
     | ChangeArea String
+    | ViewAreaGarbage
 
 
 type ViewState
@@ -271,11 +257,41 @@ update msg model =
                 | dispDate = CommonTime.intDateToDispDate intDate
                 , currentDate = CommonTime.intDateToYyyymmddDate intDate
               }
-            , getSavedApiVersion ()
+            , loadLocalStorage "areaNo"
             )
 
-        GotSavedApiVersion apiVersion ->
-            ( { model | apiVersion = apiVersion }
+        LoadedLocalStorage localStorageValue ->
+            case Debug.log "分岐" localStorageValue.key of
+                "areaNo" ->
+                    let
+                        areaNo =
+                            if localStorageValue.value == "" then
+                                "01"
+
+                            else
+                                localStorageValue.value
+                    in
+                    ( { model | areaNo = areaNo }
+                    , loadLocalStorage "apiVersion"
+                    )
+
+                "apiVersion" ->
+                    update
+                        (GotSavedApiVersion localStorageValue.value)
+                        model
+
+                "regions" ->
+                    update
+                        (GotSavedRegions localStorageValue.value)
+                        model
+
+                _ ->
+                    update
+                        (GotSavedAreaGarbage localStorageValue.value)
+                        model
+
+        GotSavedApiVersion json ->
+            ( { model | apiVersion = json }
             , Http.get
                 { url = apiBaseUrl ++ "/version.json"
                 , expect = Http.expectString GotWebApiVersion
@@ -309,15 +325,36 @@ update msg model =
                         , apiVersion = webApiVersion
                         , viewState = DataOk
                       }
-                    , saveApiVersion webApiVersion
+                    , saveLocalStorage
+                        { key = "apiVersion"
+                        , value = webApiVersion
+                        }
                     )
 
                 NoChange ->
                     -- バージョンが変わっていないのでlocalStorageを使う
-                    ( model, getSavedRegions () )
+                    ( model, loadLocalStorage "regions" )
 
                 GetError errorMessage ->
                     update (DataError errorMessage) model
+
+        LocalStorageSaved key ->
+            case key of
+                "apiVersion" ->
+                    ( model, Cmd.none )
+
+                "regions" ->
+                    update (ChangeArea model.areaNo) model
+
+                "areaNo" ->
+                    update ViewAreaGarbage model
+
+                _ ->
+                    if String.startsWith "areaGarbage-" key then
+                        ( model, Cmd.none )
+
+                    else
+                        ( model, Cmd.none )
 
         GotWebApiVersion (Err error) ->
             -- Webから取れず、localStorageにもなければエラー
@@ -326,10 +363,7 @@ update msg model =
 
             else
                 -- localStorageにデータがあればそれを使う
-                ( model, getSavedRegions () )
-
-        CompleteSaveApiVersion _ ->
-            ( model, getWebJsonRegions )
+                update (GotSavedRegions "regions") model
 
         -- 以前データを取得していてバージョンが変わっていない場合には
         -- localStorageから取得する
@@ -340,12 +374,11 @@ update msg model =
             in
             case regionsResult of
                 Ok regions ->
-                    ( { model
-                        | viewState = DataOk
-                        , regions = regions
-                      }
-                    , Cmd.none
-                    )
+                    update (ChangeArea model.areaNo)
+                        { model
+                            | viewState = DataOk
+                            , regions = regions
+                        }
 
                 -- localStorageにデータがなければWebから取得する
                 Err error ->
@@ -359,7 +392,10 @@ update msg model =
             case regionsResult of
                 Ok regions ->
                     ( { model | viewState = DataOk, regions = regions }
-                    , saveRegions resp
+                    , saveLocalStorage
+                        { key = "regions"
+                        , value = resp
+                        }
                     )
 
                 Err error ->
@@ -367,9 +403,6 @@ update msg model =
 
         GotWebRegions (Err error) ->
             update (DataError (CommonUtil.httpError error)) model
-
-        CompleteSaveRegions _ ->
-            ( model, Cmd.none )
 
         GotWebAreaGarbage (Ok resp) ->
             let
@@ -381,7 +414,10 @@ update msg model =
                     ( { model
                         | areaGarbage = areaGarbage
                       }
-                    , Cmd.none
+                    , saveLocalStorage
+                        { key = "areaGarbage-" ++ model.areaNo
+                        , value = resp
+                        }
                     )
 
                 Err error ->
@@ -408,13 +444,19 @@ update msg model =
                     ( model, getWebJsonAreaGarbage model.areaNo )
 
         ChangeArea areaNo ->
+            -- エリアが変わったら最初にareaNoを保存する
+            ( { model | areaNo = areaNo }
+            , saveLocalStorage { key = "areaNo", value = areaNo }
+            )
+
+        ViewAreaGarbage ->
             if model.isVersionChange then
                 -- バージョンが変わっていたらWebから取得する
-                ( { model | areaNo = areaNo }, getWebJsonAreaGarbage areaNo )
+                ( model, getWebJsonAreaGarbage model.areaNo )
 
             else
                 -- バージョンが変わっていなければlocalStorageから取得する
-                ( { model | areaNo = areaNo }, getSavedAreaGarbage areaNo )
+                ( model, loadLocalStorage model.areaNo )
 
 
 
@@ -429,6 +471,32 @@ view model =
             , div [ class "menu" ] [ button [ class "" ] [] ]
             ]
         , viewMain model
+        , footer []
+            [ div [ class "copyright" ]
+                [ text "©2019 "
+                , a [ href "https://webarata3.link" ] [ text "Shinichi ARATA（webarata3）" ]
+                ]
+            , div [ class "sns" ]
+                [ ul []
+                    [ li []
+                        [ a [ href "https://twitter.com/webarata3" ]
+                            [ span [ class "fab fa-twitter" ] [] ]
+                        ]
+                    , li []
+                        [ a [ href "https://facebook.com/arata.shinichi" ]
+                            [ span [ class "fab fa-facebook" ] [] ]
+                        ]
+                    , li []
+                        [ a [ href "https://github.com/webarata3" ]
+                            [ span [ class "fab fa-github" ] [] ]
+                        ]
+                    , li []
+                        [ a [ href "https://ja.stackoverflow.com/users/2214/webarata3?tab=profile" ]
+                            [ span [ class "fab fa-stack-overflow" ] [] ]
+                        ]
+                    ]
+                ]
+            ]
         ]
 
 
@@ -458,7 +526,7 @@ viewMain model =
                             [ for "area" ]
                             [ text "地域" ]
                         , select [ id "area", onChange handler ]
-                            (List.map viewRegion model.regions)
+                            (List.map (viewRegion model.areaNo) model.regions)
                         ]
                     , a
                         [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html" ]
@@ -468,16 +536,25 @@ viewMain model =
                 ]
 
 
-viewRegion : Region -> Html Msg
-viewRegion region =
+viewRegion : String -> Region -> Html Msg
+viewRegion areaNo region =
     optgroup
         [ attribute "label" region.regionName ]
-        (List.map viewArea region.areas)
+        (List.map (viewArea areaNo) region.areas)
 
 
-viewArea : Area -> Html Msg
-viewArea area =
-    option [ value area.areaNo ] [ text area.areaName ]
+viewArea : String -> Area -> Html Msg
+viewArea areaNo area =
+    option
+        (if areaNo == area.areaNo then
+            [ value area.areaNo
+            , selected True
+            ]
+
+         else
+            [ value area.areaNo, selected False ]
+        )
+        [ text area.areaName ]
 
 
 viewAreaGarbage : YyyymmddDate -> AreaGarbage -> Html Msg

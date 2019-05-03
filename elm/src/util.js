@@ -1,35 +1,16 @@
 (function (app) {
   'use strict';
 
-  const API_VERSION = 'apiVersion'
-
-  app.ports.getSavedApiVersion.subscribe(() => {
-    const apiVersion = localStorage[API_VERSION]
-    app.ports.retGetSavedApiVersion.send(apiVersion || '');
+  app.ports.loadLocalStorage.subscribe(key => {
+    const loadData = localStorage[key];
+    // 何を保存したかを表すkeyを返す
+    app.ports.retLoadLocalStorage.send({ key: key, value: loadData || '' });
   });
 
-  app.ports.saveApiVersion.subscribe(apiVersion => {
-    localStorage[API_VERSION] = apiVersion;
-    app.ports.completeSaveApiVersion.send(true);
-  });
-
-  const REGIONS = 'regions'
-
-  app.ports.getSavedRegions.subscribe(() => {
-    const regionsJson = localStorage[REGIONS];
-    app.ports.retGetSavedRegions.send(regionsJson || '');
-  });
-
-  app.ports.saveRegions.subscribe(jsonResions => {
-    localStorage[REGIONS] = jsonResions
-    app.ports.completeSaveRegions.send(true);
-  });
-
-  const AREA_GARBAGE = 'area_garbage'
-
-  app.ports.getSavedAreaGarbage.subscribe(areaNo => {
-    const areaGarbage = localStorage[`${AREA_GARBAGE}-${areaNo}`]
-    app.ports.retGetSavedAreaGarbage.send(areaGarbage || '');
+  app.ports.saveLocalStorage.subscribe(object => {
+    localStorage[object.key] = object.value;
+    // 何を保存したかを表すkeyを返す
+    app.ports.localStorageSaved.send(object.key);
   });
 
 })(app)

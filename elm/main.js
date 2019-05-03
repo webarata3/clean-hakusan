@@ -5230,38 +5230,38 @@ var author$project$Main$init = function (_n0) {
 		},
 		A2(elm$core$Task$perform, author$project$Main$SetCurrentDate, elm$time$Time$now));
 };
-var author$project$Main$CompleteSaveApiVersion = function (a) {
-	return {$: 'CompleteSaveApiVersion', a: a};
+var author$project$Main$LoadedLocalStorage = function (a) {
+	return {$: 'LoadedLocalStorage', a: a};
 };
-var author$project$Main$CompleteSaveRegions = function (a) {
-	return {$: 'CompleteSaveRegions', a: a};
+var author$project$Main$LocalStorageSaved = function (a) {
+	return {$: 'LocalStorageSaved', a: a};
 };
-var author$project$Main$GotSavedApiVersion = function (a) {
-	return {$: 'GotSavedApiVersion', a: a};
-};
-var author$project$Main$GotSavedAreaGarbage = function (a) {
-	return {$: 'GotSavedAreaGarbage', a: a};
-};
-var author$project$Main$GotSavedRegions = function (a) {
-	return {$: 'GotSavedRegions', a: a};
-};
-var elm$json$Json$Decode$bool = _Json_decodeBool;
-var author$project$Main$completeSaveApiVersion = _Platform_incomingPort('completeSaveApiVersion', elm$json$Json$Decode$bool);
-var author$project$Main$completeSaveRegions = _Platform_incomingPort('completeSaveRegions', elm$json$Json$Decode$bool);
 var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Main$retGetSavedApiVersion = _Platform_incomingPort('retGetSavedApiVersion', elm$json$Json$Decode$string);
-var author$project$Main$retGetSavedAreaGarbage = _Platform_incomingPort('retGetSavedAreaGarbage', elm$json$Json$Decode$string);
-var author$project$Main$retGetSavedRegions = _Platform_incomingPort('retGetSavedRegions', elm$json$Json$Decode$string);
+var author$project$Main$localStorageSaved = _Platform_incomingPort('localStorageSaved', elm$json$Json$Decode$string);
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var author$project$Main$retLoadLocalStorage = _Platform_incomingPort(
+	'retLoadLocalStorage',
+	A2(
+		elm$json$Json$Decode$andThen,
+		function (value) {
+			return A2(
+				elm$json$Json$Decode$andThen,
+				function (key) {
+					return elm$json$Json$Decode$succeed(
+						{key: key, value: value});
+				},
+				A2(elm$json$Json$Decode$field, 'key', elm$json$Json$Decode$string));
+		},
+		A2(elm$json$Json$Decode$field, 'value', elm$json$Json$Decode$string)));
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				author$project$Main$retGetSavedApiVersion(author$project$Main$GotSavedApiVersion),
-				author$project$Main$completeSaveApiVersion(author$project$Main$CompleteSaveApiVersion),
-				author$project$Main$retGetSavedRegions(author$project$Main$GotSavedRegions),
-				author$project$Main$completeSaveRegions(author$project$Main$CompleteSaveRegions),
-				author$project$Main$retGetSavedAreaGarbage(author$project$Main$GotSavedAreaGarbage)
+				author$project$Main$retLoadLocalStorage(author$project$Main$LoadedLocalStorage),
+				author$project$Main$localStorageSaved(author$project$Main$LocalStorageSaved)
 			]));
 };
 var author$project$CommonTime$intDateToDispDate = function (intDate) {
@@ -5948,12 +5948,24 @@ var author$project$CommonUtil$httpError = function (error) {
 var author$project$CommonUtil$jsonError = function (error) {
 	return 'Json Error';
 };
+var author$project$Main$ChangeArea = function (a) {
+	return {$: 'ChangeArea', a: a};
+};
 var author$project$Main$DataError = function (a) {
 	return {$: 'DataError', a: a};
 };
 var author$project$Main$DataOk = {$: 'DataOk'};
 var author$project$Main$GetError = function (a) {
 	return {$: 'GetError', a: a};
+};
+var author$project$Main$GotSavedApiVersion = function (a) {
+	return {$: 'GotSavedApiVersion', a: a};
+};
+var author$project$Main$GotSavedAreaGarbage = function (a) {
+	return {$: 'GotSavedAreaGarbage', a: a};
+};
+var author$project$Main$GotSavedRegions = function (a) {
+	return {$: 'GotSavedRegions', a: a};
 };
 var author$project$Main$GotWebApiVersion = function (a) {
 	return {$: 'GotWebApiVersion', a: a};
@@ -5963,6 +5975,7 @@ var author$project$Main$RequireRegion = function (a) {
 	return {$: 'RequireRegion', a: a};
 };
 var author$project$Main$SystemError = {$: 'SystemError'};
+var author$project$Main$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var author$project$Main$apiBaseUrl = '/src/api';
 var author$project$Main$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
@@ -5972,7 +5985,6 @@ var author$project$Main$Garbage = F2(
 	function (garbageTitles, garbageDates) {
 		return {garbageDates: garbageDates, garbageTitles: garbageTitles};
 	});
-var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var author$project$Main$decodeGarbage = A3(
@@ -6040,19 +6052,6 @@ var author$project$Main$getRegions = function (regionJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var elm$json$Json$Encode$null = _Json_encodeNull;
-var author$project$Main$getSavedApiVersion = _Platform_outgoingPort(
-	'getSavedApiVersion',
-	function ($) {
-		return elm$json$Json$Encode$null;
-	});
-var elm$json$Json$Encode$string = _Json_wrap;
-var author$project$Main$getSavedAreaGarbage = _Platform_outgoingPort('getSavedAreaGarbage', elm$json$Json$Encode$string);
-var author$project$Main$getSavedRegions = _Platform_outgoingPort(
-	'getSavedRegions',
-	function ($) {
-		return elm$json$Json$Encode$null;
-	});
 var author$project$Main$GotWebAreaGarbage = function (a) {
 	return {$: 'GotWebAreaGarbage', a: a};
 };
@@ -6861,11 +6860,39 @@ var author$project$Main$getWebJsonRegions = elm$http$Http$get(
 		expect: elm$http$Http$expectString(author$project$Main$GotWebRegions),
 		url: author$project$Main$apiBaseUrl + '/regions.json'
 	});
-var author$project$Main$saveApiVersion = _Platform_outgoingPort('saveApiVersion', elm$json$Json$Encode$string);
-var author$project$Main$saveRegions = _Platform_outgoingPort('saveRegions', elm$json$Json$Encode$string);
+var elm$json$Json$Encode$string = _Json_wrap;
+var author$project$Main$loadLocalStorage = _Platform_outgoingPort('loadLocalStorage', elm$json$Json$Encode$string);
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var author$project$Main$saveLocalStorage = _Platform_outgoingPort(
+	'saveLocalStorage',
+	function ($) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'key',
+					elm$json$Json$Encode$string($.key)),
+					_Utils_Tuple2(
+					'value',
+					elm$json$Json$Encode$string($.value))
+				]));
+	});
 var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var elm$core$String$startsWith = _String_startsWith;
 var author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -6894,18 +6921,68 @@ var author$project$Main$update = F2(
 								currentDate: author$project$CommonTime$intDateToYyyymmddDate(intDate),
 								dispDate: author$project$CommonTime$intDateToDispDate(intDate)
 							}),
-						author$project$Main$getSavedApiVersion(_Utils_Tuple0));
+						author$project$Main$loadLocalStorage('areaNo'));
+				case 'LoadedLocalStorage':
+					var localStorageValue = msg.a;
+					var _n1 = A2(elm$core$Debug$log, '分岐', localStorageValue.key);
+					switch (_n1) {
+						case 'areaNo':
+							var areaNo = (localStorageValue.value === '') ? '01' : localStorageValue.value;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{areaNo: areaNo}),
+								author$project$Main$loadLocalStorage('apiVersion'));
+						case 'apiVersion':
+							var $temp$msg = author$project$Main$GotSavedApiVersion(localStorageValue.value),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						case 'regions':
+							var $temp$msg = author$project$Main$GotSavedRegions(localStorageValue.value),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						default:
+							var $temp$msg = author$project$Main$GotSavedAreaGarbage(localStorageValue.value),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+					}
 				case 'GotSavedApiVersion':
-					var apiVersion = msg.a;
+					var json = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{apiVersion: apiVersion}),
+							{apiVersion: json}),
 						elm$http$Http$get(
 							{
 								expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
 								url: author$project$Main$apiBaseUrl + '/version.json'
 							}));
+				case 'LocalStorageSaved':
+					var key = msg.a;
+					switch (key) {
+						case 'apiVersion':
+							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						case 'regions':
+							var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						case 'areaNo':
+							var $temp$msg = author$project$Main$ViewAreaGarbage,
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						default:
+							return A2(elm$core$String$startsWith, 'areaGarbage-', key) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					}
 				case 'GotWebApiVersion':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
@@ -6933,11 +7010,12 @@ var author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{apiVersion: webApiVersion, isVersionChange: true, viewState: author$project$Main$DataOk}),
-									author$project$Main$saveApiVersion(webApiVersion));
+									author$project$Main$saveLocalStorage(
+										{key: 'apiVersion', value: webApiVersion}));
 							case 'NoChange':
 								return _Utils_Tuple2(
 									model,
-									author$project$Main$getSavedRegions(_Utils_Tuple0));
+									author$project$Main$loadLocalStorage('regions'));
 							default:
 								var errorMessage = apiVersionState.a;
 								var $temp$msg = author$project$Main$DataError(errorMessage),
@@ -6956,23 +7034,25 @@ var author$project$Main$update = F2(
 							model = $temp$model;
 							continue update;
 						} else {
-							return _Utils_Tuple2(
-								model,
-								author$project$Main$getSavedRegions(_Utils_Tuple0));
+							var $temp$msg = author$project$Main$GotSavedRegions('regions'),
+								$temp$model = model;
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
 						}
 					}
-				case 'CompleteSaveApiVersion':
-					return _Utils_Tuple2(model, author$project$Main$getWebJsonRegions);
 				case 'GotSavedRegions':
 					var jsonRegions = msg.a;
 					var regionsResult = author$project$Main$getRegions(jsonRegions);
 					if (regionsResult.$ === 'Ok') {
 						var regions = regionsResult.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{regions: regions, viewState: author$project$Main$DataOk}),
-							elm$core$Platform$Cmd$none);
+						var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
+							$temp$model = _Utils_update(
+							model,
+							{regions: regions, viewState: author$project$Main$DataOk});
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
 					} else {
 						var error = regionsResult.a;
 						return _Utils_Tuple2(model, author$project$Main$getWebJsonRegions);
@@ -6987,7 +7067,8 @@ var author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{regions: regions, viewState: author$project$Main$DataOk}),
-								author$project$Main$saveRegions(resp));
+								author$project$Main$saveLocalStorage(
+									{key: 'regions', value: resp}));
 						} else {
 							var error = regionsResult.a;
 							var $temp$msg = author$project$Main$DataError(error),
@@ -7005,8 +7086,6 @@ var author$project$Main$update = F2(
 						model = $temp$model;
 						continue update;
 					}
-				case 'CompleteSaveRegions':
-					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				case 'GotWebAreaGarbage':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
@@ -7017,7 +7096,8 @@ var author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{areaGarbage: areaGarbage}),
-								elm$core$Platform$Cmd$none);
+								author$project$Main$saveLocalStorage(
+									{key: 'areaGarbage-' + model.areaNo, value: resp}));
 						} else {
 							var error = areaGarbageResult.a;
 							var $temp$msg = author$project$Main$DataError(error),
@@ -7051,28 +7131,27 @@ var author$project$Main$update = F2(
 							model,
 							author$project$Main$getWebJsonAreaGarbage(model.areaNo));
 					}
-				default:
+				case 'ChangeArea':
 					var areaNo = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{areaNo: areaNo}),
+						author$project$Main$saveLocalStorage(
+							{key: 'areaNo', value: areaNo}));
+				default:
 					return model.isVersionChange ? _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{areaNo: areaNo}),
-						author$project$Main$getWebJsonAreaGarbage(areaNo)) : _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{areaNo: areaNo}),
-						author$project$Main$getSavedAreaGarbage(areaNo));
+						model,
+						author$project$Main$getWebJsonAreaGarbage(model.areaNo)) : _Utils_Tuple2(
+						model,
+						author$project$Main$loadLocalStorage(model.areaNo));
 			}
 		}
 	});
-var author$project$Main$ChangeArea = function (a) {
-	return {$: 'ChangeArea', a: a};
-};
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
 var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -7904,19 +7983,34 @@ var author$project$Main$viewAreaGarbage = F2(
 		return A2(author$project$Main$viewGarbages, currentDate, areaGarbage.garbages);
 	});
 var elm$html$Html$option = _VirtualDom_node('option');
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$selected = elm$html$Html$Attributes$boolProperty('selected');
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
-var author$project$Main$viewArea = function (area) {
-	return A2(
-		elm$html$Html$option,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$value(area.areaNo)
-			]),
-		_List_fromArray(
-			[
-				elm$html$Html$text(area.areaName)
-			]));
-};
+var author$project$Main$viewArea = F2(
+	function (areaNo, area) {
+		return A2(
+			elm$html$Html$option,
+			_Utils_eq(areaNo, area.areaNo) ? _List_fromArray(
+				[
+					elm$html$Html$Attributes$value(area.areaNo),
+					elm$html$Html$Attributes$selected(true)
+				]) : _List_fromArray(
+				[
+					elm$html$Html$Attributes$value(area.areaNo),
+					elm$html$Html$Attributes$selected(false)
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(area.areaName)
+				]));
+	});
 var elm$html$Html$optgroup = _VirtualDom_node('optgroup');
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -7926,15 +8020,19 @@ var elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
-var author$project$Main$viewRegion = function (region) {
-	return A2(
-		elm$html$Html$optgroup,
-		_List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$attribute, 'label', region.regionName)
-			]),
-		A2(elm$core$List$map, author$project$Main$viewArea, region.areas));
-};
+var author$project$Main$viewRegion = F2(
+	function (areaNo, region) {
+		return A2(
+			elm$html$Html$optgroup,
+			_List_fromArray(
+				[
+					A2(elm$html$Html$Attributes$attribute, 'label', region.regionName)
+				]),
+			A2(
+				elm$core$List$map,
+				author$project$Main$viewArea(areaNo),
+				region.areas));
+	});
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$img = _VirtualDom_node('img');
 var elm$html$Html$label = _VirtualDom_node('label');
@@ -8046,7 +8144,10 @@ var author$project$Main$viewMain = function (model) {
 												elm$html$Html$Attributes$id('area'),
 												author$project$Main$onChange(handler)
 											]),
-										A2(elm$core$List$map, author$project$Main$viewRegion, model.regions))
+										A2(
+											elm$core$List$map,
+											author$project$Main$viewRegion(model.areaNo),
+											model.regions))
 									])),
 								A2(
 								elm$html$Html$a,
@@ -8065,8 +8166,12 @@ var author$project$Main$viewMain = function (model) {
 };
 var elm$html$Html$article = _VirtualDom_node('article');
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$footer = _VirtualDom_node('footer');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$header = _VirtualDom_node('header');
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$article,
@@ -8108,7 +8213,136 @@ var author$project$Main$view = function (model) {
 								_List_Nil)
 							]))
 					])),
-				author$project$Main$viewMain(model)
+				author$project$Main$viewMain(model),
+				A2(
+				elm$html$Html$footer,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('copyright')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('©2019 '),
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('https://webarata3.link')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Shinichi ARATA（webarata3）')
+									]))
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('sns')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$ul,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$li,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$a,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$href('https://twitter.com/webarata3')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														elm$html$Html$span,
+														_List_fromArray(
+															[
+																elm$html$Html$Attributes$class('fab fa-twitter')
+															]),
+														_List_Nil)
+													]))
+											])),
+										A2(
+										elm$html$Html$li,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$a,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$href('https://facebook.com/arata.shinichi')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														elm$html$Html$span,
+														_List_fromArray(
+															[
+																elm$html$Html$Attributes$class('fab fa-facebook')
+															]),
+														_List_Nil)
+													]))
+											])),
+										A2(
+										elm$html$Html$li,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$a,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$href('https://github.com/webarata3')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														elm$html$Html$span,
+														_List_fromArray(
+															[
+																elm$html$Html$Attributes$class('fab fa-github')
+															]),
+														_List_Nil)
+													]))
+											])),
+										A2(
+										elm$html$Html$li,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												elm$html$Html$a,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$href('https://ja.stackoverflow.com/users/2214/webarata3?tab=profile')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														elm$html$Html$span,
+														_List_fromArray(
+															[
+																elm$html$Html$Attributes$class('fab fa-stack-overflow')
+															]),
+														_List_Nil)
+													]))
+											]))
+									]))
+							]))
+					]))
 			]));
 };
 var elm$browser$Browser$External = function (a) {
@@ -8137,7 +8371,6 @@ var elm$core$String$dropLeft = F2(
 			elm$core$String$length(string),
 			string);
 	});
-var elm$core$String$startsWith = _String_startsWith;
 var elm$url$Url$Http = {$: 'Http'};
 var elm$url$Url$Https = {$: 'Https'};
 var elm$core$String$indexes = _String_indexes;
