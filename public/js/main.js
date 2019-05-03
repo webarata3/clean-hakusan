@@ -5976,7 +5976,7 @@ var author$project$Main$RequireRegion = function (a) {
 };
 var author$project$Main$SystemError = {$: 'SystemError'};
 var author$project$Main$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
-var author$project$Main$apiBaseUrl = '/src/api';
+var author$project$Main$apiBaseUrl = '/api';
 var author$project$Main$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
 		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
@@ -7148,9 +7148,6 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
@@ -7163,6 +7160,195 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 		default:
 			return 3;
 	}
+};
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$footer = _VirtualDom_node('footer');
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var author$project$Main$viewFooter = A2(
+	elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('copyright')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('©2019 '),
+					A2(
+					elm$html$Html$a,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$href('https://webarata3.link')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Shinichi ARATA（webarata3）')
+						]))
+				])),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('sns')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$ul,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://twitter.com/webarata3')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-twitter')
+												]),
+											_List_Nil)
+										]))
+								])),
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://facebook.com/arata.shinichi')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-facebook')
+												]),
+											_List_Nil)
+										]))
+								])),
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://github.com/webarata3')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-github')
+												]),
+											_List_Nil)
+										]))
+								])),
+							A2(
+							elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$a,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$href('https://ja.stackoverflow.com/users/2214/webarata3?tab=profile')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fab fa-stack-overflow')
+												]),
+											_List_Nil)
+										]))
+								]))
+						]))
+				]))
+		]));
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$header = _VirtualDom_node('header');
+var author$project$Main$viewHeader = A2(
+	elm$html$Html$header,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$h1,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('header-title')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('白山市ごみ収集日程')
+				])),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('menu')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('')
+						]),
+					_List_Nil)
+				]))
+		]));
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
 };
 var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$on = F2(
@@ -7884,17 +8070,6 @@ var author$project$CommonUtil$nextDate = F2(
 			return '';
 		}
 	});
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var author$project$Main$viewGarbageDates = F2(
 	function (currentDate, garbageDates) {
 		var nextGarbageDate = A2(author$project$CommonUtil$nextDate, currentDate, garbageDates);
@@ -8033,18 +8208,11 @@ var author$project$Main$viewRegion = F2(
 				author$project$Main$viewArea(areaNo),
 				region.areas));
 	});
-var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$img = _VirtualDom_node('img');
 var elm$html$Html$label = _VirtualDom_node('label');
 var elm$html$Html$main_ = _VirtualDom_node('main');
 var elm$html$Html$select = _VirtualDom_node('select');
 var elm$html$Html$Attributes$for = elm$html$Html$Attributes$stringProperty('htmlFor');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -8165,13 +8333,6 @@ var author$project$Main$viewMain = function (model) {
 	}
 };
 var elm$html$Html$article = _VirtualDom_node('article');
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$footer = _VirtualDom_node('footer');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$header = _VirtualDom_node('header');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$html$Html$span = _VirtualDom_node('span');
-var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$article,
@@ -8181,168 +8342,9 @@ var author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
-				A2(
-				elm$html$Html$header,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$h1,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('header-title')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('白山市ごみ収集日程')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('menu')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$button,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('')
-									]),
-								_List_Nil)
-							]))
-					])),
+				author$project$Main$viewHeader,
 				author$project$Main$viewMain(model),
-				A2(
-				elm$html$Html$footer,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('copyright')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('©2019 '),
-								A2(
-								elm$html$Html$a,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$href('https://webarata3.link')
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text('Shinichi ARATA（webarata3）')
-									]))
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('sns')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$ul,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$li,
-										_List_Nil,
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$a,
-												_List_fromArray(
-													[
-														elm$html$Html$Attributes$href('https://twitter.com/webarata3')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														elm$html$Html$span,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$class('fab fa-twitter')
-															]),
-														_List_Nil)
-													]))
-											])),
-										A2(
-										elm$html$Html$li,
-										_List_Nil,
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$a,
-												_List_fromArray(
-													[
-														elm$html$Html$Attributes$href('https://facebook.com/arata.shinichi')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														elm$html$Html$span,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$class('fab fa-facebook')
-															]),
-														_List_Nil)
-													]))
-											])),
-										A2(
-										elm$html$Html$li,
-										_List_Nil,
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$a,
-												_List_fromArray(
-													[
-														elm$html$Html$Attributes$href('https://github.com/webarata3')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														elm$html$Html$span,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$class('fab fa-github')
-															]),
-														_List_Nil)
-													]))
-											])),
-										A2(
-										elm$html$Html$li,
-										_List_Nil,
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$a,
-												_List_fromArray(
-													[
-														elm$html$Html$Attributes$href('https://ja.stackoverflow.com/users/2214/webarata3?tab=profile')
-													]),
-												_List_fromArray(
-													[
-														A2(
-														elm$html$Html$span,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$class('fab fa-stack-overflow')
-															]),
-														_List_Nil)
-													]))
-											]))
-									]))
-							]))
-					]))
+				author$project$Main$viewFooter
 			]));
 };
 var elm$browser$Browser$External = function (a) {

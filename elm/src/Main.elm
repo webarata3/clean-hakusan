@@ -38,7 +38,7 @@ main =
 
 apiBaseUrl : String
 apiBaseUrl =
-    "/src/api"
+    "/api"
 
 
 getWebJsonRegions : Cmd Msg
@@ -466,34 +466,44 @@ update msg model =
 view : Model -> Html Msg
 view model =
     article [ id "app" ]
-        [ Html.header []
-            [ h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
-            , div [ class "menu" ] [ button [ class "" ] [] ]
-            ]
+        [ viewHeader
         , viewMain model
-        , footer []
-            [ div [ class "copyright" ]
-                [ text "©2019 "
-                , a [ href "https://webarata3.link" ] [ text "Shinichi ARATA（webarata3）" ]
-                ]
-            , div [ class "sns" ]
-                [ ul []
-                    [ li []
-                        [ a [ href "https://twitter.com/webarata3" ]
-                            [ span [ class "fab fa-twitter" ] [] ]
-                        ]
-                    , li []
-                        [ a [ href "https://facebook.com/arata.shinichi" ]
-                            [ span [ class "fab fa-facebook" ] [] ]
-                        ]
-                    , li []
-                        [ a [ href "https://github.com/webarata3" ]
-                            [ span [ class "fab fa-github" ] [] ]
-                        ]
-                    , li []
-                        [ a [ href "https://ja.stackoverflow.com/users/2214/webarata3?tab=profile" ]
-                            [ span [ class "fab fa-stack-overflow" ] [] ]
-                        ]
+        , viewFooter
+        ]
+
+
+viewHeader : Html Msg
+viewHeader =
+    Html.header []
+        [ h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
+        , div [ class "menu" ] [ button [ class "" ] [] ]
+        ]
+
+
+viewFooter : Html Msg
+viewFooter =
+    footer []
+        [ div [ class "copyright" ]
+            [ text "©2019 "
+            , a [ href "https://webarata3.link" ] [ text "Shinichi ARATA（webarata3）" ]
+            ]
+        , div [ class "sns" ]
+            [ ul []
+                [ li []
+                    [ a [ href "https://twitter.com/webarata3" ]
+                        [ span [ class "fab fa-twitter" ] [] ]
+                    ]
+                , li []
+                    [ a [ href "https://facebook.com/arata.shinichi" ]
+                        [ span [ class "fab fa-facebook" ] [] ]
+                    ]
+                , li []
+                    [ a [ href "https://github.com/webarata3" ]
+                        [ span [ class "fab fa-github" ] [] ]
+                    ]
+                , li []
+                    [ a [ href "https://ja.stackoverflow.com/users/2214/webarata3?tab=profile" ]
+                        [ span [ class "fab fa-stack-overflow" ] [] ]
                     ]
                 ]
             ]
