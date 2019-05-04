@@ -7359,6 +7359,22 @@ var author$project$Main$viewHeader = A2(
 	_List_fromArray(
 		[
 			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('menu-button')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('header-button')
+						]),
+					_List_Nil)
+				])),
+			A2(
 			elm$html$Html$h1,
 			_List_fromArray(
 				[
@@ -7372,18 +7388,9 @@ var author$project$Main$viewHeader = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('menu')
+					elm$html$Html$Attributes$class('nothing')
 				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('header-button')
-						]),
-					_List_Nil)
-				]))
+			_List_Nil)
 		]));
 var author$project$Main$CopyText = {$: 'CopyText'};
 var elm$virtual_dom$VirtualDom$Normal = function (a) {

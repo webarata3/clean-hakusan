@@ -48,10 +48,19 @@ header {
 
 .header-title {
   align-items: center;
+  justify-content: center;
   display: flex;
   font-weight: 400;
   font-size: 20px;
   flex: 1;
+}
+
+.menu-button {
+  width: 32px;
+}
+
+.nothing {
+  width: 32px;
 }
 
 main {
@@ -108,10 +117,6 @@ button {
   top: 0;
   width: 100%;
   z-index: 1000;
-}
-
-.menu {
-  position: relative;
 }
 
 menu {

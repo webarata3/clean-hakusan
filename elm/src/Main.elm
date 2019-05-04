@@ -482,8 +482,9 @@ view model =
 viewHeader : Html Msg
 viewHeader =
     Html.header []
-        [ h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
-        , div [ class "menu" ] [ button [ class "header-button" ] [] ]
+        [ div [ class "menu-button" ] [ button [ class "header-button" ] [] ]
+        , h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
+        , div [ class "nothing" ] []
         ]
 
 
