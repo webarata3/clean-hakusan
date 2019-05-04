@@ -4569,6 +4569,7 @@ function _Browser_load(url)
 	}));
 }
 var author$project$Main$MenuClose = {$: 'MenuClose'};
+var author$project$Main$NoOpenSubMenu = {$: 'NoOpenSubMenu'};
 var author$project$Main$PrepareData = {$: 'PrepareData'};
 var author$project$Main$SetCurrentDate = function (a) {
 	return {$: 'SetCurrentDate', a: a};
@@ -5226,6 +5227,7 @@ var author$project$Main$init = function (_n0) {
 			errorMessage: '',
 			isVersionChange: false,
 			menuState: author$project$Main$MenuClose,
+			nowOpenSubMenuType: author$project$Main$NoOpenSubMenu,
 			regions: _List_Nil,
 			time: elm$time$Time$millisToPosix(0),
 			viewState: author$project$Main$PrepareData
@@ -5983,6 +5985,7 @@ var author$project$Main$DataError = function (a) {
 	return {$: 'DataError', a: a};
 };
 var author$project$Main$DataOk = {$: 'DataOk'};
+var author$project$Main$Disclaimer = {$: 'Disclaimer'};
 var author$project$Main$GetError = function (a) {
 	return {$: 'GetError', a: a};
 };
@@ -6924,6 +6927,7 @@ var author$project$Main$saveLocalStorage = _Platform_outgoingPort(
 					elm$json$Json$Encode$string($.value))
 				]));
 	});
+var elm$core$Basics$not = _Basics_not;
 var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
@@ -6950,18 +6954,37 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$copyText(_Utils_Tuple0));
-				case 'ClickMenuButton':
+				case 'ClickMenuOpen':
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{menuState: author$project$Main$MenuOpen}),
 						elm$core$Platform$Cmd$none);
 				case 'ClickMenuClose':
+					var nowOpenSubMenu = !_Utils_eq(model.nowOpenSubMenuType, author$project$Main$NoOpenSubMenu);
+					var subMenuOpen = !nowOpenSubMenu;
+					var nowOpenSubMenuType = subMenuOpen ? model.nowOpenSubMenuType : author$project$Main$NoOpenSubMenu;
+					var menuOpen = nowOpenSubMenu ? author$project$Main$MenuOpen : author$project$Main$MenuClose;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{menuState: author$project$Main$MenuClose}),
+							{menuState: menuOpen, nowOpenSubMenuType: nowOpenSubMenuType}),
 						elm$core$Platform$Cmd$none);
+				case 'ClickSubMenu':
+					var subMenuType = msg.a;
+					if (subMenuType.$ === 'NoOpenSubMenu') {
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{nowOpenSubMenuType: author$project$Main$NoOpenSubMenu}),
+							elm$core$Platform$Cmd$none);
+					} else {
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{nowOpenSubMenuType: author$project$Main$Disclaimer}),
+							elm$core$Platform$Cmd$none);
+					}
 				case 'SetCurrentDate':
 					var time = msg.a;
 					var intDate = author$project$CommonTime$posixToIntDate(time);
@@ -6975,8 +6998,8 @@ var author$project$Main$update = F2(
 						author$project$Main$loadLocalStorage('areaNo'));
 				case 'LoadedLocalStorage':
 					var localStorageValue = msg.a;
-					var _n1 = A2(elm$core$Debug$log, '分岐', localStorageValue.key);
-					switch (_n1) {
+					var _n2 = A2(elm$core$Debug$log, '分岐', localStorageValue.key);
+					switch (_n2) {
 						case 'areaNo':
 							var areaNo = (localStorageValue.value === '') ? '01' : localStorageValue.value;
 							return _Utils_Tuple2(
@@ -7365,7 +7388,7 @@ var author$project$Main$viewFooter = A2(
 						]))
 				]))
 		]));
-var author$project$Main$ClickMenuButton = {$: 'ClickMenuButton'};
+var author$project$Main$ClickMenuOpen = {$: 'ClickMenuOpen'};
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$header = _VirtualDom_node('header');
@@ -7396,7 +7419,7 @@ var author$project$Main$viewHeader = A2(
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$class('menu-button'),
-					elm$html$Html$Events$onClick(author$project$Main$ClickMenuButton)
+					elm$html$Html$Events$onClick(author$project$Main$ClickMenuOpen)
 				]),
 			_List_fromArray(
 				[
@@ -8470,12 +8493,33 @@ var author$project$Main$viewMain = function (model) {
 					]));
 	}
 };
+var author$project$Main$ClickSubMenu = function (a) {
+	return {$: 'ClickSubMenu', a: a};
+};
+var elm$virtual_dom$VirtualDom$Custom = function (a) {
+	return {$: 'Custom', a: a};
+};
+var elm$html$Html$Events$custom = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Custom(decoder));
+	});
+var author$project$Main$onClickNoPrevent = function (message) {
+	return A2(
+		elm$html$Html$Events$custom,
+		'click',
+		elm$json$Json$Decode$succeed(
+			{message: message, preventDefault: true, stopPropagation: true}));
+};
 var author$project$Main$viewMenuClass = function (model) {
+	var appendClass = _Utils_eq(model.nowOpenSubMenuType, author$project$Main$NoOpenSubMenu) ? '' : ' sub-menu-open';
 	var _n0 = model.menuState;
 	if (_n0.$ === 'MenuClose') {
-		return elm$html$Html$Attributes$class('menu-close');
+		return elm$html$Html$Attributes$class('menu-close' + appendClass);
 	} else {
-		return elm$html$Html$Attributes$class('menu-open');
+		return elm$html$Html$Attributes$class('menu-open' + appendClass);
 	}
 };
 var elm$html$Html$menu = _VirtualDom_node('menu');
@@ -8520,7 +8564,9 @@ var author$project$Main$viewMenu = function (model) {
 								elm$html$Html$a,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$href('')
+										elm$html$Html$Attributes$href('#'),
+										author$project$Main$onClickNoPrevent(
+										author$project$Main$ClickSubMenu(author$project$Main$Disclaimer))
 									]),
 								_List_fromArray(
 									[
@@ -8536,7 +8582,7 @@ var author$project$Main$viewMenu = function (model) {
 								elm$html$Html$a,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$href('')
+										elm$html$Html$Attributes$href('#')
 									]),
 								_List_fromArray(
 									[
@@ -8552,7 +8598,7 @@ var author$project$Main$viewMenu = function (model) {
 								elm$html$Html$a,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$href('')
+										elm$html$Html$Attributes$href('#')
 									]),
 								_List_fromArray(
 									[
@@ -8574,6 +8620,80 @@ var author$project$Main$viewMenuBackground = function (model) {
 			]),
 		_List_Nil);
 };
+var elm$html$Html$h2 = _VirtualDom_node('h2');
+var elm$html$Html$p = _VirtualDom_node('p');
+var author$project$Main$viewSubMenu = function (model) {
+	var _n0 = model.nowOpenSubMenuType;
+	if (_n0.$ === 'NoOpenSubMenu') {
+		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
+	} else {
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('sub-menu')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('sub-menu-window')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h2,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text('免責事項')
+								])),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('text')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$p,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('当サイトの情報は、慎重に管理・作成しますが、すべての情報が正確・完全であることは保証しません。そのことをご承知の上、利用者の責任において情報を利用してください。当サイトを利用したことによるいかなる損失について、一切保証しません。')
+										])),
+									A2(
+									elm$html$Html$p,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('また、当サイトは白山市役所が作成したものではありません。'),
+											A2(
+											elm$html$Html$span,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('warning')
+												]),
+											_List_fromArray(
+												[
+													elm$html$Html$text('問い合わせ等を白山市にしないようにお願いします。')
+												]))
+										])),
+									A2(
+									elm$html$Html$p,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。')
+										]))
+								]))
+						]))
+				]));
+	}
+};
 var elm$html$Html$article = _VirtualDom_node('article');
 var author$project$Main$view = function (model) {
 	return A2(
@@ -8587,8 +8707,9 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewHeader,
 				author$project$Main$viewMain(model),
 				author$project$Main$viewFooter,
+				author$project$Main$viewMenuBackground(model),
 				author$project$Main$viewMenu(model),
-				author$project$Main$viewMenuBackground(model)
+				author$project$Main$viewSubMenu(model)
 			]));
 };
 var elm$browser$Browser$External = function (a) {

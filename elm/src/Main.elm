@@ -139,6 +139,7 @@ getAreaGarbage areaGarbageJson =
 type alias Model =
     { viewState : ViewState
     , menuState : MenuState
+    , nowOpenSubMenuType : SubMenuType
     , errorMessage : String
     , isVersionChange : Bool
     , time : Time.Posix
@@ -186,8 +187,9 @@ type Msg
     = DataError String
     | Loading
     | CopyText
-    | ClickMenuButton
+    | ClickMenuOpen
     | ClickMenuClose
+    | ClickSubMenu SubMenuType
     | SetCurrentDate Time.Posix
     | LoadedLocalStorage LoadLocalStorageValue
     | LocalStorageSaved String
@@ -218,10 +220,16 @@ type ApiVersionState
     | GetError String
 
 
+type SubMenuType
+    = NoOpenSubMenu
+    | Disclaimer
+
+
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { viewState = PrepareData
       , menuState = MenuClose
+      , nowOpenSubMenuType = NoOpenSubMenu
       , errorMessage = ""
       , isVersionChange = False
       , time = Time.millisToPosix 0
@@ -264,11 +272,45 @@ update msg model =
         CopyText ->
             ( model, copyText () )
 
-        ClickMenuButton ->
+        ClickMenuOpen ->
             ( { model | menuState = MenuOpen }, Cmd.none )
 
         ClickMenuClose ->
-            ( { model | menuState = MenuClose }, Cmd.none )
+            let
+                nowOpenSubMenu =
+                    model.nowOpenSubMenuType /= NoOpenSubMenu
+
+                subMenuOpen =
+                    not nowOpenSubMenu
+
+                nowOpenSubMenuType =
+                    if subMenuOpen then
+                        model.nowOpenSubMenuType
+
+                    else
+                        NoOpenSubMenu
+
+                menuOpen =
+                    if nowOpenSubMenu then
+                        MenuOpen
+
+                    else
+                        MenuClose
+            in
+            ( { model
+                | menuState = menuOpen
+                , nowOpenSubMenuType = nowOpenSubMenuType
+              }
+            , Cmd.none
+            )
+
+        ClickSubMenu subMenuType ->
+            case subMenuType of
+                NoOpenSubMenu ->
+                    ( { model | nowOpenSubMenuType = NoOpenSubMenu }, Cmd.none )
+
+                Disclaimer ->
+                    ( { model | nowOpenSubMenuType = Disclaimer }, Cmd.none )
 
         SetCurrentDate time ->
             let
@@ -491,8 +533,9 @@ view model =
         [ viewHeader
         , viewMain model
         , viewFooter
-        , viewMenu model
         , viewMenuBackground model
+        , viewMenu model
+        , viewSubMenu model
         ]
 
 
@@ -501,7 +544,7 @@ viewHeader =
     Html.header []
         [ div
             [ class "menu-button"
-            , onClick ClickMenuButton
+            , onClick ClickMenuOpen
             ]
             [ button [ class "header-button" ] [] ]
         , h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
@@ -539,26 +582,6 @@ viewFooter =
         ]
 
 
-viewMenu : Model -> Html Msg
-viewMenu model =
-    menu [ type_ "toolbar", viewMenuClass model ]
-        [ ul []
-            [ li []
-                [ a [ href "how-to-use/" ] [ text "使い方" ]
-                ]
-            , li []
-                [ a [ href "" ] [ text "免責事項" ]
-                ]
-            , li []
-                [ a [ href "" ] [ text "プライバシーポリシー" ]
-                ]
-            , li []
-                [ a [ href "" ] [ text "クレジット" ]
-                ]
-            ]
-        ]
-
-
 viewMenuBackground : Model -> Html Msg
 viewMenuBackground model =
     div
@@ -569,14 +592,73 @@ viewMenuBackground model =
         []
 
 
+viewMenu : Model -> Html Msg
+viewMenu model =
+    menu [ type_ "toolbar", viewMenuClass model ]
+        [ ul []
+            [ li []
+                [ a [ href "how-to-use/" ] [ text "使い方" ] ]
+            , li []
+                [ a
+                    [ href "#", onClickNoPrevent (ClickSubMenu Disclaimer) ]
+                    [ text "免責事項" ]
+                ]
+            , li []
+                [ a [ href "#" ] [ text "プライバシーポリシー" ] ]
+            , li []
+                [ a [ href "#" ] [ text "クレジット" ] ]
+            ]
+        ]
+
+
+onClickNoPrevent : msg -> Html.Attribute msg
+onClickNoPrevent message =
+    Html.Events.custom "click"
+        (Json.Decode.succeed
+            { message = message, stopPropagation = True, preventDefault = True }
+        )
+
+
 viewMenuClass : Model -> Html.Attribute Msg
 viewMenuClass model =
+    let
+        appendClass =
+            if model.nowOpenSubMenuType == NoOpenSubMenu then
+                ""
+
+            else
+                " sub-menu-open"
+    in
     case model.menuState of
         MenuClose ->
-            class "menu-close"
+            class ("menu-close" ++ appendClass)
 
         MenuOpen ->
-            class "menu-open"
+            class ("menu-open" ++ appendClass)
+
+
+viewSubMenu : Model -> Html Msg
+viewSubMenu model =
+    case model.nowOpenSubMenuType of
+        NoOpenSubMenu ->
+            div [] []
+
+        Disclaimer ->
+            div [ class "sub-menu" ]
+                [ div [ class "sub-menu-window" ]
+                    [ h2 [] [ text "免責事項" ]
+                    , div [ class "text" ]
+                        [ p [] [ text "当サイトの情報は、慎重に管理・作成しますが、すべての情報が正確・完全であることは保証しません。そのことをご承知の上、利用者の責任において情報を利用してください。当サイトを利用したことによるいかなる損失について、一切保証しません。" ]
+                        , p []
+                            [ text "また、当サイトは白山市役所が作成したものではありません。"
+                            , span [ class "warning" ]
+                                [ text "問い合わせ等を白山市にしないようにお願いします。"
+                                ]
+                            ]
+                        , p [] [ text "問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。" ]
+                        ]
+                    ]
+                ]
 
 
 viewMain : Model -> Html Msg
