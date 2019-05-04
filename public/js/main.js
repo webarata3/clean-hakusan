@@ -8453,6 +8453,87 @@ var author$project$Main$viewMain = function (model) {
 					]));
 	}
 };
+var elm$html$Html$menu = _VirtualDom_node('menu');
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var author$project$Main$viewMenu = A2(
+	elm$html$Html$menu,
+	_List_fromArray(
+		[
+			elm$html$Html$Attributes$type_('toolbar')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$ul,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('how-to-use/')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('使い方')
+								]))
+						])),
+					A2(
+					elm$html$Html$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('免責事項')
+								]))
+						])),
+					A2(
+					elm$html$Html$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('プライバシーポリシー')
+								]))
+						])),
+					A2(
+					elm$html$Html$li,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$href('')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('クレジット')
+								]))
+						]))
+				]))
+		]));
 var elm$html$Html$article = _VirtualDom_node('article');
 var author$project$Main$view = function (model) {
 	return A2(
@@ -8465,7 +8546,8 @@ var author$project$Main$view = function (model) {
 			[
 				author$project$Main$viewHeader,
 				author$project$Main$viewMain(model),
-				author$project$Main$viewFooter
+				author$project$Main$viewFooter,
+				author$project$Main$viewMenu
 			]));
 };
 var elm$browser$Browser$External = function (a) {

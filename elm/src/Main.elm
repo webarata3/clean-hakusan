@@ -476,6 +476,7 @@ view model =
         [ viewHeader
         , viewMain model
         , viewFooter
+        , viewMenu
         ]
 
 
@@ -513,6 +514,26 @@ viewFooter =
                     [ a [ href "https://ja.stackoverflow.com/users/2214/webarata3?tab=profile" ]
                         [ span [ class "fab fa-stack-overflow" ] [] ]
                     ]
+                ]
+            ]
+        ]
+
+
+viewMenu : Html Msg
+viewMenu =
+    menu [ type_ "toolbar" ]
+        [ ul []
+            [ li []
+                [ a [ href "how-to-use/" ] [ text "使い方" ]
+                ]
+            , li []
+                [ a [ href "" ] [ text "免責事項" ]
+                ]
+            , li []
+                [ a [ href "" ] [ text "プライバシーポリシー" ]
+                ]
+            , li []
+                [ a [ href "" ] [ text "クレジット" ]
                 ]
             ]
         ]
