@@ -138,6 +138,7 @@ getAreaGarbage areaGarbageJson =
 
 type alias Model =
     { viewState : ViewState
+    , menuState : MenuState
     , errorMessage : String
     , isVersionChange : Bool
     , time : Time.Posix
@@ -185,6 +186,8 @@ type Msg
     = DataError String
     | Loading
     | CopyText
+    | ClickMenuButton
+    | ClickMenuClose
     | SetCurrentDate Time.Posix
     | LoadedLocalStorage LoadLocalStorageValue
     | LocalStorageSaved String
@@ -204,6 +207,11 @@ type ViewState
     | DataOk
 
 
+type MenuState
+    = MenuClose
+    | MenuOpen
+
+
 type ApiVersionState
     = NoChange
     | RequireRegion String
@@ -213,6 +221,7 @@ type ApiVersionState
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { viewState = PrepareData
+      , menuState = MenuClose
       , errorMessage = ""
       , isVersionChange = False
       , time = Time.millisToPosix 0
@@ -254,6 +263,12 @@ update msg model =
 
         CopyText ->
             ( model, copyText () )
+
+        ClickMenuButton ->
+            ( { model | menuState = MenuOpen }, Cmd.none )
+
+        ClickMenuClose ->
+            ( { model | menuState = MenuClose }, Cmd.none )
 
         SetCurrentDate time ->
             let
@@ -476,14 +491,19 @@ view model =
         [ viewHeader
         , viewMain model
         , viewFooter
-        , viewMenu
+        , viewMenu model
+        , viewMenuBackground model
         ]
 
 
 viewHeader : Html Msg
 viewHeader =
     Html.header []
-        [ div [ class "menu-button" ] [ button [ class "header-button" ] [] ]
+        [ div
+            [ class "menu-button"
+            , onClick ClickMenuButton
+            ]
+            [ button [ class "header-button" ] [] ]
         , h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
         , div [ class "nothing" ] []
         ]
@@ -519,9 +539,9 @@ viewFooter =
         ]
 
 
-viewMenu : Html Msg
-viewMenu =
-    menu [ type_ "toolbar" ]
+viewMenu : Model -> Html Msg
+viewMenu model =
+    menu [ type_ "toolbar", viewMenuClass model ]
         [ ul []
             [ li []
                 [ a [ href "how-to-use/" ] [ text "使い方" ]
@@ -537,6 +557,26 @@ viewMenu =
                 ]
             ]
         ]
+
+
+viewMenuBackground : Model -> Html Msg
+viewMenuBackground model =
+    div
+        [ class "menu-background"
+        , viewMenuClass model
+        , onClick ClickMenuClose
+        ]
+        []
+
+
+viewMenuClass : Model -> Html.Attribute Msg
+viewMenuClass model =
+    case model.menuState of
+        MenuClose ->
+            class "menu-close"
+
+        MenuOpen ->
+            class "menu-open"
 
 
 viewMain : Model -> Html Msg

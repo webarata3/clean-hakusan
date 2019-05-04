@@ -4568,6 +4568,7 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Main$MenuClose = {$: 'MenuClose'};
 var author$project$Main$PrepareData = {$: 'PrepareData'};
 var author$project$Main$SetCurrentDate = function (a) {
 	return {$: 'SetCurrentDate', a: a};
@@ -5224,6 +5225,7 @@ var author$project$Main$init = function (_n0) {
 			dispDate: '',
 			errorMessage: '',
 			isVersionChange: false,
+			menuState: author$project$Main$MenuClose,
 			regions: _List_Nil,
 			time: elm$time$Time$millisToPosix(0),
 			viewState: author$project$Main$PrepareData
@@ -5996,6 +5998,7 @@ var author$project$Main$GotSavedRegions = function (a) {
 var author$project$Main$GotWebApiVersion = function (a) {
 	return {$: 'GotWebApiVersion', a: a};
 };
+var author$project$Main$MenuOpen = {$: 'MenuOpen'};
 var author$project$Main$NoChange = {$: 'NoChange'};
 var author$project$Main$RequireRegion = function (a) {
 	return {$: 'RequireRegion', a: a};
@@ -6947,6 +6950,18 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						author$project$Main$copyText(_Utils_Tuple0));
+				case 'ClickMenuButton':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{menuState: author$project$Main$MenuOpen}),
+						elm$core$Platform$Cmd$none);
+				case 'ClickMenuClose':
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{menuState: author$project$Main$MenuClose}),
+						elm$core$Platform$Cmd$none);
 				case 'SetCurrentDate':
 					var time = msg.a;
 					var intDate = author$project$CommonTime$posixToIntDate(time);
@@ -7350,9 +7365,27 @@ var author$project$Main$viewFooter = A2(
 						]))
 				]))
 		]));
+var author$project$Main$ClickMenuButton = {$: 'ClickMenuButton'};
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$header = _VirtualDom_node('header');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$Main$viewHeader = A2(
 	elm$html$Html$header,
 	_List_Nil,
@@ -7362,7 +7395,8 @@ var author$project$Main$viewHeader = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('menu-button')
+					elm$html$Html$Attributes$class('menu-button'),
+					elm$html$Html$Events$onClick(author$project$Main$ClickMenuButton)
 				]),
 			_List_fromArray(
 				[
@@ -7393,17 +7427,6 @@ var author$project$Main$viewHeader = A2(
 			_List_Nil)
 		]));
 var author$project$Main$CopyText = {$: 'CopyText'};
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
 var elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
@@ -8266,12 +8289,6 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
 var author$project$Main$viewMain = function (model) {
 	var handler = function (selectedValue) {
 		return author$project$Main$ChangeArea(selectedValue);
@@ -8453,87 +8470,110 @@ var author$project$Main$viewMain = function (model) {
 					]));
 	}
 };
+var author$project$Main$viewMenuClass = function (model) {
+	var _n0 = model.menuState;
+	if (_n0.$ === 'MenuClose') {
+		return elm$html$Html$Attributes$class('menu-close');
+	} else {
+		return elm$html$Html$Attributes$class('menu-open');
+	}
+};
 var elm$html$Html$menu = _VirtualDom_node('menu');
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
-var author$project$Main$viewMenu = A2(
-	elm$html$Html$menu,
-	_List_fromArray(
-		[
-			elm$html$Html$Attributes$type_('toolbar')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			elm$html$Html$ul,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$li,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$a,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$href('how-to-use/')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('使い方')
-								]))
-						])),
-					A2(
-					elm$html$Html$li,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$a,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$href('')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('免責事項')
-								]))
-						])),
-					A2(
-					elm$html$Html$li,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$a,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$href('')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('プライバシーポリシー')
-								]))
-						])),
-					A2(
-					elm$html$Html$li,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$a,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$href('')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('クレジット')
-								]))
-						]))
-				]))
-		]));
+var author$project$Main$viewMenu = function (model) {
+	return A2(
+		elm$html$Html$menu,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$type_('toolbar'),
+				author$project$Main$viewMenuClass(model)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$ul,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('how-to-use/')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('使い方')
+									]))
+							])),
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('免責事項')
+									]))
+							])),
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('プライバシーポリシー')
+									]))
+							])),
+						A2(
+						elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('クレジット')
+									]))
+							]))
+					]))
+			]));
+};
+var author$project$Main$ClickMenuClose = {$: 'ClickMenuClose'};
+var author$project$Main$viewMenuBackground = function (model) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('menu-background'),
+				author$project$Main$viewMenuClass(model),
+				elm$html$Html$Events$onClick(author$project$Main$ClickMenuClose)
+			]),
+		_List_Nil);
+};
 var elm$html$Html$article = _VirtualDom_node('article');
 var author$project$Main$view = function (model) {
 	return A2(
@@ -8547,7 +8587,8 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewHeader,
 				author$project$Main$viewMain(model),
 				author$project$Main$viewFooter,
-				author$project$Main$viewMenu
+				author$project$Main$viewMenu(model),
+				author$project$Main$viewMenuBackground(model)
 			]));
 };
 var elm$browser$Browser$External = function (a) {
