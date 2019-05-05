@@ -8651,7 +8651,8 @@ var author$project$Main$viewSubMenuCredit = function (isOpen) {
 		_List_fromArray(
 			[
 				elm$html$Html$Attributes$class('sub-menu'),
-				author$project$Main$subMenuOpenClass(isOpen)
+				author$project$Main$subMenuOpenClass(isOpen),
+				elm$html$Html$Events$onClick(author$project$Main$ClickMenuClose)
 			]),
 		_List_fromArray(
 			[
@@ -8785,7 +8786,8 @@ var author$project$Main$viewSubMenuDisclaimer = function (isOpen) {
 		_List_fromArray(
 			[
 				elm$html$Html$Attributes$class('sub-menu'),
-				author$project$Main$subMenuOpenClass(isOpen)
+				author$project$Main$subMenuOpenClass(isOpen),
+				elm$html$Html$Events$onClick(author$project$Main$ClickMenuClose)
 			]),
 		_List_fromArray(
 			[
@@ -8853,7 +8855,8 @@ var author$project$Main$viewSubMenuPrivacyPolicy = function (isOpen) {
 		_List_fromArray(
 			[
 				elm$html$Html$Attributes$class('sub-menu'),
-				author$project$Main$subMenuOpenClass(isOpen)
+				author$project$Main$subMenuOpenClass(isOpen),
+				elm$html$Html$Events$onClick(author$project$Main$ClickMenuClose)
 			]),
 		_List_fromArray(
 			[

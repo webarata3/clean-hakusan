@@ -799,7 +799,11 @@ onChange handler =
 
 viewSubMenuDisclaimer : Bool -> Html Msg
 viewSubMenuDisclaimer isOpen =
-    div [ class "sub-menu", subMenuOpenClass isOpen ]
+    div
+        [ class "sub-menu"
+        , subMenuOpenClass isOpen
+        , onClick ClickMenuClose
+        ]
         [ div [ class "sub-menu-window" ]
             [ h2 [] [ text "免責事項" ]
             , div [ class "text" ]
@@ -818,7 +822,9 @@ viewSubMenuDisclaimer isOpen =
 
 viewSubMenuPrivacyPolicy : Bool -> Html Msg
 viewSubMenuPrivacyPolicy isOpen =
-    div [ class "sub-menu", subMenuOpenClass isOpen ]
+    div [ class "sub-menu", subMenuOpenClass isOpen
+        , onClick ClickMenuClose
+    ]
         [ div [ class "sub-menu-window" ]
             [ h2 []
                 [ text "プライバシーポリシー" ]
@@ -850,7 +856,9 @@ viewSubMenuPrivacyPolicy isOpen =
 
 viewSubMenuCredit : Bool -> Html Msg
 viewSubMenuCredit isOpen =
-    div [ class "sub-menu", subMenuOpenClass isOpen ]
+    div [ class "sub-menu", subMenuOpenClass isOpen
+        , onClick ClickMenuClose
+     ]
         [ div [ class "sub-menu-window credit" ]
             [ h2 [] [ text "クレジット" ]
             , div []
