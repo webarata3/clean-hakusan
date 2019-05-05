@@ -5294,7 +5294,7 @@ var author$project$CommonTime$intDateToDayOfWeek = function (intDate) {
 	}
 };
 var author$project$CommonTime$intDateToDispDate = function (intDate) {
-	return elm$core$String$fromInt(intDate.year) + ('年' + (elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + ('日' + ('(' + (author$project$CommonTime$intDateToDayOfWeek(intDate) + ')')))))));
+	return elm$core$String$fromInt(intDate.month) + ('月' + (elm$core$String$fromInt(intDate.day) + ('日' + ('(' + (author$project$CommonTime$intDateToDayOfWeek(intDate) + ')')))));
 };
 var elm$core$String$cons = _String_cons;
 var elm$core$String$fromChar = function (_char) {

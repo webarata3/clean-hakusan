@@ -149,9 +149,7 @@ intDateToYyyymmddDate intDate =
 
 intDateToDispDate : IntDate -> DispDate
 intDateToDispDate intDate =
-    String.fromInt intDate.year
-        ++ "年"
-        ++ String.fromInt intDate.month
+    String.fromInt intDate.month
         ++ "月"
         ++ String.fromInt intDate.day
         ++ "日"
