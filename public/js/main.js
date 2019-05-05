@@ -5981,6 +5981,7 @@ var author$project$CommonUtil$jsonError = function (error) {
 var author$project$Main$ChangeArea = function (a) {
 	return {$: 'ChangeArea', a: a};
 };
+var author$project$Main$Credit = {$: 'Credit'};
 var author$project$Main$DataError = function (a) {
 	return {$: 'DataError', a: a};
 };
@@ -6972,18 +6973,25 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$none);
 				case 'ClickSubMenu':
 					var subMenuType = msg.a;
-					if (subMenuType.$ === 'NoOpenSubMenu') {
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{nowOpenSubMenuType: author$project$Main$NoOpenSubMenu}),
-							elm$core$Platform$Cmd$none);
-					} else {
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{nowOpenSubMenuType: author$project$Main$Disclaimer}),
-							elm$core$Platform$Cmd$none);
+					switch (subMenuType.$) {
+						case 'NoOpenSubMenu':
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{nowOpenSubMenuType: author$project$Main$NoOpenSubMenu}),
+								elm$core$Platform$Cmd$none);
+						case 'Disclaimer':
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{nowOpenSubMenuType: author$project$Main$Disclaimer}),
+								elm$core$Platform$Cmd$none);
+						default:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{nowOpenSubMenuType: author$project$Main$Credit}),
+								elm$core$Platform$Cmd$none);
 					}
 				case 'SetCurrentDate':
 					var time = msg.a;
@@ -8598,7 +8606,9 @@ var author$project$Main$viewMenu = function (model) {
 								elm$html$Html$a,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$href('#')
+										elm$html$Html$Attributes$href('#'),
+										author$project$Main$onClickNoPrevent(
+										author$project$Main$ClickSubMenu(author$project$Main$Credit))
 									]),
 								_List_fromArray(
 									[
@@ -8620,79 +8630,213 @@ var author$project$Main$viewMenuBackground = function (model) {
 			]),
 		_List_Nil);
 };
+var author$project$Main$subMenuOpenClass = function (isOpen) {
+	return isOpen ? elm$html$Html$Attributes$class('sub-menu-open') : elm$html$Html$Attributes$class('sub-menu-close');
+};
 var elm$html$Html$h2 = _VirtualDom_node('h2');
+var elm$html$Html$h3 = _VirtualDom_node('h3');
+var elm$html$Html$pre = _VirtualDom_node('pre');
+var author$project$Main$viewSubMenuCredit = function (isOpen) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('sub-menu'),
+				author$project$Main$subMenuOpenClass(isOpen)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('sub-menu-window credit')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('クレジット')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h3,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://github.com/elm/compiler')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('Elm Compiler')
+											]))
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$pre,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text('Copyright (c) 2012-present, Evan Czaplicki\n\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n\n    * Redistributions in binary form must reproduce the above\n      copyright notice, this list of conditions and the following\n      disclaimer in the documentation and/or other materials provided\n      with the distribution.\n\n    * Neither the name of Evan Czaplicki nor the names of other\n      contributors may be used to endorse or promote products derived\n      from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.')
+											]))
+									]))
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h3,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://github.com/justinmimbs/time-extra')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('justinmimbs/time-extra')
+											]))
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$pre,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text('BSD 3-Clause\n\nCopyright (c) 2018, Justin Mimbs. All rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n1. Redistributions of source code must retain the above copyright notice, this\n   list of conditions and the following disclaimer.\n2. Redistributions in binary form must reproduce the above copyright notice,\n   this list of conditions and the following disclaimer in the documentation\n   and/or other materials provided with the distribution.\n3. Neither the name of the copyright holder nor the names of its contributors\n   may be used to endorse or promote products derived from this software\n   without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE\nFOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\nDAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\nSERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\nCAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\nOR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.')
+											]))
+									]))
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h3,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://github.com/justinmimbs/timezone-data')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('justinmimbs/time-zone-data')
+											]))
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$pre,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text('BSD 3-Clause\n\nCopyright (c) 2018, Justin Mimbs. All rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n1. Redistributions of source code must retain the above copyright notice, this\n   list of conditions and the following disclaimer.\n2. Redistributions in binary form must reproduce the above copyright notice,\n   this list of conditions and the following disclaimer in the documentation\n   and/or other materials provided with the distribution.\n3. Neither the name of the copyright holder nor the names of its contributors\n   may be used to endorse or promote products derived from this software\n   without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE\nFOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\nDAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\nSERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\nCAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\nOR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.')
+											]))
+									]))
+							]))
+					]))
+			]));
+};
 var elm$html$Html$p = _VirtualDom_node('p');
-var author$project$Main$viewSubMenu = function (model) {
-	var _n0 = model.nowOpenSubMenuType;
-	if (_n0.$ === 'NoOpenSubMenu') {
-		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
-	} else {
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('sub-menu')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('sub-menu-window')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$h2,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('免責事項')
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('text')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$p,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('当サイトの情報は、慎重に管理・作成しますが、すべての情報が正確・完全であることは保証しません。そのことをご承知の上、利用者の責任において情報を利用してください。当サイトを利用したことによるいかなる損失について、一切保証しません。')
-										])),
-									A2(
-									elm$html$Html$p,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('また、当サイトは白山市役所が作成したものではありません。'),
-											A2(
-											elm$html$Html$span,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('warning')
-												]),
-											_List_fromArray(
-												[
-													elm$html$Html$text('問い合わせ等を白山市にしないようにお願いします。')
-												]))
-										])),
-									A2(
-									elm$html$Html$p,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。')
-										]))
-								]))
-						]))
-				]));
-	}
+var author$project$Main$viewSubMenuDisclaimer = function (isOpen) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('sub-menu'),
+				author$project$Main$subMenuOpenClass(isOpen)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('sub-menu-window')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('免責事項')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('当サイトの情報は、慎重に管理・作成しますが、すべての情報が正確・完全であることは保証しません。そのことをご承知の上、利用者の責任において情報を利用してください。当サイトを利用したことによるいかなる損失について、一切保証しません。')
+									])),
+								A2(
+								elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('また、当サイトは白山市役所が作成したものではありません。'),
+										A2(
+										elm$html$Html$span,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('warning')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('問い合わせ等を白山市にしないようにお願いします。')
+											]))
+									])),
+								A2(
+								elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。')
+									]))
+							]))
+					]))
+			]));
 };
 var elm$html$Html$article = _VirtualDom_node('article');
 var author$project$Main$view = function (model) {
@@ -8709,7 +8853,10 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewFooter,
 				author$project$Main$viewMenuBackground(model),
 				author$project$Main$viewMenu(model),
-				author$project$Main$viewSubMenu(model)
+				author$project$Main$viewSubMenuDisclaimer(
+				_Utils_eq(model.nowOpenSubMenuType, author$project$Main$Disclaimer)),
+				author$project$Main$viewSubMenuCredit(
+				_Utils_eq(model.nowOpenSubMenuType, author$project$Main$Credit))
 			]));
 };
 var elm$browser$Browser$External = function (a) {

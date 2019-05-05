@@ -223,6 +223,7 @@ type ApiVersionState
 type SubMenuType
     = NoOpenSubMenu
     | Disclaimer
+    | Credit
 
 
 init : () -> ( Model, Cmd Msg )
@@ -311,6 +312,9 @@ update msg model =
 
                 Disclaimer ->
                     ( { model | nowOpenSubMenuType = Disclaimer }, Cmd.none )
+
+                Credit ->
+                    ( { model | nowOpenSubMenuType = Credit }, Cmd.none )
 
         SetCurrentDate time ->
             let
@@ -535,7 +539,8 @@ view model =
         , viewFooter
         , viewMenuBackground model
         , viewMenu model
-        , viewSubMenu model
+        , viewSubMenuDisclaimer (model.nowOpenSubMenuType == Disclaimer)
+        , viewSubMenuCredit (model.nowOpenSubMenuType == Credit)
         ]
 
 
@@ -606,7 +611,10 @@ viewMenu model =
             , li []
                 [ a [ href "#" ] [ text "プライバシーポリシー" ] ]
             , li []
-                [ a [ href "#" ] [ text "クレジット" ] ]
+                [ a
+                    [ href "#", onClickNoPrevent (ClickSubMenu Credit) ]
+                    [ text "クレジット" ]
+                ]
             ]
         ]
 
@@ -637,28 +645,13 @@ viewMenuClass model =
             class ("menu-open" ++ appendClass)
 
 
-viewSubMenu : Model -> Html Msg
-viewSubMenu model =
-    case model.nowOpenSubMenuType of
-        NoOpenSubMenu ->
-            div [] []
+subMenuOpenClass : Bool -> Html.Attribute Msg
+subMenuOpenClass isOpen =
+    if isOpen then
+        class "sub-menu-open"
 
-        Disclaimer ->
-            div [ class "sub-menu" ]
-                [ div [ class "sub-menu-window" ]
-                    [ h2 [] [ text "免責事項" ]
-                    , div [ class "text" ]
-                        [ p [] [ text "当サイトの情報は、慎重に管理・作成しますが、すべての情報が正確・完全であることは保証しません。そのことをご承知の上、利用者の責任において情報を利用してください。当サイトを利用したことによるいかなる損失について、一切保証しません。" ]
-                        , p []
-                            [ text "また、当サイトは白山市役所が作成したものではありません。"
-                            , span [ class "warning" ]
-                                [ text "問い合わせ等を白山市にしないようにお願いします。"
-                                ]
-                            ]
-                        , p [] [ text "問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。" ]
-                        ]
-                    ]
-                ]
+    else
+        class "sub-menu-close"
 
 
 viewMain : Model -> Html Msg
@@ -794,3 +787,136 @@ viewLine value =
 onChange : (String -> msg) -> Attribute msg
 onChange handler =
     on "change" (Json.Decode.map handler Html.Events.targetValue)
+
+
+viewSubMenuDisclaimer : Bool -> Html Msg
+viewSubMenuDisclaimer isOpen =
+    div [ class "sub-menu", subMenuOpenClass isOpen ]
+        [ div [ class "sub-menu-window" ]
+            [ h2 [] [ text "免責事項" ]
+            , div [ class "text" ]
+                [ p [] [ text "当サイトの情報は、慎重に管理・作成しますが、すべての情報が正確・完全であることは保証しません。そのことをご承知の上、利用者の責任において情報を利用してください。当サイトを利用したことによるいかなる損失について、一切保証しません。" ]
+                , p []
+                    [ text "また、当サイトは白山市役所が作成したものではありません。"
+                    , span [ class "warning" ]
+                        [ text "問い合わせ等を白山市にしないようにお願いします。"
+                        ]
+                    ]
+                , p [] [ text "問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。" ]
+                ]
+            ]
+        ]
+
+
+viewSubMenuCredit : Bool -> Html Msg
+viewSubMenuCredit isOpen =
+    div [ class "sub-menu", subMenuOpenClass isOpen ]
+        [ div [ class "sub-menu-window credit" ]
+            [ h2 [] [ text "クレジット" ]
+            , div []
+                [ h3 []
+                    [ a [ href "https://github.com/elm/compiler" ] [ text "Elm Compiler" ]
+                    ]
+                , div []
+                    [ pre [] [ text """Copyright (c) 2012-present, Evan Czaplicki
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Evan Czaplicki nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.""" ]
+                    ]
+                ]
+            , div []
+                [ h3 []
+                    [ a [ href "https://github.com/justinmimbs/time-extra" ] [ text "justinmimbs/time-extra" ]
+                    ]
+                , div []
+                    [ pre [] [ text """BSD 3-Clause
+
+Copyright (c) 2018, Justin Mimbs. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.""" ]
+                    ]
+                ]
+            , div []
+                [ h3 []
+                    [ a
+                        [ href "https://github.com/justinmimbs/timezone-data" ]
+                        [ text "justinmimbs/time-zone-data" ]
+                    ]
+                , div []
+                    [ pre [] [ text """BSD 3-Clause
+
+Copyright (c) 2018, Justin Mimbs. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.""" ]
+                    ]
+                ]
+            ]
+        ]

@@ -164,14 +164,15 @@ menu a, menu a:hover, menu a:active, menu a:visited {
 }
 
 .sub-menu {
-  --sub-menu-height: 90vh;
   --sub-menu-width: 90vw;
   position: fixed;
   width: var(--sub-menu-width);
-  top: calc(50% - var(--sub-menu-height) / 2);
   left: calc(50% - var(--sub-menu-width) / 2);
   background-color: #fff;
+  max-height: 80vh;
+  overflow: scroll;
   z-index: 1500;
+  transition: transform 0.5s ease;
 }
 
 .sub-menu-window {
@@ -187,6 +188,10 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   margin-bottom: 10px;
 }
 
+.sub-menu-window h3 {
+  margin-bottom: 10px;
+}
+
 .sub-menu-window .text {
   font-size: 14px;
   line-height: 1.8rem;
@@ -198,6 +203,14 @@ menu a, menu a:hover, menu a:active, menu a:visited {
 
 .sub-menu-window .warning {
   color: #f00;
+}
+
+.sub-menu.sub-menu-close {
+  transform: translate(0, -100vh);
+}
+
+.sub-menu.sub-menu-open {
+  transform: translate(0, 5vh);
 }
 
 .header-button {
@@ -218,58 +231,29 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   margin-left: 5px;
 }
 
-.disclaimer, .credit {
-  background-color: rgba(0, 0, 0, 0.7);
-  height: 100vh;
-  left: 0;
-  overflow: scroll;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 2000;
+.credit > div:not(:first-of-type) {
+  border-top: 1px solid #000;
 }
 
-.disclaimer > div, .credit > div {
-  background-color: #fff;
-  color: #000;
-  margin: 10px 0;
-  padding: 5px;
+.credit > div {
+  margin: 5px 0 5px;
+  padding: 10px 0;
 }
 
-.disclaimer > div > div, .credit > div > div {
-  margin-bottom: 20px;
-}
-
-.disclaimer h1, .credit h1 {
-  background-color: #888;
-  color: #fff;
-  margin-bottom: 5px;
-  padding: 5px;
-}
-
-.disclaimer .text {
-  font-size: 14pt;
-  line-height: 1.4em;
-}
-
-.credit h2 {
-  border-bottom: 1px solid #888;
-  font-size: 16px;
-  padding: 5px;
-}
-
-.link {
+.credit h3 {
   margin-bottom: 10px;
 }
 
-.link a, .link a:hover, .link a:active, .link a:visited {
-  color: #00f;
-  font-size: 14px;
+@font-face {
+  font-family: 'B612 Mono';
+  src: url('../font/B612Mono-Regular.woff') format('woff'),
+       url('../font/B612Mono-Regular.ttf') format("truetype");
 }
 
 pre {
+  font-family: 'B612 Mono', monospace;
   font-size: 14px;
+  line-height: 1.2rem;
   white-space: pre-wrap;
 }
 
