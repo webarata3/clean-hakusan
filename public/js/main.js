@@ -6004,6 +6004,7 @@ var author$project$Main$GotWebApiVersion = function (a) {
 };
 var author$project$Main$MenuOpen = {$: 'MenuOpen'};
 var author$project$Main$NoChange = {$: 'NoChange'};
+var author$project$Main$PrivacyPolicy = {$: 'PrivacyPolicy'};
 var author$project$Main$RequireRegion = function (a) {
 	return {$: 'RequireRegion', a: a};
 };
@@ -6985,6 +6986,12 @@ var author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{nowOpenSubMenuType: author$project$Main$Disclaimer}),
+								elm$core$Platform$Cmd$none);
+						case 'PrivacyPolicy':
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{nowOpenSubMenuType: author$project$Main$PrivacyPolicy}),
 								elm$core$Platform$Cmd$none);
 						default:
 							return _Utils_Tuple2(
@@ -8590,7 +8597,9 @@ var author$project$Main$viewMenu = function (model) {
 								elm$html$Html$a,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$href('#')
+										elm$html$Html$Attributes$href('#'),
+										author$project$Main$onClickNoPrevent(
+										author$project$Main$ClickSubMenu(author$project$Main$PrivacyPolicy))
 									]),
 								_List_fromArray(
 									[
@@ -8838,6 +8847,103 @@ var author$project$Main$viewSubMenuDisclaimer = function (isOpen) {
 					]))
 			]));
 };
+var author$project$Main$viewSubMenuPrivacyPolicy = function (isOpen) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('sub-menu'),
+				author$project$Main$subMenuOpenClass(isOpen)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('sub-menu-window')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('プライバシーポリシー')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$h3,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('当サイトが使用しているアクセス解析ツールについて')
+									])),
+								A2(
+								elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('当サイトでは、Googleによるアクセス解析ツール'),
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://analytics.google.com/analytics/start')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('Googleアナリティクス')
+											])),
+										elm$html$Html$text('を利用しています。')
+									])),
+								A2(
+								elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('このGoogleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。\nこのトラフィックデータは匿名で収集されており、個人を特定するものではありません。\nこの機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。')
+									])),
+								A2(
+								elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://www.google.com/analytics/terms/jp.html')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('この規約に関して、詳しくはこちらの利用規約')
+											])),
+										elm$html$Html$text('、または'),
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://policies.google.com/technologies/partner-sites?hl=ja')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('こちらのGoogle ポリシーと規約をクリック')
+											])),
+										elm$html$Html$text('してください。')
+									]))
+							]))
+					]))
+			]));
+};
 var elm$html$Html$article = _VirtualDom_node('article');
 var author$project$Main$view = function (model) {
 	return A2(
@@ -8856,7 +8962,9 @@ var author$project$Main$view = function (model) {
 				author$project$Main$viewSubMenuDisclaimer(
 				_Utils_eq(model.nowOpenSubMenuType, author$project$Main$Disclaimer)),
 				author$project$Main$viewSubMenuCredit(
-				_Utils_eq(model.nowOpenSubMenuType, author$project$Main$Credit))
+				_Utils_eq(model.nowOpenSubMenuType, author$project$Main$Credit)),
+				author$project$Main$viewSubMenuPrivacyPolicy(
+				_Utils_eq(model.nowOpenSubMenuType, author$project$Main$PrivacyPolicy))
 			]));
 };
 var elm$browser$Browser$External = function (a) {

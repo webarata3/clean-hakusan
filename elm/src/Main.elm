@@ -223,6 +223,7 @@ type ApiVersionState
 type SubMenuType
     = NoOpenSubMenu
     | Disclaimer
+    | PrivacyPolicy
     | Credit
 
 
@@ -312,6 +313,9 @@ update msg model =
 
                 Disclaimer ->
                     ( { model | nowOpenSubMenuType = Disclaimer }, Cmd.none )
+
+                PrivacyPolicy ->
+                    ( { model | nowOpenSubMenuType = PrivacyPolicy }, Cmd.none )
 
                 Credit ->
                     ( { model | nowOpenSubMenuType = Credit }, Cmd.none )
@@ -541,6 +545,7 @@ view model =
         , viewMenu model
         , viewSubMenuDisclaimer (model.nowOpenSubMenuType == Disclaimer)
         , viewSubMenuCredit (model.nowOpenSubMenuType == Credit)
+        , viewSubMenuPrivacyPolicy (model.nowOpenSubMenuType == PrivacyPolicy)
         ]
 
 
@@ -609,7 +614,10 @@ viewMenu model =
                     [ text "免責事項" ]
                 ]
             , li []
-                [ a [ href "#" ] [ text "プライバシーポリシー" ] ]
+                [ a
+                    [ href "#", onClickNoPrevent (ClickSubMenu PrivacyPolicy) ]
+                    [ text "プライバシーポリシー" ]
+                ]
             , li []
                 [ a
                     [ href "#", onClickNoPrevent (ClickSubMenu Credit) ]
@@ -803,6 +811,38 @@ viewSubMenuDisclaimer isOpen =
                         ]
                     ]
                 , p [] [ text "問い合わせはTwitter（@webarata3）もしくは、webmaster at hakusan.appまでお願いします。" ]
+                ]
+            ]
+        ]
+
+
+viewSubMenuPrivacyPolicy : Bool -> Html Msg
+viewSubMenuPrivacyPolicy isOpen =
+    div [ class "sub-menu", subMenuOpenClass isOpen ]
+        [ div [ class "sub-menu-window" ]
+            [ h2 []
+                [ text "プライバシーポリシー" ]
+            , div [ class "text" ]
+                [ h3 []
+                    [ text "当サイトが使用しているアクセス解析ツールについて" ]
+                , p []
+                    [ text "当サイトでは、Googleによるアクセス解析ツール"
+                    , a [ href "https://analytics.google.com/analytics/start" ]
+                        [ text "Googleアナリティクス" ]
+                    , text "を利用しています。"
+                    ]
+                , p [] [ text """このGoogleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。
+このトラフィックデータは匿名で収集されており、個人を特定するものではありません。
+この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。""" ]
+                , p []
+                    [ a [ href "https://www.google.com/analytics/terms/jp.html" ]
+                        [ text "この規約に関して、詳しくはこちらの利用規約" ]
+                    , text "、または"
+                    , a
+                        [ href "https://policies.google.com/technologies/partner-sites?hl=ja" ]
+                        [ text "こちらのGoogle ポリシーと規約をクリック" ]
+                    , text "してください。"
+                    ]
                 ]
             ]
         ]
