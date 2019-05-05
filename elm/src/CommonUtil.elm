@@ -1,11 +1,10 @@
 module CommonUtil exposing (dispHowManyDays, howManyDaysCss, httpError, jsonError, nextDate)
 
-import CommonTime exposing (YyyymmddDate)
 import Http
 import Json.Decode
 
 
-nextDate : YyyymmddDate -> List YyyymmddDate -> String
+nextDate : String -> List String -> String
 nextDate currentDate garbageDates =
     case List.head (List.filter (\d -> d >= currentDate) garbageDates) of
         Just date ->

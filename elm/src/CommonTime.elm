@@ -1,16 +1,8 @@
-module CommonTime exposing (DispDate, IntDate, YyyymmddDate, diffDayYyyymmddDate, intDateToDispDate, intDateToPosix, intDateToYyyymmddDate, numberToMonth, posixToIntDate, sliceToInt, toMonthNumber, yyyymmddDateToDispDate, yyyymmddDateToIntDate)
+module CommonTime exposing (IntDate, diffDayYyyymmddDate, intDateToDispDate, intDateToPosix, intDateToYyyymmddDate, numberToMonth, posixToIntDate, sliceToInt, toMonthNumber, yyyymmddDateToDispDate, yyyymmddDateToIntDate)
 
 import Time
 import Time.Extra
 import TimeZone
-
-
-type alias YyyymmddDate =
-    String
-
-
-type alias DispDate =
-    String
 
 
 type alias IntDate =
@@ -132,7 +124,7 @@ posixToIntDate time =
     }
 
 
-intDateToYyyymmddDate : IntDate -> YyyymmddDate
+intDateToYyyymmddDate : IntDate -> String
 intDateToYyyymmddDate intDate =
     let
         stringYear =
@@ -147,7 +139,7 @@ intDateToYyyymmddDate intDate =
     stringYear ++ stringMonth ++ stringDay
 
 
-intDateToDispDate : IntDate -> DispDate
+intDateToDispDate : IntDate -> String
 intDateToDispDate intDate =
     String.fromInt intDate.month
         ++ "月"
@@ -158,12 +150,12 @@ intDateToDispDate intDate =
         ++ ")"
 
 
-yyyymmddDateToDispDate : YyyymmddDate -> DispDate
+yyyymmddDateToDispDate : String -> String
 yyyymmddDateToDispDate yyyymmddDate =
     intDateToDispDate (yyyymmddDateToIntDate yyyymmddDate)
 
 
-yyyymmddDateToIntDate : YyyymmddDate -> IntDate
+yyyymmddDateToIntDate : String -> IntDate
 yyyymmddDateToIntDate yyyymmddDate =
     let
         sliceToInt2 =
@@ -185,7 +177,7 @@ sliceToInt dateString begin end =
             0
 
 
-diffDayYyyymmddDate : YyyymmddDate -> YyyymmddDate -> Int
+diffDayYyyymmddDate : String -> String -> Int
 diffDayYyyymmddDate yyyymmddDate1 yyyymmddDate2 =
     let
         intDate1 =

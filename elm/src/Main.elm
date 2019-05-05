@@ -1,7 +1,7 @@
 port module Main exposing (apiBaseUrl, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update)
 
 import Browser
-import CommonTime exposing (DispDate, IntDate, YyyymmddDate)
+import CommonTime exposing (IntDate)
 import CommonUtil
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -143,8 +143,8 @@ type alias Model =
     , errorMessage : String
     , isVersionChange : Bool
     , time : Time.Posix
-    , dispDate : DispDate
-    , currentDate : YyyymmddDate
+    , dispDate : String
+    , currentDate : String
     , apiVersion : String
     , areaNo : String
     , regions : List Region
@@ -179,7 +179,7 @@ type alias AreaGarbage =
 
 type alias Garbage =
     { garbageTitles : List String
-    , garbageDates : List YyyymmddDate
+    , garbageDates : List String
     }
 
 
@@ -729,7 +729,7 @@ viewArea areaNo area =
         [ text area.areaName ]
 
 
-viewAreaGarbage : YyyymmddDate -> AreaGarbage -> Html Msg
+viewAreaGarbage : String -> AreaGarbage -> Html Msg
 viewAreaGarbage currentDate areaGarbage =
     let
         t =
@@ -738,7 +738,7 @@ viewAreaGarbage currentDate areaGarbage =
     viewGarbages currentDate areaGarbage.garbages
 
 
-viewGarbages : YyyymmddDate -> List Garbage -> Html Msg
+viewGarbages : String -> List Garbage -> Html Msg
 viewGarbages currentDate garbages =
     let
         t =
@@ -750,7 +750,7 @@ viewGarbages currentDate garbages =
     div [ class "garbages" ] (List.map viewGarbage2 garbages)
 
 
-viewGarbage : YyyymmddDate -> Garbage -> Html Msg
+viewGarbage : String -> Garbage -> Html Msg
 viewGarbage currentDate garbage =
     div [ class "garbage-item" ]
         [ viewGarbageTitles garbage.garbageTitles
@@ -763,7 +763,7 @@ viewGarbageTitles garbageTitles =
     div [ class "garbage-title" ] (List.map viewLine garbageTitles)
 
 
-viewGarbageDates : YyyymmddDate -> List YyyymmddDate -> Html Msg
+viewGarbageDates : String -> List String -> Html Msg
 viewGarbageDates currentDate garbageDates =
     let
         nextGarbageDate =
