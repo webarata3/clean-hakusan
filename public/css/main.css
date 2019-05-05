@@ -233,10 +233,6 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   background: url(../image/menu.svg) 50% no-repeat;
 }
 
-.fa-external-link {
-  margin-left: 5px;
-}
-
 .credit > div:not(:first-of-type) {
   border-top: 1px solid #000;
 }
