@@ -10,6 +10,7 @@
 @font-face {
   font-family: 'FiraSans';
   src: url('../font/FiraSans.woff2') format('woff'),
+       url('../font/FiraSans-Regular.ttf') format("truetype"),
        url('../font/FiraSans-Light.ttf') format("truetype");
 }
 
