@@ -1,5 +1,11 @@
 @charset "utf-8";
 
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('../font/Inconsolata.woff2') format('woff'),
+       url('../font/Inconsolata-Regular.ttf') format("truetype");
+}
+
 html, body {
   height: 100%;
   width: 100%;
@@ -246,15 +252,9 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   margin-bottom: 15px;
 }
 
-@font-face {
-  font-family: 'B612 Mono';
-  src: url('../font/B612Mono-Regular.woff') format('woff'),
-       url('../font/B612Mono-Regular.ttf') format("truetype");
-}
-
 pre {
-  font-family: 'B612 Mono', monospace;
-  font-size: 14px;
+  font-family: 'Inconsolata', monospace;
+  font-size: 16px;
   line-height: 1.2rem;
   white-space: pre-wrap;
 }
@@ -402,6 +402,8 @@ label {
 /********** footer **********/
 
 footer {
+  font-family: 'Inconsolata', monospace;
+  font-size: 16px;
   display: flex;
   flex-direction: row;
   font-size: 14px;
@@ -421,7 +423,11 @@ li {
   margin-right: 5px;
 }
 
-a, a:hover, a:active, a:visited {
+.sns li:not(:last-of-type) a {
+  margin-right: 3px;
+}
+
+footer a, footer a:hover, footer a:active, footer a:visited {
   color: black;
   text-decoration: none;
 }
