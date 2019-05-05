@@ -3,7 +3,14 @@
 @font-face {
   font-family: 'Inconsolata';
   src: url('../font/Inconsolata.woff2') format('woff'),
-       url('../font/Inconsolata-Regular.ttf') format("truetype");
+       url('../font/Inconsolata-Regular.ttf') format("truetype"),
+       url('../font/Inconsolata-Bold.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: 'FiraSans';
+  src: url('../font/FiraSans.woff2') format('woff'),
+       url('../font/FiraSans-Light.ttf') format("truetype");
 }
 
 html, body {
@@ -402,7 +409,8 @@ label {
 /********** footer **********/
 
 footer {
-  font-family: 'Inconsolata', monospace;
+  font-family: 'FiraSans', sans-serif;
+  font-weight: 300;
   font-size: 16px;
   display: flex;
   flex-direction: row;
