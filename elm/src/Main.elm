@@ -194,7 +194,7 @@ type Msg
     | LoadedLocalStorage LoadLocalStorageValue
     | LocalStorageSaved String
     | GotSavedApiVersion String
-    | GotWebApiVersion (Result Http.Error String)
+    | GotApiVersionWeb (Result Http.Error String)
     | GotSavedRegions String
     | GotRegionsWeb (Result Http.Error String)
     | GotSavedAreaGarbage String
@@ -366,11 +366,11 @@ update msg model =
             ( { model | apiVersion = json }
             , Http.get
                 { url = apiBaseUrl ++ "/version.json"
-                , expect = Http.expectString GotWebApiVersion
+                , expect = Http.expectString GotApiVersionWeb
                 }
             )
 
-        GotWebApiVersion (Ok resp) ->
+        GotApiVersionWeb (Ok resp) ->
             let
                 jsonApiVersion =
                     decodeString (field "apiVersion" string) resp
@@ -428,7 +428,7 @@ update msg model =
                     else
                         ( model, Cmd.none )
 
-        GotWebApiVersion (Err error) ->
+        GotApiVersionWeb (Err error) ->
             -- Webから取れず、localStorageにもなければエラー
             if model.apiVersion == "" then
                 update (DataError (CommonUtil.httpError "[API VERSION]" error)) model

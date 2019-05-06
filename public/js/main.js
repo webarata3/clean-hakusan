@@ -5990,6 +5990,9 @@ var author$project$Main$Disclaimer = {$: 'Disclaimer'};
 var author$project$Main$GetError = function (a) {
 	return {$: 'GetError', a: a};
 };
+var author$project$Main$GotApiVersionWeb = function (a) {
+	return {$: 'GotApiVersionWeb', a: a};
+};
 var author$project$Main$GotSavedApiVersion = function (a) {
 	return {$: 'GotSavedApiVersion', a: a};
 };
@@ -5998,9 +6001,6 @@ var author$project$Main$GotSavedAreaGarbage = function (a) {
 };
 var author$project$Main$GotSavedRegions = function (a) {
 	return {$: 'GotSavedRegions', a: a};
-};
-var author$project$Main$GotWebApiVersion = function (a) {
-	return {$: 'GotWebApiVersion', a: a};
 };
 var author$project$Main$MenuOpen = {$: 'MenuOpen'};
 var author$project$Main$NoChange = {$: 'NoChange'};
@@ -7049,7 +7049,7 @@ var author$project$Main$update = F2(
 							{apiVersion: json}),
 						elm$http$Http$get(
 							{
-								expect: elm$http$Http$expectString(author$project$Main$GotWebApiVersion),
+								expect: elm$http$Http$expectString(author$project$Main$GotApiVersionWeb),
 								url: author$project$Main$apiBaseUrl + '/version.json'
 							}));
 				case 'LocalStorageSaved':
@@ -7074,7 +7074,7 @@ var author$project$Main$update = F2(
 						default:
 							return A2(elm$core$String$startsWith, 'areaGarbage-', key) ? _Utils_Tuple2(model, elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
-				case 'GotWebApiVersion':
+				case 'GotApiVersionWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
 						var jsonApiVersion = A2(
