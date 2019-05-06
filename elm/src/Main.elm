@@ -1,8 +1,9 @@
-port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, MenuState(..), Model, Msg(..), Region, SubMenuType(..), ViewState(..), apiBaseUrl, convertAreaGarbage, convertRegions, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbageWeb, getRegionsWeb, init, loadLocalStorage, localStorageSaved, main, onChange, onClickNoPrevent, retLoadLocalStorage, saveLocalStorage, subMenuOpenClass, subscriptions, update, view, viewArea, viewAreaGarbage, viewFooter, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewHeader, viewLine, viewMain, viewMenu, viewMenuBackground, viewMenuClass, viewRegion, viewSubMenuCredit, viewSubMenuDisclaimer, viewSubMenuPrivacyPolicy)
+port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, MenuState(..), Model, Msg(..), Region, SubMenuType(..), ViewState(..), apiBaseUrl, convertAreaGarbage, convertRegions, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbageWeb, getRegionsWeb, init, loadLocalStorage, localStorageSaved, main, onChange, onClickNoPrevent, retLoadLocalStorage, saveLocalStorage, subMenuOpenClass, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewHeader, viewLine, viewMain, viewMenu, viewMenuBackground, viewMenuClass, viewRegion, viewSubMenuCredit, viewSubMenuDisclaimer, viewSubMenuPrivacyPolicy)
 
 import Browser
 import CommonTime exposing (IntDate)
 import CommonUtil
+import Footer
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -540,7 +541,7 @@ view model =
     article [ id "app" ]
         [ viewHeader
         , viewMain model
-        , viewFooter
+        , Footer.viewFooter
         , viewMenuBackground model
         , viewMenu model
         , viewSubMenuDisclaimer (model.nowOpenSubMenuType == Disclaimer)
@@ -559,36 +560,6 @@ viewHeader =
             [ button [ class "header-button" ] [] ]
         , h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
         , div [ class "nothing" ] []
-        ]
-
-
-viewFooter : Html Msg
-viewFooter =
-    footer []
-        [ div [ class "copyright" ]
-            [ text "©2019 "
-            , a [ href "https://webarata3.dev" ] [ text "Shinichi ARATA（webarata3）" ]
-            ]
-        , div [ class "sns" ]
-            [ ul []
-                [ li []
-                    [ a [ href "https://twitter.com/webarata3" ]
-                        [ span [ class "fab fa-twitter" ] [] ]
-                    ]
-                , li []
-                    [ a [ href "https://facebook.com/arata.shinichi" ]
-                        [ span [ class "fab fa-facebook" ] [] ]
-                    ]
-                , li []
-                    [ a [ href "https://github.com/webarata3" ]
-                        [ span [ class "fab fa-github" ] [] ]
-                    ]
-                , li []
-                    [ a [ href "https://ja.stackoverflow.com/users/2214/webarata3?tab=profile" ]
-                        [ span [ class "fab fa-stack-overflow" ] [] ]
-                    ]
-                ]
-            ]
         ]
 
 
@@ -627,7 +598,7 @@ viewMenu model =
         ]
 
 
-onClickNoPrevent : msg -> Html.Attribute msg
+onClickNoPrevent : Msg -> Html.Attribute Msg
 onClickNoPrevent message =
     Html.Events.custom "click"
         (Json.Decode.succeed
@@ -792,7 +763,7 @@ viewLine value =
     div [] [ text value ]
 
 
-onChange : (String -> msg) -> Attribute msg
+onChange : (String -> Msg) -> Attribute Msg
 onChange handler =
     on "change" (Json.Decode.map handler Html.Events.targetValue)
 

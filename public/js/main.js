@@ -7274,7 +7274,7 @@ var elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var author$project$Main$viewFooter = A2(
+var author$project$Footer$viewFooter = A2(
 	elm$html$Html$footer,
 	_List_Nil,
 	_List_fromArray(
@@ -8959,7 +8959,7 @@ var author$project$Main$view = function (model) {
 			[
 				author$project$Main$viewHeader,
 				author$project$Main$viewMain(model),
-				author$project$Main$viewFooter,
+				author$project$Footer$viewFooter,
 				author$project$Main$viewMenuBackground(model),
 				author$project$Main$viewMenu(model),
 				author$project$Main$viewSubMenuDisclaimer(
