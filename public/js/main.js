@@ -5990,17 +5990,17 @@ var author$project$Main$Disclaimer = {$: 'Disclaimer'};
 var author$project$Main$GetError = function (a) {
 	return {$: 'GetError', a: a};
 };
+var author$project$Main$GotApiVersionLocal = function (a) {
+	return {$: 'GotApiVersionLocal', a: a};
+};
 var author$project$Main$GotApiVersionWeb = function (a) {
 	return {$: 'GotApiVersionWeb', a: a};
 };
-var author$project$Main$GotSavedApiVersion = function (a) {
-	return {$: 'GotSavedApiVersion', a: a};
+var author$project$Main$GotAreaGarbageLocal = function (a) {
+	return {$: 'GotAreaGarbageLocal', a: a};
 };
-var author$project$Main$GotSavedAreaGarbage = function (a) {
-	return {$: 'GotSavedAreaGarbage', a: a};
-};
-var author$project$Main$GotSavedRegions = function (a) {
-	return {$: 'GotSavedRegions', a: a};
+var author$project$Main$GotRegionsLocal = function (a) {
+	return {$: 'GotRegionsLocal', a: a};
 };
 var author$project$Main$MenuOpen = {$: 'MenuOpen'};
 var author$project$Main$NoChange = {$: 'NoChange'};
@@ -7023,25 +7023,25 @@ var author$project$Main$update = F2(
 									{areaNo: areaNo}),
 								author$project$Main$loadLocalStorage('apiVersion'));
 						case 'apiVersion':
-							var $temp$msg = author$project$Main$GotSavedApiVersion(localStorageValue.value),
+							var $temp$msg = author$project$Main$GotApiVersionLocal(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						case 'regions':
-							var $temp$msg = author$project$Main$GotSavedRegions(localStorageValue.value),
+							var $temp$msg = author$project$Main$GotRegionsLocal(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						default:
-							var $temp$msg = author$project$Main$GotSavedAreaGarbage(localStorageValue.value),
+							var $temp$msg = author$project$Main$GotAreaGarbageLocal(localStorageValue.value),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 					}
-				case 'GotSavedApiVersion':
+				case 'GotApiVersionLocal':
 					var json = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -7125,14 +7125,14 @@ var author$project$Main$update = F2(
 							model = $temp$model;
 							continue update;
 						} else {
-							var $temp$msg = author$project$Main$GotSavedRegions('regions'),
+							var $temp$msg = author$project$Main$GotRegionsLocal('regions'),
 								$temp$model = model;
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						}
 					}
-				case 'GotSavedRegions':
+				case 'GotRegionsLocal':
 					var jsonRegions = msg.a;
 					var regionsResult = author$project$Main$convertRegions(jsonRegions);
 					if (regionsResult.$ === 'Ok') {
@@ -7206,7 +7206,7 @@ var author$project$Main$update = F2(
 						model = $temp$model;
 						continue update;
 					}
-				case 'GotSavedAreaGarbage':
+				case 'GotAreaGarbageLocal':
 					var jsonAreaGarbage = msg.a;
 					var areaGarbageResult = author$project$Main$convertAreaGarbage(jsonAreaGarbage);
 					if (areaGarbageResult.$ === 'Ok') {

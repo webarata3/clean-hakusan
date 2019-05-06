@@ -193,11 +193,11 @@ type Msg
     | SetCurrentDate Time.Posix
     | LoadedLocalStorage LoadLocalStorageValue
     | LocalStorageSaved String
-    | GotSavedApiVersion String
+    | GotApiVersionLocal String
     | GotApiVersionWeb (Result Http.Error String)
-    | GotSavedRegions String
+    | GotRegionsLocal String
     | GotRegionsWeb (Result Http.Error String)
-    | GotSavedAreaGarbage String
+    | GotAreaGarbageLocal String
     | GotAreaGarbageWeb (Result Http.Error String)
     | ChangeArea String
     | ViewAreaGarbage
@@ -349,20 +349,20 @@ update msg model =
 
                 "apiVersion" ->
                     update
-                        (GotSavedApiVersion localStorageValue.value)
+                        (GotApiVersionLocal localStorageValue.value)
                         model
 
                 "regions" ->
                     update
-                        (GotSavedRegions localStorageValue.value)
+                        (GotRegionsLocal localStorageValue.value)
                         model
 
                 _ ->
                     update
-                        (GotSavedAreaGarbage localStorageValue.value)
+                        (GotAreaGarbageLocal localStorageValue.value)
                         model
 
-        GotSavedApiVersion json ->
+        GotApiVersionLocal json ->
             ( { model | apiVersion = json }
             , Http.get
                 { url = apiBaseUrl ++ "/version.json"
@@ -435,11 +435,11 @@ update msg model =
 
             else
                 -- localStorageにデータがあればそれを使う
-                update (GotSavedRegions "regions") model
+                update (GotRegionsLocal "regions") model
 
         -- 以前データを取得していてバージョンが変わっていない場合には
         -- localStorageから取得する
-        GotSavedRegions jsonRegions ->
+        GotRegionsLocal jsonRegions ->
             let
                 regionsResult =
                     convertRegions jsonRegions
@@ -498,7 +498,7 @@ update msg model =
         GotAreaGarbageWeb (Err error) ->
             update (DataError (CommonUtil.httpError "[AREA GARBAGE]" error)) model
 
-        GotSavedAreaGarbage jsonAreaGarbage ->
+        GotAreaGarbageLocal jsonAreaGarbage ->
             let
                 areaGarbageResult =
                     convertAreaGarbage jsonAreaGarbage
