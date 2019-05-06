@@ -6058,42 +6058,8 @@ var author$project$Main$getAreaGarbage = function (areaGarbageJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$Main$Region = F2(
-	function (regionName, areas) {
-		return {areas: areas, regionName: regionName};
-	});
-var author$project$Main$Area = F2(
-	function (areaNo, areaName) {
-		return {areaName: areaName, areaNo: areaNo};
-	});
-var author$project$Main$decodeArea = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Area,
-	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
-var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
-var author$project$Main$decodeRegion = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Region,
-	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
-var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
-var author$project$Main$getRegions = function (regionJson) {
-	var regionsResult = A2(
-		elm$json$Json$Decode$decodeString,
-		A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
-		regionJson);
-	if (regionsResult.$ === 'Ok') {
-		var resultJson = regionsResult.a;
-		return elm$core$Result$Ok(resultJson);
-	} else {
-		var error = regionsResult.a;
-		return elm$core$Result$Err(
-			author$project$CommonUtil$jsonError(error));
-	}
-};
-var author$project$Main$GotWebAreaGarbage = function (a) {
-	return {$: 'GotWebAreaGarbage', a: a};
+var author$project$Main$GotAreaGarbageFromWeb = function (a) {
+	return {$: 'GotAreaGarbageFromWeb', a: a};
 };
 var elm$core$Basics$composeR = F3(
 	function (f, g, x) {
@@ -6885,19 +6851,53 @@ var elm$http$Http$get = function (r) {
 	return elm$http$Http$request(
 		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
-var author$project$Main$getWebJsonAreaGarbage = function (areaNo) {
+var author$project$Main$getAreaGarbageFromWeb = function (areaNo) {
 	return elm$http$Http$get(
 		{
-			expect: elm$http$Http$expectString(author$project$Main$GotWebAreaGarbage),
+			expect: elm$http$Http$expectString(author$project$Main$GotAreaGarbageFromWeb),
 			url: author$project$Main$apiBaseUrl + ('/' + (areaNo + '.json'))
 		});
 };
-var author$project$Main$GotWebRegions = function (a) {
-	return {$: 'GotWebRegions', a: a};
+var author$project$Main$Region = F2(
+	function (regionName, areas) {
+		return {areas: areas, regionName: regionName};
+	});
+var author$project$Main$Area = F2(
+	function (areaNo, areaName) {
+		return {areaName: areaName, areaNo: areaNo};
+	});
+var author$project$Main$decodeArea = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Area,
+	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
+var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
+var author$project$Main$decodeRegion = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Region,
+	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
+var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
+var author$project$Main$getRegions = function (regionJson) {
+	var regionsResult = A2(
+		elm$json$Json$Decode$decodeString,
+		A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
+		regionJson);
+	if (regionsResult.$ === 'Ok') {
+		var resultJson = regionsResult.a;
+		return elm$core$Result$Ok(resultJson);
+	} else {
+		var error = regionsResult.a;
+		return elm$core$Result$Err(
+			author$project$CommonUtil$jsonError(error));
+	}
 };
-var author$project$Main$getWebJsonRegions = elm$http$Http$get(
+var author$project$Main$GotRegionsFromWeb = function (a) {
+	return {$: 'GotRegionsFromWeb', a: a};
+};
+var author$project$Main$getRegionsFromWeb = elm$http$Http$get(
 	{
-		expect: elm$http$Http$expectString(author$project$Main$GotWebRegions),
+		expect: elm$http$Http$expectString(author$project$Main$GotRegionsFromWeb),
 		url: author$project$Main$apiBaseUrl + '/regions.json'
 	});
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -7146,9 +7146,9 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var error = regionsResult.a;
-						return _Utils_Tuple2(model, author$project$Main$getWebJsonRegions);
+						return _Utils_Tuple2(model, author$project$Main$getRegionsFromWeb);
 					}
-				case 'GotWebRegions':
+				case 'GotRegionsFromWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
 						var regionsResult = author$project$Main$getRegions(resp);
@@ -7177,7 +7177,7 @@ var author$project$Main$update = F2(
 						model = $temp$model;
 						continue update;
 					}
-				case 'GotWebAreaGarbage':
+				case 'GotAreaGarbageFromWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
 						var areaGarbageResult = author$project$Main$getAreaGarbage(resp);
@@ -7220,7 +7220,7 @@ var author$project$Main$update = F2(
 						var error = areaGarbageResult.a;
 						return _Utils_Tuple2(
 							model,
-							author$project$Main$getWebJsonAreaGarbage(model.areaNo));
+							author$project$Main$getAreaGarbageFromWeb(model.areaNo));
 					}
 				case 'ChangeArea':
 					var areaNo = msg.a;
@@ -7233,7 +7233,7 @@ var author$project$Main$update = F2(
 				default:
 					return model.isVersionChange ? _Utils_Tuple2(
 						model,
-						author$project$Main$getWebJsonAreaGarbage(model.areaNo)) : _Utils_Tuple2(
+						author$project$Main$getAreaGarbageFromWeb(model.areaNo)) : _Utils_Tuple2(
 						model,
 						author$project$Main$loadLocalStorage(model.areaNo));
 			}

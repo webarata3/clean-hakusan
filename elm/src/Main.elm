@@ -1,4 +1,4 @@
-port module Main exposing (apiBaseUrl, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getRegions, getWebJsonAreaGarbage, getWebJsonRegions, init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update)
+port module Main exposing (apiBaseUrl, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getAreaGarbageFromWeb, getRegions, getRegionsFromWeb, init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update)
 
 import Browser
 import CommonTime exposing (IntDate)
@@ -44,19 +44,19 @@ apiBaseUrl =
     "/api"
 
 
-getWebJsonRegions : Cmd Msg
-getWebJsonRegions =
+getRegionsFromWeb : Cmd Msg
+getRegionsFromWeb =
     Http.get
         { url = apiBaseUrl ++ "/regions.json"
-        , expect = Http.expectString GotWebRegions
+        , expect = Http.expectString GotRegionsFromWeb
         }
 
 
-getWebJsonAreaGarbage : String -> Cmd Msg
-getWebJsonAreaGarbage areaNo =
+getAreaGarbageFromWeb : String -> Cmd Msg
+getAreaGarbageFromWeb areaNo =
     Http.get
         { url = apiBaseUrl ++ "/" ++ areaNo ++ ".json"
-        , expect = Http.expectString GotWebAreaGarbage
+        , expect = Http.expectString GotAreaGarbageFromWeb
         }
 
 
@@ -196,9 +196,9 @@ type Msg
     | GotSavedApiVersion String
     | GotWebApiVersion (Result Http.Error String)
     | GotSavedRegions String
-    | GotWebRegions (Result Http.Error String)
+    | GotRegionsFromWeb (Result Http.Error String)
     | GotSavedAreaGarbage String
-    | GotWebAreaGarbage (Result Http.Error String)
+    | GotAreaGarbageFromWeb (Result Http.Error String)
     | ChangeArea String
     | ViewAreaGarbage
 
@@ -454,9 +454,9 @@ update msg model =
 
                 -- localStorageにデータがなければWebから取得する
                 Err error ->
-                    ( model, getWebJsonRegions )
+                    ( model, getRegionsFromWeb )
 
-        GotWebRegions (Ok resp) ->
+        GotRegionsFromWeb (Ok resp) ->
             let
                 regionsResult =
                     getRegions resp
@@ -473,10 +473,10 @@ update msg model =
                 Err error ->
                     update (DataError error) model
 
-        GotWebRegions (Err error) ->
+        GotRegionsFromWeb (Err error) ->
             update (DataError (CommonUtil.httpError "[REGIONS]" error)) model
 
-        GotWebAreaGarbage (Ok resp) ->
+        GotAreaGarbageFromWeb (Ok resp) ->
             let
                 areaGarbageResult =
                     getAreaGarbage resp
@@ -495,7 +495,7 @@ update msg model =
                 Err error ->
                     update (DataError error) model
 
-        GotWebAreaGarbage (Err error) ->
+        GotAreaGarbageFromWeb (Err error) ->
             update (DataError (CommonUtil.httpError "[AREA GARBAGE]" error)) model
 
         GotSavedAreaGarbage jsonAreaGarbage ->
@@ -513,7 +513,7 @@ update msg model =
 
                 -- localStorageにデータがなければWebから取得する
                 Err error ->
-                    ( model, getWebJsonAreaGarbage model.areaNo )
+                    ( model, getAreaGarbageFromWeb model.areaNo )
 
         ChangeArea areaNo ->
             -- エリアが変わったら最初にareaNoを保存する
@@ -524,7 +524,7 @@ update msg model =
         ViewAreaGarbage ->
             if model.isVersionChange then
                 -- バージョンが変わっていたらWebから取得する
-                ( model, getWebJsonAreaGarbage model.areaNo )
+                ( model, getAreaGarbageFromWeb model.areaNo )
 
             else
                 -- バージョンが変わっていなければlocalStorageから取得する
