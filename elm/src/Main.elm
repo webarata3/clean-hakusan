@@ -1,4 +1,4 @@
-port module Main exposing (apiBaseUrl, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbage, getAreaGarbageWeb, getRegions, getRegionsWeb, init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update)
+port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, MenuState(..), Model, Msg(..), Region, SubMenuType(..), ViewState(..), apiBaseUrl, convertAreaGarbage, convertRegions, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbageWeb, getRegionsWeb, init, loadLocalStorage, localStorageSaved, main, onChange, onClickNoPrevent, retLoadLocalStorage, saveLocalStorage, subMenuOpenClass, subscriptions, update, view, viewArea, viewAreaGarbage, viewFooter, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewHeader, viewLine, viewMain, viewMenu, viewMenuBackground, viewMenuClass, viewRegion, viewSubMenuCredit, viewSubMenuDisclaimer, viewSubMenuPrivacyPolicy)
 
 import Browser
 import CommonTime exposing (IntDate)
@@ -104,8 +104,8 @@ decodeGarbage =
         (field "garbageDates" (list string))
 
 
-getRegions : String -> Result String (List Region)
-getRegions regionJson =
+convertRegions : String -> Result String (List Region)
+convertRegions regionJson =
     let
         regionsResult =
             decodeString (field "regions" decodeRegions) regionJson
@@ -118,8 +118,8 @@ getRegions regionJson =
             Err (CommonUtil.jsonError error)
 
 
-getAreaGarbage : String -> Result String AreaGarbage
-getAreaGarbage areaGarbageJson =
+convertAreaGarbage : String -> Result String AreaGarbage
+convertAreaGarbage areaGarbageJson =
     let
         areaGarbageResult =
             decodeString decodeAreaGarbage areaGarbageJson
@@ -442,7 +442,7 @@ update msg model =
         GotSavedRegions jsonRegions ->
             let
                 regionsResult =
-                    getRegions jsonRegions
+                    convertRegions jsonRegions
             in
             case regionsResult of
                 Ok regions ->
@@ -459,7 +459,7 @@ update msg model =
         GotRegionsWeb (Ok resp) ->
             let
                 regionsResult =
-                    getRegions resp
+                    convertRegions resp
             in
             case regionsResult of
                 Ok regions ->
@@ -479,7 +479,7 @@ update msg model =
         GotAreaGarbageWeb (Ok resp) ->
             let
                 areaGarbageResult =
-                    getAreaGarbage resp
+                    convertAreaGarbage resp
             in
             case areaGarbageResult of
                 Ok areaGarbage ->
@@ -501,7 +501,7 @@ update msg model =
         GotSavedAreaGarbage jsonAreaGarbage ->
             let
                 areaGarbageResult =
-                    getAreaGarbage jsonAreaGarbage
+                    convertAreaGarbage jsonAreaGarbage
             in
             case areaGarbageResult of
                 Ok areaGarbage ->

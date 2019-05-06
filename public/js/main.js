@@ -6011,12 +6011,6 @@ var author$project$Main$RequireRegion = function (a) {
 var author$project$Main$SystemError = {$: 'SystemError'};
 var author$project$Main$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var author$project$Main$apiBaseUrl = '/api';
-var elm$json$Json$Encode$null = _Json_encodeNull;
-var author$project$Main$copyText = _Platform_outgoingPort(
-	'copyText',
-	function ($) {
-		return elm$json$Json$Encode$null;
-	});
 var author$project$Main$AreaGarbage = F3(
 	function (areaNo, areaName, garbages) {
 		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
@@ -6047,7 +6041,7 @@ var author$project$Main$decodeAreaGarbage = A4(
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
 var elm$json$Json$Decode$decodeString = _Json_runOnString;
-var author$project$Main$getAreaGarbage = function (areaGarbageJson) {
+var author$project$Main$convertAreaGarbage = function (areaGarbageJson) {
 	var areaGarbageResult = A2(elm$json$Json$Decode$decodeString, author$project$Main$decodeAreaGarbage, areaGarbageJson);
 	if (areaGarbageResult.$ === 'Ok') {
 		var resultJson = areaGarbageResult.a;
@@ -6058,6 +6052,46 @@ var author$project$Main$getAreaGarbage = function (areaGarbageJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
+var author$project$Main$Region = F2(
+	function (regionName, areas) {
+		return {areas: areas, regionName: regionName};
+	});
+var author$project$Main$Area = F2(
+	function (areaNo, areaName) {
+		return {areaName: areaName, areaNo: areaNo};
+	});
+var author$project$Main$decodeArea = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Area,
+	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
+var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
+var author$project$Main$decodeRegion = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$Region,
+	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
+var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
+var author$project$Main$convertRegions = function (regionJson) {
+	var regionsResult = A2(
+		elm$json$Json$Decode$decodeString,
+		A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
+		regionJson);
+	if (regionsResult.$ === 'Ok') {
+		var resultJson = regionsResult.a;
+		return elm$core$Result$Ok(resultJson);
+	} else {
+		var error = regionsResult.a;
+		return elm$core$Result$Err(
+			author$project$CommonUtil$jsonError(error));
+	}
+};
+var elm$json$Json$Encode$null = _Json_encodeNull;
+var author$project$Main$copyText = _Platform_outgoingPort(
+	'copyText',
+	function ($) {
+		return elm$json$Json$Encode$null;
+	});
 var author$project$Main$GotAreaGarbageWeb = function (a) {
 	return {$: 'GotAreaGarbageWeb', a: a};
 };
@@ -6858,40 +6892,6 @@ var author$project$Main$getAreaGarbageWeb = function (areaNo) {
 			url: author$project$Main$apiBaseUrl + ('/' + (areaNo + '.json'))
 		});
 };
-var author$project$Main$Region = F2(
-	function (regionName, areas) {
-		return {areas: areas, regionName: regionName};
-	});
-var author$project$Main$Area = F2(
-	function (areaNo, areaName) {
-		return {areaName: areaName, areaNo: areaNo};
-	});
-var author$project$Main$decodeArea = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Area,
-	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string));
-var author$project$Main$decodeAreas = elm$json$Json$Decode$list(author$project$Main$decodeArea);
-var author$project$Main$decodeRegion = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Main$Region,
-	A2(elm$json$Json$Decode$field, 'regionName', elm$json$Json$Decode$string),
-	A2(elm$json$Json$Decode$field, 'areas', author$project$Main$decodeAreas));
-var author$project$Main$decodeRegions = elm$json$Json$Decode$list(author$project$Main$decodeRegion);
-var author$project$Main$getRegions = function (regionJson) {
-	var regionsResult = A2(
-		elm$json$Json$Decode$decodeString,
-		A2(elm$json$Json$Decode$field, 'regions', author$project$Main$decodeRegions),
-		regionJson);
-	if (regionsResult.$ === 'Ok') {
-		var resultJson = regionsResult.a;
-		return elm$core$Result$Ok(resultJson);
-	} else {
-		var error = regionsResult.a;
-		return elm$core$Result$Err(
-			author$project$CommonUtil$jsonError(error));
-	}
-};
 var author$project$Main$GotRegionsWeb = function (a) {
 	return {$: 'GotRegionsWeb', a: a};
 };
@@ -7134,7 +7134,7 @@ var author$project$Main$update = F2(
 					}
 				case 'GotSavedRegions':
 					var jsonRegions = msg.a;
-					var regionsResult = author$project$Main$getRegions(jsonRegions);
+					var regionsResult = author$project$Main$convertRegions(jsonRegions);
 					if (regionsResult.$ === 'Ok') {
 						var regions = regionsResult.a;
 						var $temp$msg = author$project$Main$ChangeArea(model.areaNo),
@@ -7151,7 +7151,7 @@ var author$project$Main$update = F2(
 				case 'GotRegionsWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
-						var regionsResult = author$project$Main$getRegions(resp);
+						var regionsResult = author$project$Main$convertRegions(resp);
 						if (regionsResult.$ === 'Ok') {
 							var regions = regionsResult.a;
 							return _Utils_Tuple2(
@@ -7180,7 +7180,7 @@ var author$project$Main$update = F2(
 				case 'GotAreaGarbageWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
-						var areaGarbageResult = author$project$Main$getAreaGarbage(resp);
+						var areaGarbageResult = author$project$Main$convertAreaGarbage(resp);
 						if (areaGarbageResult.$ === 'Ok') {
 							var areaGarbage = areaGarbageResult.a;
 							return _Utils_Tuple2(
@@ -7208,7 +7208,7 @@ var author$project$Main$update = F2(
 					}
 				case 'GotSavedAreaGarbage':
 					var jsonAreaGarbage = msg.a;
-					var areaGarbageResult = author$project$Main$getAreaGarbage(jsonAreaGarbage);
+					var areaGarbageResult = author$project$Main$convertAreaGarbage(jsonAreaGarbage);
 					if (areaGarbageResult.$ === 'Ok') {
 						var areaGarbage = areaGarbageResult.a;
 						return _Utils_Tuple2(
