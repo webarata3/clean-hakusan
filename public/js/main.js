@@ -7292,7 +7292,7 @@ var author$project$Main$viewFooter = A2(
 					elm$html$Html$a,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$href('https://webarata3.link')
+							elm$html$Html$Attributes$href('https://webarata3.dev')
 						]),
 					_List_fromArray(
 						[

@@ -567,7 +567,7 @@ viewFooter =
     footer []
         [ div [ class "copyright" ]
             [ text "©2019 "
-            , a [ href "https://webarata3.link" ] [ text "Shinichi ARATA（webarata3）" ]
+            , a [ href "https://webarata3.dev" ] [ text "Shinichi ARATA（webarata3）" ]
             ]
         , div [ class "sns" ]
             [ ul []
