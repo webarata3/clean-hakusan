@@ -3,7 +3,6 @@ port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, Load
 import Browser
 import CommonTime exposing (IntDate)
 import CommonUtil
-import Footer
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -13,6 +12,7 @@ import Task
 import Time
 import Time.Extra
 import TimeZone
+import View.Footer
 
 
 port loadLocalStorage : String -> Cmd msg
@@ -541,7 +541,7 @@ view model =
     article [ id "app" ]
         [ viewHeader
         , viewMain model
-        , Footer.viewFooter
+        , View.Footer.viewFooter
         , viewMenuBackground model
         , viewMenu model
         , viewSubMenuDisclaimer (model.nowOpenSubMenuType == Disclaimer)
