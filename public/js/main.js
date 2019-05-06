@@ -6058,8 +6058,8 @@ var author$project$Main$getAreaGarbage = function (areaGarbageJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$Main$GotAreaGarbageFromWeb = function (a) {
-	return {$: 'GotAreaGarbageFromWeb', a: a};
+var author$project$Main$GotAreaGarbageWeb = function (a) {
+	return {$: 'GotAreaGarbageWeb', a: a};
 };
 var elm$core$Basics$composeR = F3(
 	function (f, g, x) {
@@ -6851,10 +6851,10 @@ var elm$http$Http$get = function (r) {
 	return elm$http$Http$request(
 		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
-var author$project$Main$getAreaGarbageFromWeb = function (areaNo) {
+var author$project$Main$getAreaGarbageWeb = function (areaNo) {
 	return elm$http$Http$get(
 		{
-			expect: elm$http$Http$expectString(author$project$Main$GotAreaGarbageFromWeb),
+			expect: elm$http$Http$expectString(author$project$Main$GotAreaGarbageWeb),
 			url: author$project$Main$apiBaseUrl + ('/' + (areaNo + '.json'))
 		});
 };
@@ -6892,12 +6892,12 @@ var author$project$Main$getRegions = function (regionJson) {
 			author$project$CommonUtil$jsonError(error));
 	}
 };
-var author$project$Main$GotRegionsFromWeb = function (a) {
-	return {$: 'GotRegionsFromWeb', a: a};
+var author$project$Main$GotRegionsWeb = function (a) {
+	return {$: 'GotRegionsWeb', a: a};
 };
-var author$project$Main$getRegionsFromWeb = elm$http$Http$get(
+var author$project$Main$getRegionsWeb = elm$http$Http$get(
 	{
-		expect: elm$http$Http$expectString(author$project$Main$GotRegionsFromWeb),
+		expect: elm$http$Http$expectString(author$project$Main$GotRegionsWeb),
 		url: author$project$Main$apiBaseUrl + '/regions.json'
 	});
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -7146,9 +7146,9 @@ var author$project$Main$update = F2(
 						continue update;
 					} else {
 						var error = regionsResult.a;
-						return _Utils_Tuple2(model, author$project$Main$getRegionsFromWeb);
+						return _Utils_Tuple2(model, author$project$Main$getRegionsWeb);
 					}
-				case 'GotRegionsFromWeb':
+				case 'GotRegionsWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
 						var regionsResult = author$project$Main$getRegions(resp);
@@ -7177,7 +7177,7 @@ var author$project$Main$update = F2(
 						model = $temp$model;
 						continue update;
 					}
-				case 'GotAreaGarbageFromWeb':
+				case 'GotAreaGarbageWeb':
 					if (msg.a.$ === 'Ok') {
 						var resp = msg.a.a;
 						var areaGarbageResult = author$project$Main$getAreaGarbage(resp);
@@ -7220,7 +7220,7 @@ var author$project$Main$update = F2(
 						var error = areaGarbageResult.a;
 						return _Utils_Tuple2(
 							model,
-							author$project$Main$getAreaGarbageFromWeb(model.areaNo));
+							author$project$Main$getAreaGarbageWeb(model.areaNo));
 					}
 				case 'ChangeArea':
 					var areaNo = msg.a;
@@ -7233,7 +7233,7 @@ var author$project$Main$update = F2(
 				default:
 					return model.isVersionChange ? _Utils_Tuple2(
 						model,
-						author$project$Main$getAreaGarbageFromWeb(model.areaNo)) : _Utils_Tuple2(
+						author$project$Main$getAreaGarbageWeb(model.areaNo)) : _Utils_Tuple2(
 						model,
 						author$project$Main$loadLocalStorage(model.areaNo));
 			}
