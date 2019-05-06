@@ -2,6 +2,29 @@
 const CACHE_NAME = 'cache-20190506-02';
 const cacheWhitelist = ['cache-20190506-02'];
 const urlsToCache = [
+  '/api/01.json',
+  '/api/02.json',
+  '/api/03.json',
+  '/api/04.json',
+  '/api/05.json',
+  '/api/06.json',
+  '/api/07.json',
+  '/api/08.json',
+  '/api/09.json',
+  '/api/10.json',
+  '/api/11.json',
+  '/api/12.json',
+  '/api/13.json',
+  '/api/14.json',
+  '/api/15.json',
+  '/api/16.json',
+  '/api/17.json',
+  '/api/18.json',
+  '/api/19.json',
+  '/api/20.json',
+  '/api/21.json',
+  '/api/22.json',
+  '/api/23.json',
   '/css/font.css',
   '/css/main.css',
   '/css/reset.css',
@@ -32,7 +55,6 @@ const urlsToCache = [
   '/404.html',
   '/index.html'
 ];
-
 
 self.addEventListener('install', function (event) {
   // Perform install steps
