@@ -1,6 +1,100 @@
 {
-    "html_dir": "./html",
-    "json_dir": "./json",
-    "number_of_file": 23,
-    "year": 2019
+  "html_dir": "./html",
+  "json_dir": "./json",
+  "number_of_file": 23,
+  "year": 2019,
+  "areaCalendars": [
+    {
+      "areaNo": "01",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/mattoa.pdf"
+    },
+    {
+      "areaNo": "02",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/mattob.pdf"
+    },
+    {
+      "areaNo": "03",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/mattoc.pdf"
+    },
+    {
+      "areaNo": "04",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/ishikawa.pdf"
+    },
+    {
+      "areaNo": "05",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/kasama.pdf"
+    },
+    {
+      "areaNo": "06",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/dejiro.pdf"
+    },
+    {
+      "areaNo": "07",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/ichiki.pdf"
+    },
+    {
+      "areaNo": "08",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/nakaoku.pdf"
+    },
+    {
+      "areaNo": "09",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/chiyono.pdf"
+    },
+    {
+      "areaNo": "10",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/hayashinaka.pdf"
+    },
+    {
+      "areaNo": "11",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/mikawa.pdf"
+    },
+    {
+      "areaNo": "12",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/choya.pdf"
+    },
+    {
+      "areaNo": "13",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/minato.pdf"
+    },
+    {
+      "areaNo": "14",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/ichinomiya.pdf"
+    },
+    {
+      "areaNo": "15",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/tsurugi.pdf"
+    },
+    {
+      "areaNo": "16",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/tachihata.pdf"
+    },
+    {
+      "areaNo": "17",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/kurayama.pdf"
+    },
+    {
+      "areaNo": "18",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/hayashi.pdf"
+    },
+    {
+      "areaNo": "19",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/kawachi.pdf"
+    },
+    {
+      "areaNo": "20",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/yoshinodani.pdf"
+    },
+    {
+      "areaNo": "21",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/torigoe.pdf"
+    },
+    {
+      "areaNo": "22",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/oguchi.pdf"
+    },
+    {
+      "areaNo": "23",
+      "calendarUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1/siramine.pdf"
+    }
+  ]
 }

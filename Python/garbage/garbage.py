@@ -17,6 +17,7 @@ class Config():
     json_dir: str
     number_of_file: int
     year: int
+    areaCalendars: list()
 
     def __init__(self, settings_text: str):
         self.__logger = logging.getLogger('garbage')
@@ -29,6 +30,7 @@ class Config():
         self.json_dir = settings['json_dir']
         self.number_of_file = settings['number_of_file']
         self.year = settings['year']
+        self.areaCalendars = settings['areaCalendars']
 
     def __output_log(self) -> None:
         self.__output_all_log(['html_dir', 'json_dir', 'number_of_file'])
@@ -93,6 +95,7 @@ class HtmlToJson():
     __config: Config
     __soup: bs4.BeautifulSoup
     __result_dict: dict
+    __area_no: int
     __DAY_OF_WEEK_DICT: dict = {
         '日': calendar.SUNDAY,
         '月': calendar.MONDAY,
@@ -107,16 +110,26 @@ class HtmlToJson():
         self.__logger = logging.getLogger('garbage')
         self.__config = config
         self.__soup = bs4.BeautifulSoup(html, 'html.parser')
+        self.__area_no = area_no
         self.__result_dict = {
             'areaNo': '{:02}'.format(area_no),
             'garbages': []
         }
 
     def conversion(self) -> str:
+        self.__set_areaCalendars()
         self.__set_areaName()
         self.__get_bargages()
 
         return json.dumps(self.__result_dict, ensure_ascii=False, indent=2)
+
+    def __set_areaCalendars(self) -> None:
+        check_area_no = '{:02}'.format(self.__area_no)
+        for i in range(0, 23):
+            areaCalendar = self.__config.areaCalendars[i]
+            if areaCalendar['areaNo'] == check_area_no:
+                self.__result_dict['calendarUrl'] = areaCalendar['calendarUrl']
+                return
 
     def __set_areaName(self) -> None:
         areaName_str = self.__get_text_one('.container h4')
