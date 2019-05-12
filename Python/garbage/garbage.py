@@ -17,7 +17,7 @@ class Config():
     json_dir: str
     number_of_file: int
     year: int
-    areaCalendars: list()
+    areaCalendars: list[dict[str, str]]
 
     def __init__(self, settings_text: str):
         self.__logger = logging.getLogger('garbage')
