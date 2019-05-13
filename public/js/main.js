@@ -5220,7 +5220,7 @@ var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
 		{
 			apiVersion: '',
-			areaGarbage: {areaName: '', areaNo: '', garbages: _List_Nil},
+			areaGarbage: {areaName: '', areaNo: '', calendarUrl: '', garbages: _List_Nil},
 			areaNo: '',
 			currentDate: '',
 			dispDate: '',
@@ -6011,9 +6011,9 @@ var author$project$Main$RequireRegion = function (a) {
 var author$project$Main$SystemError = {$: 'SystemError'};
 var author$project$Main$ViewAreaGarbage = {$: 'ViewAreaGarbage'};
 var author$project$Main$apiBaseUrl = '/api';
-var author$project$Main$AreaGarbage = F3(
-	function (areaNo, areaName, garbages) {
-		return {areaName: areaName, areaNo: areaNo, garbages: garbages};
+var author$project$Main$AreaGarbage = F4(
+	function (areaNo, areaName, calendarUrl, garbages) {
+		return {areaName: areaName, areaNo: areaNo, calendarUrl: calendarUrl, garbages: garbages};
 	});
 var author$project$Main$Garbage = F2(
 	function (garbageTitles, garbageDates) {
@@ -6033,12 +6033,13 @@ var author$project$Main$decodeGarbage = A3(
 		'garbageDates',
 		elm$json$Json$Decode$list(elm$json$Json$Decode$string)));
 var author$project$Main$decodeGarbages = elm$json$Json$Decode$list(author$project$Main$decodeGarbage);
-var elm$json$Json$Decode$map3 = _Json_map3;
-var author$project$Main$decodeAreaGarbage = A4(
-	elm$json$Json$Decode$map3,
+var elm$json$Json$Decode$map4 = _Json_map4;
+var author$project$Main$decodeAreaGarbage = A5(
+	elm$json$Json$Decode$map4,
 	author$project$Main$AreaGarbage,
 	A2(elm$json$Json$Decode$field, 'areaNo', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'areaName', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'calendarUrl', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'garbages', author$project$Main$decodeGarbages));
 var elm$json$Json$Decode$decodeString = _Json_runOnString;
 var author$project$Main$convertAreaGarbage = function (areaGarbageJson) {
@@ -8361,14 +8362,43 @@ var author$project$Main$viewMain = function (model) {
 											model.regions))
 									])),
 								A2(
-								elm$html$Html$a,
+								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
+										elm$html$Html$Attributes$class('external-link')
 									]),
 								_List_fromArray(
 									[
-										elm$html$Html$text('地域が不明な方はこちらで確認してください')
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('地域が不明な方')
+											])),
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href('https://gb.hn-kouiki.jp/hakusan')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('ゴミ分別検索')
+											])),
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href(model.areaGarbage.calendarUrl)
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('ゴミの出し方')
+											]))
 									]))
 							])),
 						A2(author$project$Main$viewAreaGarbage, model.currentDate, model.areaGarbage)

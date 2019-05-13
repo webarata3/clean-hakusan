@@ -87,9 +87,10 @@ decodeArea =
 
 decodeAreaGarbage : Decoder AreaGarbage
 decodeAreaGarbage =
-    Json.Decode.map3 AreaGarbage
+    Json.Decode.map4 AreaGarbage
         (field "areaNo" string)
         (field "areaName" string)
+        (field "calendarUrl" string)
         (field "garbages" decodeGarbages)
 
 
@@ -174,6 +175,7 @@ type alias Area =
 type alias AreaGarbage =
     { areaNo : String
     , areaName : String
+    , calendarUrl : String
     , garbages : List Garbage
     }
 
@@ -241,7 +243,12 @@ init _ =
       , apiVersion = ""
       , areaNo = ""
       , regions = []
-      , areaGarbage = { areaNo = "", areaName = "", garbages = [] }
+      , areaGarbage =
+            { areaNo = ""
+            , areaName = ""
+            , calendarUrl = ""
+            , garbages = []
+            }
       }
     , Task.perform SetCurrentDate Time.now
     )
@@ -671,9 +678,17 @@ viewMain model =
                         , select [ id "area", onChange handler ]
                             (List.map (viewRegion model.areaNo) model.regions)
                         ]
-                    , a
-                        [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html" ]
-                        [ text "地域が不明な方はこちらで確認してください" ]
+                    , div [ class "external-link" ]
+                        [ a
+                            [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html" ]
+                            [ text "地域が不明な方" ]
+                        , a
+                            [ href "https://gb.hn-kouiki.jp/hakusan" ]
+                            [ text "ゴミ分別検索" ]
+                        , a
+                            [ href model.areaGarbage.calendarUrl ]
+                            [ text "ゴミの出し方" ]
+                        ]
                     ]
                 , viewAreaGarbage model.currentDate model.areaGarbage
                 ]

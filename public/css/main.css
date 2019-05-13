@@ -289,20 +289,26 @@ select {
   padding: 10px 20px;
 }
 
-.area a, .area a:hover, .area a:active, .area a:visited {
-  color: #ff4040;
-  font-size: 10pt;
-  text-align: right;
-  text-decoration: none;
-  margin-top: 5px;
-  width: 100%;
-}
-
 .select-area {
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
+}
+
+.external-link {
+  text-align: right;
+  width: 100%;
+}
+
+.external-link a, .external-link a:hover, .external-link a:active, .external-link a:visited {
+  color: #ff4040;
+  font-size: 10pt;
+  text-decoration: none;
+}
+
+.external-link a:not(:last-of-type) {
+  margin-right: 0.5rem;
 }
 
 label {
