@@ -3,3 +3,5 @@ elm-stuff/
 /firebase-debug.log
 /public/js/main.js
 /Python/garbage/html/
+/.vscode/*
+!.vscode/extensions.json
