@@ -302,7 +302,7 @@ select {
 }
 
 .external-link a, .external-link a:hover, .external-link a:active, .external-link a:visited {
-  color: #ff4040;
+  color: #03c;
   font-size: 10pt;
   text-decoration: none;
 }
