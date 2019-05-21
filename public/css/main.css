@@ -446,3 +446,26 @@ footer a, footer a:hover, footer a:active, footer a:visited {
   color: black;
   text-decoration: none;
 }
+
+@media screen and (max-height: 580px) {
+  .garbage-item:first-child:nth-last-child(4) .garbage-how-many-days,
+  .garbage-item:first-child:nth-last-child(4) ~ .garbage-item .garbage-how-many-days {
+    font-size: 28px;
+  }
+
+  .garbage-item:first-child:nth-last-child(4) .garbage-next-date,
+  .garbage-item:first-child:nth-last-child(4) ~ .garbage-item .garbage-next-date {
+    font-size: 10px;
+  }
+
+  .garbage-item:first-child:nth-last-child(5) .garbage-how-many-days,
+  .garbage-item:first-child:nth-last-child(5) ~ .garbage-item .garbage-how-many-days {
+    font-size: 24px;
+  }
+
+  .garbage-item:first-child:nth-last-child(5) .garbage-next-date,
+  .garbage-item:first-child:nth-last-child(5) ~ .garbage-item .garbage-next-date {
+    font-size: 10px;
+  }
+
+}
