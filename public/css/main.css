@@ -18,6 +18,7 @@ html, body {
   height: 100%;
   width: 100%;
   font-family: 'Hiragino Maru Gothic Pro', 'ヒラギノ丸ゴ Pro',
+               Roboto,'Droid Sans',
                'Meiryo', 'メイリオ', 'MS PGothic', 'MS Pゴシック', 'Webフォント', sans-serif;
   color: #444;
   -webkit-font-smoothing: antialiased;
@@ -467,5 +468,4 @@ footer a, footer a:hover, footer a:active, footer a:visited {
   .garbage-item:first-child:nth-last-child(5) ~ .garbage-item .garbage-next-date {
     font-size: 10px;
   }
-
 }
