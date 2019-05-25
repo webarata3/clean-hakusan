@@ -564,9 +564,11 @@ viewHeader =
             [ class "menu-button"
             , onClick ClickMenuOpen
             ]
-            [ button [ class "header-button" ] [] ]
+            [ button [ class "header-menu-button" ] [] ]
         , h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
-        , div [ class "nothing" ] []
+        , div [ class "menu-button" ]
+            [ button [ class "header-reload-button" ] []
+            ]
         ]
 
 
@@ -585,7 +587,18 @@ viewMenu model =
     menu [ type_ "toolbar", viewMenuClass model ]
         [ ul []
             [ li []
-                [ a [ href "how-to-use/" ] [ text "使い方" ] ]
+                [ a
+                    [ href "how-to-use/"
+                    , target "_blank"
+                    ]
+                    [ text "使い方"
+                    , img
+                        [ src "image/external-link-alt-solid.svg"
+                        , class "toolbar-external-link-image"
+                        ]
+                        []
+                    ]
+                ]
             , li []
                 [ a
                     [ href "#", onClickNoPrevent (ClickSubMenu Disclaimer) ]

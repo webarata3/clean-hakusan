@@ -74,10 +74,6 @@ header {
   width: 32px;
 }
 
-.nothing {
-  width: 32px;
-}
-
 main {
   display: flex;
   flex-direction: column;
@@ -234,7 +230,7 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   text-decoration: none;
 }
 
-.header-button {
+.header-menu-button, .header-reload-button {
   width: 24px;
   height: 24px;
   margin-right: 16px;
@@ -245,7 +241,14 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.header-menu-button {
   background: url(../image/menu.svg) 50% no-repeat;
+}
+
+.header-reload-button {
+  background: url(../image/redo-alt-solid.svg) 50% no-repeat;
 }
 
 .credit > div:not(:first-of-type) {
@@ -266,6 +269,13 @@ pre {
   font-size: 16px;
   line-height: 1.2rem;
   white-space: pre-wrap;
+}
+
+.toolbar-external-link-image {
+  margin-left: 5px;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
 }
 
 /********** select **********/
