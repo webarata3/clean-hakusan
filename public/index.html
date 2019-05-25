@@ -26,15 +26,12 @@
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/font.css">
-  <script src="js/main.js"></script>
+  <script defer src="js/sw_init.js"></script>
+  <script defer src="js/main.js"></script>
+  <script defer src="js/init.js"></script>
+  <script defer src="js/util.js"></script>
  </head>
  <body>
   <div id="elm"></div>
-  <script>
-   const app = Elm.Main.init({
-    node: document.getElementById('elm')
-   });
-  </script>
-  <script src="js/util.js"></script>
  </body>
 </html>
