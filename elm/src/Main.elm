@@ -193,6 +193,7 @@ type Msg
     | ClickMenuOpen
     | ClickMenuClose
     | ClickSubMenu SubMenuType
+    | ClickReload
     | SetCurrentDate Time.Posix
     | LoadedLocalStorage LoadLocalStorageValue
     | LocalStorageSaved String
@@ -327,6 +328,11 @@ update msg model =
 
                 Credit ->
                     ( { model | nowOpenSubMenuType = Credit }, Cmd.none )
+
+        ClickReload ->
+            ( model
+            , Task.perform SetCurrentDate Time.now
+            )
 
         SetCurrentDate time ->
             let
@@ -567,7 +573,11 @@ viewHeader =
             [ button [ class "header-menu-button" ] [] ]
         , h1 [ class "header-title" ] [ text "白山市ごみ収集日程" ]
         , div [ class "menu-button" ]
-            [ button [ class "header-reload-button" ] []
+            [ button
+                [ class "header-reload-button"
+                , onClick ClickReload
+                ]
+                []
             ]
         ]
 
