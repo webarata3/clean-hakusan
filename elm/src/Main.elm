@@ -693,13 +693,19 @@ viewMain model =
                         ]
                     , div [ class "external-link" ]
                         [ a
-                            [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html" ]
+                            [ href "http://www.city.hakusan.ishikawa.jp/shiminseikatsubu/kankyo/4r/gomi_chikunokensaku.html"
+                            , target "_blank"
+                            ]
                             [ text "地域が不明な方" ]
                         , a
-                            [ href "https://gb.hn-kouiki.jp/hakusan" ]
+                            [ href "https://gb.hn-kouiki.jp/hakusan"
+                            , target "_blank"
+                            ]
                             [ text "ゴミ分別検索" ]
                         , a
-                            [ href model.areaGarbage.calendarUrl ]
+                            [ href model.areaGarbage.calendarUrl
+                            , target "_blank"
+                            ]
                             [ text "ゴミの出し方" ]
                         ]
                     ]
