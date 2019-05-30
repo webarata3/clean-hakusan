@@ -133,7 +133,6 @@ menu {
   background-color: #fff;
   border-left: 1px solid #000;
   height: 100vh;
-  padding: 5px;
   position: fixed;
   left: 0;
   top: 0;
@@ -157,6 +156,7 @@ menu {
 menu ul {
   display: flex;
   flex-direction: column;
+  padding: 5px;
   font-size: 16px;
   line-height: 1.8em;
   white-space: nowrap;
@@ -227,6 +227,16 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   color: #1698cc;
   padding: 0 0.5rem;
   text-decoration: none;
+}
+
+.submenu-header {
+  background-color: #e0e0e0;
+  padding: 16px;
+}
+
+.close-button {
+  width: 24px;
+  height: 24px;
 }
 
 .header-menu-button, .header-reload-button {

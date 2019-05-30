@@ -595,7 +595,15 @@ viewMenuBackground model =
 viewMenu : Model -> Html Msg
 viewMenu model =
     menu [ type_ "toolbar", viewMenuClass model ]
-        [ ul []
+        [ div [ class "submenu-header" ]
+            [ img
+                [ src "image/times-solid.svg"
+                , class "close-button"
+                , onClick ClickMenuClose
+                ]
+                []
+            ]
+        , ul []
             [ li []
                 [ a
                     [ href "how-to-use/"
