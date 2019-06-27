@@ -1,6 +1,6 @@
 // キャッシュファイルの指定
-const CACHE_NAME = 'cache-20190506-02';
-const cacheWhitelist = ['cache-20190506-02'];
+const CACHE_NAME = 'cache-20190627-03';
+const cacheWhitelist = ['cache-20190627-03'];
 const urlsToCache = [
   '/api/01.json',
   '/api/02.json',
