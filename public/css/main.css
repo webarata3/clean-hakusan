@@ -1,24 +1,25 @@
 @charset "utf-8";
 
 @font-face {
-  font-family: 'Inconsolata';
-  src: url('../font/Inconsolata.woff2') format('woff'),
-       url('../font/Inconsolata-Regular.ttf') format("truetype"),
-       url('../font/Inconsolata-Bold.ttf') format("truetype");
+  font-family: "Inconsolata";
+  src: url("../font/Inconsolata.woff2") format("woff"),
+    url("../font/Inconsolata-Regular.ttf") format("truetype"),
+    url("../font/Inconsolata-Bold.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'FiraSans';
-  src: url('../font/FiraSans.woff2') format('woff'),
-       url('../font/FiraSans-Regular.ttf') format("truetype"),
-       url('../font/FiraSans-Light.ttf') format("truetype");
+  font-family: "FiraSans";
+  src: url("../font/FiraSans.woff2") format("woff"),
+    url("../font/FiraSans-Regular.ttf") format("truetype"),
+    url("../font/FiraSans-Light.ttf") format("truetype");
 }
 
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
-  font-family: 'Hiragino Maru Gothic Pro', 'ヒラギノ丸ゴ Pro', Roboto, 'Droid Sans',
-               'Meiryo', 'メイリオ', 'MS PGothic', 'MS Pゴシック', sans-serif;
+  font-family: "Hiragino Maru Gothic Pro", "ヒラギノ丸ゴ Pro", Roboto,
+    "Droid Sans", "Meiryo", "メイリオ", "MS PGothic", "MS Pゴシック", sans-serif;
   color: #444;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,6 +27,13 @@ html, body {
 
 html {
   overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+
+  /* 確認用 */
+  background-color: #00f;
 }
 
 body {
@@ -56,7 +64,7 @@ header {
   align-items: stretch;
   align-content: center;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 9px 1px rgba(0, 0, 0, 0.12),
-  0 4px 2px -2px rgba(0, 0, 0, 0.2);
+    0 4px 2px -2px rgba(0, 0, 0, 0.2);
   transition: transform 0.233s cubic-bezier(0, 0, 0.21, 1) 0.1s;
 }
 
@@ -124,8 +132,8 @@ button {
   top: 0;
   left: 0;
   width: 100%;
-  height:100%;
-  background: rgba(0,0,0,0.6);
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
   z-index: 100;
 }
 
@@ -166,7 +174,10 @@ menu li:not(:nth-child(1)) {
   border-top: 1px solid #ccc;
 }
 
-menu a, menu a:hover, menu a:active, menu a:visited {
+menu a,
+menu a:hover,
+menu a:active,
+menu a:visited {
   display: block;
   color: #000;
   text-decoration: none;
@@ -223,7 +234,11 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   transform: translate(0, 5vh);
 }
 
-.sub-menu a, .sub-menu a:link, .sub-menu a:visited, .sub-menu a:hover, .sub-menu a:active {
+.sub-menu a,
+.sub-menu a:link,
+.sub-menu a:visited,
+.sub-menu a:hover,
+.sub-menu a:active {
   color: #1698cc;
   padding: 0 0.5rem;
   text-decoration: none;
@@ -239,7 +254,8 @@ menu a, menu a:hover, menu a:active, menu a:visited {
   height: 24px;
 }
 
-.header-menu-button, .header-reload-button {
+.header-menu-button,
+.header-reload-button {
   width: 24px;
   height: 24px;
   margin-right: 16px;
@@ -274,7 +290,7 @@ menu a, menu a:hover, menu a:active, menu a:visited {
 }
 
 pre {
-  font-family: 'Inconsolata', monospace;
+  font-family: "Inconsolata", monospace;
   font-size: 16px;
   line-height: 1.2rem;
   white-space: pre-wrap;
@@ -293,7 +309,8 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: url(../image/arrow.png) 99% 50% no-repeat, linear-gradient(to bottom, #fff 0%, #efebe1 100%);
+  background: url(../image/arrow.png) 99% 50% no-repeat,
+    linear-gradient(to bottom, #fff 0%, #efebe1 100%);
   background-size: 20px, 100%;
   border: 1px solid #999;
   flex: 1;
@@ -321,7 +338,10 @@ select {
   width: 100%;
 }
 
-.external-link a, .external-link a:hover, .external-link a:active, .external-link a:visited {
+.external-link a,
+.external-link a:hover,
+.external-link a:active,
+.external-link a:visited {
   color: #03c;
   font-size: 10pt;
   text-decoration: none;
@@ -365,7 +385,7 @@ label {
   position: relative;
 }
 
-.garbage-title:before{
+.garbage-title:before {
   content: "";
   position: absolute;
   top: 50%;
@@ -376,7 +396,7 @@ label {
   z-index: 2;
 }
 
-.garbage-title:after{
+.garbage-title:after {
   content: "";
   position: absolute;
   top: 50%;
@@ -435,7 +455,7 @@ label {
 
 /********** footer **********/
 footer {
-  font-family: 'FiraSans', sans-serif;
+  font-family: "FiraSans", sans-serif;
   font-weight: 300;
   font-size: 16px;
   display: flex;
@@ -461,29 +481,40 @@ li {
   margin-right: 3px;
 }
 
-footer a, footer a:hover, footer a:active, footer a:visited {
+footer a,
+footer a:hover,
+footer a:active,
+footer a:visited {
   color: black;
   text-decoration: none;
 }
 
 @media screen and (max-height: 580px) {
   .garbage-item:first-child:nth-last-child(4) .garbage-how-many-days,
-  .garbage-item:first-child:nth-last-child(4) ~ .garbage-item .garbage-how-many-days {
+  .garbage-item:first-child:nth-last-child(4)
+    ~ .garbage-item
+    .garbage-how-many-days {
     font-size: 28px;
   }
 
   .garbage-item:first-child:nth-last-child(4) .garbage-next-date,
-  .garbage-item:first-child:nth-last-child(4) ~ .garbage-item .garbage-next-date {
+  .garbage-item:first-child:nth-last-child(4)
+    ~ .garbage-item
+    .garbage-next-date {
     font-size: 10px;
   }
 
   .garbage-item:first-child:nth-last-child(5) .garbage-how-many-days,
-  .garbage-item:first-child:nth-last-child(5) ~ .garbage-item .garbage-how-many-days {
+  .garbage-item:first-child:nth-last-child(5)
+    ~ .garbage-item
+    .garbage-how-many-days {
     font-size: 24px;
   }
 
   .garbage-item:first-child:nth-last-child(5) .garbage-next-date,
-  .garbage-item:first-child:nth-last-child(5) ~ .garbage-item .garbage-next-date {
+  .garbage-item:first-child:nth-last-child(5)
+    ~ .garbage-item
+    .garbage-next-date {
     font-size: 10px;
   }
 }

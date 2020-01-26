@@ -1,5 +1,5 @@
-((global) => {
+(global => {
   global.app = Elm.Main.init({
-    node: document.getElementById('elm')
+    node: document.getElementById("elm")
   });
 })(this);
