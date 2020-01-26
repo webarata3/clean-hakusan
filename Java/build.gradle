@@ -1,0 +1,20 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 13
+targetCompatibility = 13
+
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'dev.webarata3'
+    }
+}
