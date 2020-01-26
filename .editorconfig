@@ -14,5 +14,5 @@ indent_size = 1
 [*.css]
 indent_size = 2
 
-[*.py]
+[*.java]
 indent_size = 4
