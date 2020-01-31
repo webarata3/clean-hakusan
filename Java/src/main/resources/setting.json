@@ -1,46 +1,47 @@
 {
+  "years": [2019, 2020],
   "regions": [
     {
       "regionName": "松任地域",
       "areas": [
         {
-          "areaNo": "01",
+          "areaNo": 1,
           "areaName": "松任Ａ"
         },
         {
-          "areaNo": "02",
+          "areaNo": 2,
           "areaName": "松任Ｂ・旭"
         },
         {
-          "areaNo": "03",
+          "areaNo": 3,
           "areaName": "松任Ｃ"
         },
         {
-          "areaNo": "04",
+          "areaNo": 4,
           "areaName": "石川・柏野"
         },
         {
-          "areaNo": "05",
+          "areaNo": 5,
           "areaName": "笠間・宮保・加賀野"
         },
         {
-          "areaNo": "06",
+          "areaNo": 6,
           "areaName": "出城・御手洗"
         },
         {
-          "areaNo": "07",
+          "areaNo": 7,
           "areaName": "一木"
         },
         {
-          "areaNo": "08",
+          "areaNo": 8,
           "areaName": "中奥・郷"
         },
         {
-          "areaNo": "09",
+          "areaNo": 9,
           "areaName": "千代野"
         },
         {
-          "areaNo": "10",
+          "areaNo": 10,
           "areaName": "林中・山島"
         }
       ]
@@ -49,15 +50,15 @@
       "regionName": "美川地域",
       "areas": [
         {
-          "areaNo": "11",
+          "areaNo": 11,
           "areaName": "美川"
         },
         {
-          "areaNo": "12",
+          "areaNo": 12,
           "areaName": "蝶屋"
         },
         {
-          "areaNo": "13",
+          "areaNo": 13,
           "areaName": "湊"
         }
       ]
@@ -66,23 +67,23 @@
       "regionName": "鶴来地域",
       "areas": [
         {
-          "areaNo": "14",
+          "areaNo": 14,
           "areaName": "一ノ宮"
         },
         {
-          "areaNo": "15",
+          "areaNo": 15,
           "areaName": "鶴来"
         },
         {
-          "areaNo": "16",
+          "areaNo": 16,
           "areaName": "舘畑"
         },
         {
-          "areaNo": "17",
+          "areaNo": 17,
           "areaName": "蔵山"
         },
         {
-          "areaNo": "18",
+          "areaNo": 18,
           "areaName": "林"
         }
       ]
@@ -91,23 +92,23 @@
       "regionName": "白山ろく地域",
       "areas": [
         {
-          "areaNo": "19",
+          "areaNo": 19,
           "areaName": "河内"
         },
         {
-          "areaNo": "20",
+          "areaNo": 20,
           "areaName": "吉野谷（中宮除く）"
         },
         {
-          "areaNo": "21",
+          "areaNo": 21,
           "areaName": "鳥越（仏師ヶ野除く）"
         },
         {
-          "areaNo": "22",
+          "areaNo": 22,
           "areaName": "中宮・仏師ヶ野・尾口（深瀬除く）"
         },
         {
-          "areaNo": "23",
+          "areaNo": 23,
           "areaName": "深瀬・白峰"
         }
       ]
