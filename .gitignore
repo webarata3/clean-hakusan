@@ -5,3 +5,4 @@ elm-stuff/
 /Python/garbage/html/
 /.vscode/*
 !.vscode/extensions.json
+/node_modules/
