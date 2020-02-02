@@ -1,17 +1,15 @@
 port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, MenuState(..), Model, Msg(..), Region, SubMenuType(..), ViewState(..), apiBaseUrl, convertAreaGarbage, convertRegions, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbageWeb, getRegionsWeb, init, loadLocalStorage, localStorageSaved, main, onChange, onClickNoPrevent, retLoadLocalStorage, saveLocalStorage, subMenuOpenClass, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewHeader, viewLine, viewMain, viewMenu, viewMenuBackground, viewMenuClass, viewRegion, viewSubMenuCredit, viewSubMenuDisclaimer, viewSubMenuPrivacyPolicy)
 
 import Browser
-import CommonTime exposing (IntDate)
+import CommonTime
 import CommonUtil
-import Html exposing (..)
+import Html exposing (Attribute, Html, a, article, button, div, h1, h2, h3, img, label, li, main_, menu, optgroup, option, p, pre, select, span, text, ul)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http exposing (..)
 import Json.Decode exposing (Decoder, decodeString, field, list, string)
 import Task
 import Time
-import Time.Extra
-import TimeZone
 import View.Footer
 
 
@@ -63,7 +61,7 @@ getAreaGarbageWeb areaNo =
 
 decodeRegions : Decoder (List Region)
 decodeRegions =
-    list decodeRegion
+    Json.Decode.list decodeRegion
 
 
 decodeRegion : Decoder Region
@@ -75,7 +73,7 @@ decodeRegion =
 
 decodeAreas : Decoder (List Area)
 decodeAreas =
-    list decodeArea
+    Json.Decode.list decodeArea
 
 
 decodeArea : Decoder Area
@@ -96,14 +94,14 @@ decodeAreaGarbage =
 
 decodeGarbages : Decoder (List Garbage)
 decodeGarbages =
-    list decodeGarbage
+    Json.Decode.list decodeGarbage
 
 
 decodeGarbage : Decoder Garbage
 decodeGarbage =
     Json.Decode.map2 Garbage
-        (field "garbageTitles" (list string))
-        (field "garbageDates" (list string))
+        (field "garbageTitles" (Json.Decode.list string))
+        (field "garbageDates" (Json.Decode.list string))
 
 
 convertRegions : String -> Result String (List Region)
