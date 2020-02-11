@@ -8,13 +8,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.jsoup.Jsoup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import dev.webarata3.hakusan.clean.entity.AreaGarbage;
 import dev.webarata3.hakusan.clean.entity.Garbage;
 
 public class GarbageJson {
@@ -50,7 +50,7 @@ public class GarbageJson {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            String json = mapper.writeValueAsString(Map.of(String.format("%02d", areaNo), garbages));
+            String json = mapper.writeValueAsString(new AreaGarbage(areaNo, "全う", "test", garbages));
             Path outputPath = Paths.get("output", String.format("%02d.json", areaNo));
             Files.writeString(outputPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         } catch (IOException e) {

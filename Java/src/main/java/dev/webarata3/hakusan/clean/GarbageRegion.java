@@ -4,7 +4,7 @@ import java.util.List;
 
 public class GarbageRegion {
     private String regionName;
-    private List<GarbageArea> areas;
+    private List<Area> areas;
 
     public String getRegionName() {
         return regionName;
@@ -14,11 +14,11 @@ public class GarbageRegion {
         this.regionName = regionName;
     }
 
-    public List<GarbageArea> getAreas() {
+    public List<Area> getAreas() {
         return areas;
     }
 
-    public void setAreas(List<GarbageArea> areas) {
+    public void setAreas(List<Area> areas) {
         this.areas = areas;
     }
 }

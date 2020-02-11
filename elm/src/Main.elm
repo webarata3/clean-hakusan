@@ -1,4 +1,4 @@
-port module Main exposing (ApiVersionState(..), Area, AreaGarbage, Garbage, LoadLocalStorageValue, MenuState(..), Model, Msg(..), Region, SubMenuType(..), ViewState(..), apiBaseUrl, convertAreaGarbage, convertRegions, copyText, decodeArea, decodeAreaGarbage, decodeAreas, decodeGarbage, decodeGarbages, decodeRegion, decodeRegions, getAreaGarbageWeb, getRegionsWeb, init, loadLocalStorage, localStorageSaved, main, onChange, onClickNoPrevent, retLoadLocalStorage, saveLocalStorage, subMenuOpenClass, subscriptions, update, view, viewArea, viewAreaGarbage, viewGarbage, viewGarbageDates, viewGarbageTitles, viewGarbages, viewHeader, viewLine, viewMain, viewMenu, viewMenuBackground, viewMenuClass, viewRegion, viewSubMenuCredit, viewSubMenuDisclaimer, viewSubMenuPrivacyPolicy)
+port module Main exposing (Model, Msg(..), ViewState(..), init, loadLocalStorage, main, retLoadLocalStorage, subscriptions, update, view)
 
 import Browser
 import CommonTime
@@ -10,6 +10,7 @@ import Http
 import Json.Decode exposing (Decoder, decodeString, field, list, string)
 import Task
 import Time
+import Url.Builder
 import View.Footer
 
 
@@ -38,25 +39,100 @@ main =
         }
 
 
-apiBaseUrl : String
-apiBaseUrl =
-    "/api"
+
+-- MODEL
 
 
-getRegionsWeb : Cmd Msg
-getRegionsWeb =
-    Http.get
-        { url = apiBaseUrl ++ "/regions.json"
-        , expect = Http.expectString GotRegionsWeb
-        }
+type alias Model =
+    { viewState : ViewState
+    , menuState : MenuState
+    , nowOpenSubMenuType : SubMenuType
+    , errorMessage : String
+    , isVersionChange : Bool
+    , time : Time.Posix
+    , currentDate : String
+    , apiVersion : String
+    , areaNo : String
+    , regions : List Region
+    , areaGarbage : AreaGarbage
+    }
 
 
-getAreaGarbageWeb : String -> Cmd Msg
-getAreaGarbageWeb areaNo =
-    Http.get
-        { url = apiBaseUrl ++ "/" ++ areaNo ++ ".json"
-        , expect = Http.expectString GotAreaGarbageWeb
-        }
+type Msg
+    = DataError String
+    | Loading
+    | CopyText
+    | ClickMenuOpen
+    | ClickMenuClose
+    | ClickSubMenu SubMenuType
+    | ClickReload
+    | SetCurrentDate Time.Posix
+    | LoadedLocalStorage LoadLocalStorageValue
+    | LocalStorageSaved String
+    | GotApiVersionLocalStorage String
+    | GotApiVersionWeb (Result Http.Error String)
+    | GotRegionsLocalStorage String
+    | GotRegionsWeb (Result Http.Error String)
+    | GotAreaGarbageLocalStorage String
+    | GotAreaGarbageWeb (Result Http.Error String)
+    | ChangeArea String
+    | ViewAreaGarbage
+
+
+type ViewState
+    = PrepareData
+    | SystemError
+    | DataOk
+
+
+type MenuState
+    = MenuClose
+    | MenuOpen
+
+
+type ApiVersionState
+    = NoChange
+    | RequireRegion String
+    | GetError String
+
+
+type SubMenuType
+    = NoOpenSubMenu
+    | Disclaimer
+    | PrivacyPolicy
+    | Credit
+
+
+type alias LoadLocalStorageValue =
+    { key : String
+    , value : String
+    }
+
+
+type alias Region =
+    { regionName : String
+    , areas : List Area
+    }
+
+
+type alias Area =
+    { areaNo : String
+    , areaName : String
+    }
+
+
+type alias AreaGarbage =
+    { areaNo : String
+    , areaName : String
+    , calendarUrl : String
+    , garbages : List Garbage
+    }
+
+
+type alias Garbage =
+    { garbageTitles : List String
+    , garbageDates : List String
+    }
 
 
 decodeRegions : Decoder (List Region)
@@ -104,131 +180,6 @@ decodeGarbage =
         (field "garbageDates" (Json.Decode.list string))
 
 
-convertRegions : String -> Result String (List Region)
-convertRegions regionJson =
-    let
-        regionsResult =
-            decodeString (field "regions" decodeRegions) regionJson
-    in
-    case regionsResult of
-        Ok resultJson ->
-            Ok resultJson
-
-        Err error ->
-            Err (CommonUtil.jsonError error)
-
-
-convertAreaGarbage : String -> Result String AreaGarbage
-convertAreaGarbage areaGarbageJson =
-    let
-        areaGarbageResult =
-            decodeString decodeAreaGarbage areaGarbageJson
-    in
-    case areaGarbageResult of
-        Ok resultJson ->
-            Ok resultJson
-
-        Err error ->
-            Err (CommonUtil.jsonError error)
-
-
-
--- MODEL
-
-
-type alias Model =
-    { viewState : ViewState
-    , menuState : MenuState
-    , nowOpenSubMenuType : SubMenuType
-    , errorMessage : String
-    , isVersionChange : Bool
-    , time : Time.Posix
-    , dispDate : String
-    , currentDate : String
-    , apiVersion : String
-    , areaNo : String
-    , regions : List Region
-    , areaGarbage : AreaGarbage
-    }
-
-
-type alias LoadLocalStorageValue =
-    { key : String
-    , value : String
-    }
-
-
-type alias Region =
-    { regionName : String
-    , areas : List Area
-    }
-
-
-type alias Area =
-    { areaNo : String
-    , areaName : String
-    }
-
-
-type alias AreaGarbage =
-    { areaNo : String
-    , areaName : String
-    , calendarUrl : String
-    , garbages : List Garbage
-    }
-
-
-type alias Garbage =
-    { garbageTitles : List String
-    , garbageDates : List String
-    }
-
-
-type Msg
-    = DataError String
-    | Loading
-    | CopyText
-    | ClickMenuOpen
-    | ClickMenuClose
-    | ClickSubMenu SubMenuType
-    | ClickReload
-    | SetCurrentDate Time.Posix
-    | LoadedLocalStorage LoadLocalStorageValue
-    | LocalStorageSaved String
-    | GotApiVersionLocal String
-    | GotApiVersionWeb (Result Http.Error String)
-    | GotRegionsLocal String
-    | GotRegionsWeb (Result Http.Error String)
-    | GotAreaGarbageLocal String
-    | GotAreaGarbageWeb (Result Http.Error String)
-    | ChangeArea String
-    | ViewAreaGarbage
-
-
-type ViewState
-    = PrepareData
-    | SystemError
-    | DataOk
-
-
-type MenuState
-    = MenuClose
-    | MenuOpen
-
-
-type ApiVersionState
-    = NoChange
-    | RequireRegion String
-    | GetError String
-
-
-type SubMenuType
-    = NoOpenSubMenu
-    | Disclaimer
-    | PrivacyPolicy
-    | Credit
-
-
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { viewState = PrepareData
@@ -237,7 +188,6 @@ init _ =
       , errorMessage = ""
       , isVersionChange = False
       , time = Time.millisToPosix 0
-      , dispDate = ""
       , currentDate = ""
       , apiVersion = ""
       , areaNo = ""
@@ -268,13 +218,23 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Loading ->
-            ( { model | apiVersion = "" }
-            , Cmd.none
+        SetCurrentDate time ->
+            let
+                intDate =
+                    CommonTime.posixToIntDate time
+            in
+            ( { model
+                | currentDate = CommonTime.intDateToYyyymmddDate intDate
+              }
+            , loadLocalStorage "areaNo"
             )
 
-        DataError errorMessage ->
-            ( { model | viewState = SystemError, errorMessage = errorMessage }
+        DataError error ->
+            -- TODO
+            ( model, Cmd.none )
+
+        Loading ->
+            ( { model | apiVersion = "" }
             , Cmd.none
             )
 
@@ -332,20 +292,8 @@ update msg model =
             , Task.perform SetCurrentDate Time.now
             )
 
-        SetCurrentDate time ->
-            let
-                intDate =
-                    CommonTime.posixToIntDate time
-            in
-            ( { model
-                | dispDate = CommonTime.intDateToDispDate intDate
-                , currentDate = CommonTime.intDateToYyyymmddDate intDate
-              }
-            , loadLocalStorage "areaNo"
-            )
-
         LoadedLocalStorage localStorageValue ->
-            case Debug.log "分岐" localStorageValue.key of
+            case localStorageValue.key of
                 "areaNo" ->
                     let
                         areaNo =
@@ -361,23 +309,23 @@ update msg model =
 
                 "apiVersion" ->
                     update
-                        (GotApiVersionLocal localStorageValue.value)
+                        (GotApiVersionLocalStorage localStorageValue.value)
                         model
 
                 "regions" ->
                     update
-                        (GotRegionsLocal localStorageValue.value)
+                        (GotRegionsLocalStorage localStorageValue.value)
                         model
 
                 _ ->
                     update
-                        (GotAreaGarbageLocal localStorageValue.value)
+                        (GotAreaGarbageLocalStorage localStorageValue.value)
                         model
 
-        GotApiVersionLocal json ->
+        GotApiVersionLocalStorage json ->
             ( { model | apiVersion = json }
-            , Http.get
-                { url = apiBaseUrl ++ "/version.json"
+            , noCacheGet
+                { url = getApiUrl [ "version.json" ]
                 , expect = Http.expectString GotApiVersionWeb
                 }
             )
@@ -388,18 +336,16 @@ update msg model =
                     decodeString (field "apiVersion" string) resp
 
                 apiVersionState =
-                    Debug.log "apiVersionState"
-                        (case jsonApiVersion of
-                            Ok webApiVersion ->
-                                if model.apiVersion == "" || webApiVersion > model.apiVersion then
-                                    RequireRegion webApiVersion
+                    case jsonApiVersion of
+                        Ok webApiVersion ->
+                            if model.apiVersion == "" || webApiVersion > model.apiVersion then
+                                RequireRegion webApiVersion
 
-                                else
-                                    NoChange
+                            else
+                                NoChange
 
-                            Err error ->
-                                GetError (CommonUtil.jsonError error)
-                        )
+                        Err error ->
+                            GetError (CommonUtil.jsonError error)
             in
             case apiVersionState of
                 RequireRegion webApiVersion ->
@@ -447,11 +393,11 @@ update msg model =
 
             else
                 -- localStorageにデータがあればそれを使う
-                update (GotRegionsLocal "regions") model
+                update (GotRegionsLocalStorage "regions") model
 
         -- 以前データを取得していてバージョンが変わっていない場合には
         -- localStorageから取得する
-        GotRegionsLocal jsonRegions ->
+        GotRegionsLocalStorage jsonRegions ->
             let
                 regionsResult =
                     convertRegions jsonRegions
@@ -510,7 +456,7 @@ update msg model =
         GotAreaGarbageWeb (Err error) ->
             update (DataError (CommonUtil.httpError "[AREA GARBAGE]" error)) model
 
-        GotAreaGarbageLocal jsonAreaGarbage ->
+        GotAreaGarbageLocalStorage jsonAreaGarbage ->
             let
                 areaGarbageResult =
                     convertAreaGarbage jsonAreaGarbage
@@ -541,6 +487,76 @@ update msg model =
             else
                 -- バージョンが変わっていなければlocalStorageから取得する
                 ( model, loadLocalStorage model.areaNo )
+
+
+
+-- FUNCTION
+
+
+noCacheGet : { url : String, expect : Http.Expect msg } -> Cmd msg
+noCacheGet r =
+    Http.request
+        { method = "GET"
+        , headers =
+            [ Http.header "pragma" "no-cache"
+            , Http.header "Cache-Control" "no-cache"
+            , Http.header "If-Modified-Since" "Sat, 01 Jan 2000 00:00:00 GMT"
+            ]
+        , url = r.url
+        , body = Http.emptyBody
+        , expect = r.expect
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+getApiUrl : List String -> String
+getApiUrl paths =
+    Url.Builder.absolute ("api" :: paths) []
+
+
+convertRegions : String -> Result String (List Region)
+convertRegions regionJson =
+    let
+        regionsResult =
+            decodeString (field "regions" decodeRegions) regionJson
+    in
+    case regionsResult of
+        Ok resultJson ->
+            Ok resultJson
+
+        Err error ->
+            Err (CommonUtil.jsonError error)
+
+
+getRegionsWeb : Cmd Msg
+getRegionsWeb =
+    noCacheGet
+        { url = getApiUrl <| List.singleton "regions.json"
+        , expect = Http.expectString GotRegionsWeb
+        }
+
+
+getAreaGarbageWeb : String -> Cmd Msg
+getAreaGarbageWeb areaNo =
+    noCacheGet
+        { url = getApiUrl <| List.singleton (areaNo ++ ".json")
+        , expect = Http.expectString GotAreaGarbageWeb
+        }
+
+
+convertAreaGarbage : String -> Result String AreaGarbage
+convertAreaGarbage areaGarbageJson =
+    let
+        areaGarbageResult =
+            decodeString decodeAreaGarbage areaGarbageJson
+    in
+    case areaGarbageResult of
+        Ok resultJson ->
+            Ok resultJson
+
+        Err error ->
+            Err (CommonUtil.jsonError error)
 
 
 
@@ -752,19 +768,12 @@ viewArea areaNo area =
 
 viewAreaGarbage : String -> AreaGarbage -> Html Msg
 viewAreaGarbage currentDate areaGarbage =
-    let
-        t =
-            Debug.log "1" areaGarbage.areaNo
-    in
     viewGarbages currentDate areaGarbage.garbages
 
 
 viewGarbages : String -> List Garbage -> Html Msg
 viewGarbages currentDate garbages =
     let
-        t =
-            Debug.log "2" garbages
-
         viewGarbage2 =
             viewGarbage currentDate
     in

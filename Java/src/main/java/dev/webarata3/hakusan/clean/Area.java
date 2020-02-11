@@ -1,6 +1,6 @@
 package dev.webarata3.hakusan.clean;
 
-public class GarbageArea {
+public class Area {
     private int areaNo;
     private String areaName;
 
