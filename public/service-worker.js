@@ -1,30 +1,8 @@
 // キャッシュファイルの指定
-const CACHE_NAME = "cache-20190726-01";
-const cacheWhitelist = ["cache-20190726-01"];
+const CACHE_NAME = "cache-20200212-01";
+const cacheWhitelist = ["cache-20200212-01"];
 const urlsToCache = [
-  "/api/01.json",
-  "/api/02.json",
-  "/api/03.json",
-  "/api/04.json",
-  "/api/05.json",
-  "/api/06.json",
-  "/api/07.json",
-  "/api/08.json",
-  "/api/09.json",
-  "/api/10.json",
-  "/api/11.json",
-  "/api/12.json",
-  "/api/13.json",
-  "/api/14.json",
-  "/api/15.json",
-  "/api/16.json",
-  "/api/17.json",
-  "/api/18.json",
-  "/api/19.json",
-  "/api/20.json",
-  "/api/21.json",
-  "/api/22.json",
-  "/api/23.json",
+  "/",
   "/css/font.css",
   "/css/main.css",
   "/css/reset.css",
@@ -34,6 +12,12 @@ const urlsToCache = [
   "/font/Inconsolata-Bold.ttf",
   "/font/Inconsolata-Regular.ttf",
   "/font/Inconsolata.woff2",
+  "/js/sw_init.js",
+  "/image/icons/apple-touch-icon-152x152.png",
+  "/image/icons/favicon-16x16.png",
+  "/image/icons/favicon-32x32.png",
+  "/image/icons/safari-pinned-tab.svg",
+  "/image/icons/msapplication-icon-144x144.png",
   "/js/init.js",
   "/js/main.js",
   "/js/util.js",
@@ -52,22 +36,21 @@ const urlsToCache = [
   "/webfont/fa-solid-900.ttf",
   "/webfont/fa-solid-900.woff",
   "/webfont/fa-solid-900.woff2",
-  "/404.html",
   "/index.html"
 ];
 
-self.addEventListener("install", function(event) {
+self.addEventListener("install", function (event) {
   // Perform install steps
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
+    caches.open(CACHE_NAME).then(function (cache) {
       return cache.addAll(urlsToCache);
     })
   );
 });
 
-self.addEventListener("fetch", function(event) {
+self.addEventListener("fetch", function (event) {
   event.respondWith(
-    caches.match(event.request).then(function(response) {
+    caches.match(event.request).then(function (response) {
       // Cache hit - return response
       if (response) {
         return response;
@@ -77,11 +60,11 @@ self.addEventListener("fetch", function(event) {
   );
 });
 
-self.addEventListener("activate", function(event) {
+self.addEventListener("activate", function (event) {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then(function (cacheNames) {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
+        cacheNames.map(function (cacheName) {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName);
           }

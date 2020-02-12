@@ -30,14 +30,14 @@ public class GarbageJson {
         } catch (IOException e) {
         }
         for (int areaNo : setting.getAreaNos()) {
-            makeJson(inputBasePath, outputBasePath, areaNo, setting.getYears());
+            makeJson(inputBasePath, outputBasePath, areaNo, setting);
         }
     }
 
-    private static void makeJson(Path inputBasePath, Path outputBasePath, int areaNo, List<Integer> years) {
+    private static void makeJson(Path inputBasePath, Path outputBasePath, int areaNo, GarbageSetting setting) {
         var fileName = String.format("%02d.html", areaNo);
         List<Garbage> garbages = null;
-        for (int year : years) {
+        for (int year : setting.getYears()) {
             var tempGarbages = parseHtml(year, inputBasePath.resolve(String.valueOf(year)).resolve(fileName));
             if (garbages == null) {
                 garbages = tempGarbages;
@@ -50,7 +50,9 @@ public class GarbageJson {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            String json = mapper.writeValueAsString(new AreaGarbage(areaNo, "全う", "test", garbages));
+            String json = mapper
+                    .writeValueAsString(
+                            new AreaGarbage(areaNo, setting.getAreaName(areaNo), setting.getPdfName(areaNo), garbages));
             Path outputPath = Paths.get("output", String.format("%02d.json", areaNo));
             Files.writeString(outputPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         } catch (IOException e) {

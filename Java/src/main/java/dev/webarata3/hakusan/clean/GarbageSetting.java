@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GarbageSetting {
     private List<Integer> years;
+    private String calendarPdfBaseUrl;
     private List<GarbageRegion> regions;
 
     public static GarbageSetting readSetting() {
@@ -20,6 +21,26 @@ public class GarbageSetting {
         }
     }
 
+    public String getAreaName(int areaNo) {
+        List<String> areaNames = regions
+                .stream()
+                .flatMap(v -> v.getAreas().stream())
+                .filter(v -> v.getAreaNo() == areaNo)
+                .map(v -> v.getAreaName())
+                .collect(Collectors.toList());
+        return areaNames.get(0);
+    }
+
+    public String getPdfName(int areaNo) {
+        List<String> pdfNames = regions
+                .stream()
+                .flatMap(v -> v.getAreas().stream())
+                .filter(v -> v.getAreaNo() == areaNo)
+                .map(v -> v.getPdfName())
+                .collect(Collectors.toList());
+        return String.format("%s/%s", calendarPdfBaseUrl, pdfNames.get(0));
+    }
+
     public List<Integer> getAreaNos() {
         return regions
                 .stream()
@@ -30,6 +51,10 @@ public class GarbageSetting {
 
     public List<Integer> getYears() {
         return years;
+    }
+
+    public String getCalendarPdfBaseUrl() {
+        return calendarPdfBaseUrl;
     }
 
     public void setYears(List<Integer> years) {

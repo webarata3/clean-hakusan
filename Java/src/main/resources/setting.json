@@ -1,48 +1,68 @@
 {
   "years": [2019, 2020],
+  "calendarPdfBaseUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1",
   "regions": [
     {
       "regionName": "松任地域",
       "areas": [
         {
           "areaNo": 1,
-          "areaName": "松任Ａ"
+          "areaName": "松任Ａ",
+          "pdfName": "mattoa.pdf"
         },
         {
           "areaNo": 2,
-          "areaName": "松任Ｂ・旭"
+          "areaName": "松任Ｂ・旭",
+          "pdfName": "mattob.pdf"
+
         },
         {
           "areaNo": 3,
-          "areaName": "松任Ｃ"
+          "areaName": "松任Ｃ",
+          "pdfName": "mattoc.pdf"
+
         },
         {
           "areaNo": 4,
-          "areaName": "石川・柏野"
+          "areaName": "石川・柏野",
+          "pdfName": "ishikawa.pdf"
+
         },
         {
           "areaNo": 5,
-          "areaName": "笠間・宮保・加賀野"
+          "areaName": "笠間・宮保・加賀野",
+          "pdfName": "kasama.pdf"
+
         },
         {
           "areaNo": 6,
-          "areaName": "出城・御手洗"
+          "areaName": "出城・御手洗",
+          "pdfName": "dejiro.pdf"
+
         },
         {
           "areaNo": 7,
-          "areaName": "一木"
+          "areaName": "一木",
+          "pdfName": "ichiki.pdf"
+
         },
         {
           "areaNo": 8,
-          "areaName": "中奥・郷"
+          "areaName": "中奥・郷",
+          "pdfName": "nakaoku.pdf"
+
         },
         {
           "areaNo": 9,
-          "areaName": "千代野"
+          "areaName": "千代野",
+          "pdfName": "chiyono.pdf"
+
         },
         {
           "areaNo": 10,
-          "areaName": "林中・山島"
+          "areaName": "林中・山島",
+          "pdfName": "hayashinaka.pdf"
+
         }
       ]
     },
@@ -51,15 +71,21 @@
       "areas": [
         {
           "areaNo": 11,
-          "areaName": "美川"
+          "areaName": "美川",
+          "pdfName": "mikawa.pdf"
+
         },
         {
           "areaNo": 12,
-          "areaName": "蝶屋"
+          "areaName": "蝶屋",
+          "pdfName": "choya.pdf"
+
         },
         {
           "areaNo": 13,
-          "areaName": "湊"
+          "areaName": "湊",
+          "pdfName": "minato.pdf"
+
         }
       ]
     },
@@ -68,23 +94,33 @@
       "areas": [
         {
           "areaNo": 14,
-          "areaName": "一ノ宮"
+          "areaName": "一ノ宮",
+          "pdfName": "ichinomiya.pdf"
+
         },
         {
           "areaNo": 15,
-          "areaName": "鶴来"
+          "areaName": "鶴来",
+          "pdfName": "tsurugi.pdf"
+
         },
         {
           "areaNo": 16,
-          "areaName": "舘畑"
+          "areaName": "舘畑",
+          "pdfName": "tachihata.pdf"
+
         },
         {
           "areaNo": 17,
-          "areaName": "蔵山"
+          "areaName": "蔵山",
+          "pdfName": "kurayama.pdf"
+
         },
         {
           "areaNo": 18,
-          "areaName": "林"
+          "areaName": "林",
+          "pdfName": "hayashi.pdf"
+
         }
       ]
     },
@@ -93,23 +129,33 @@
       "areas": [
         {
           "areaNo": 19,
-          "areaName": "河内"
+          "areaName": "河内",
+          "pdfName": "kawachi.pdf"
+
         },
         {
           "areaNo": 20,
-          "areaName": "吉野谷（中宮除く）"
+          "areaName": "吉野谷（中宮除く）",
+          "pdfName": "yoshinodani.pdf"
+
         },
         {
           "areaNo": 21,
-          "areaName": "鳥越（仏師ヶ野除く）"
+          "areaName": "鳥越（仏師ヶ野除く）",
+          "pdfName": "torigoe.pdf"
+
         },
         {
           "areaNo": 22,
-          "areaName": "中宮・仏師ヶ野・尾口（深瀬除く）"
+          "areaName": "中宮・仏師ヶ野・尾口（深瀬除く）",
+          "pdfName": "oguchi.pdf"
+
         },
         {
           "areaNo": 23,
-          "areaName": "深瀬・白峰"
+          "areaName": "深瀬・白峰",
+          "pdfName": "shiramine.pdf"
+
         }
       ]
     }
