@@ -368,6 +368,15 @@ update msg model =
                 GetError errorMessage ->
                     update (DataError errorMessage) model
 
+        GotApiVersionWeb (Err error) ->
+            -- Webから取れず、localStorageにもなければエラー
+            if model.apiVersion == "" then
+                update (DataError (CommonUtil.httpError "[API VERSION]" error)) model
+
+            else
+                -- localStorageにデータがあればそれを使う
+                update (GotRegionsLocalStorage "regions") model
+
         LocalStorageSaved key ->
             case key of
                 "apiVersion" ->
@@ -385,15 +394,6 @@ update msg model =
 
                     else
                         ( model, Cmd.none )
-
-        GotApiVersionWeb (Err error) ->
-            -- Webから取れず、localStorageにもなければエラー
-            if model.apiVersion == "" then
-                update (DataError (CommonUtil.httpError "[API VERSION]" error)) model
-
-            else
-                -- localStorageにデータがあればそれを使う
-                update (GotRegionsLocalStorage "regions") model
 
         -- 以前データを取得していてバージョンが変わっていない場合には
         -- localStorageから取得する
