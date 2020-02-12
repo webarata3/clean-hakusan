@@ -375,7 +375,7 @@ update msg model =
 
             else
                 -- localStorageにデータがあればそれを使う
-                update (GotRegionsLocalStorage "regions") model
+                ( model, loadLocalStorage "regions" )
 
         LocalStorageSaved key ->
             case key of
@@ -486,7 +486,7 @@ update msg model =
 
             else
                 -- バージョンが変わっていなければlocalStorageから取得する
-                ( model, loadLocalStorage model.areaNo )
+                ( model, loadLocalStorage <| "areaGarbage-" ++ model.areaNo )
 
 
 
