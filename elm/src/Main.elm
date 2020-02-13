@@ -230,8 +230,12 @@ update msg model =
             )
 
         DataError error ->
-            -- TODO
-            ( model, Cmd.none )
+            ( { model
+                | viewState = SystemError
+                , errorMessage = "何かがおかしいです"
+              }
+            , Cmd.none
+            )
 
         Loading ->
             ( { model | apiVersion = "" }
