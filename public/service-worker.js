@@ -1,6 +1,6 @@
 // キャッシュファイルの指定
-const CACHE_NAME = "cache-20200213-05";
-const cacheWhitelist = ["cache-20200213-05"];
+const CACHE_NAME = "cache-20200213-06";
+const cacheWhitelist = ["cache-20200213-06"];
 const urlsToCache = [
   "/",
   "/css/font.css",
