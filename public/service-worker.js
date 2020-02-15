@@ -1,6 +1,6 @@
 // キャッシュファイルの指定
-const CACHE_NAME = "cache-20200213-06";
-const cacheWhitelist = ["cache-20200213-06"];
+const CACHE_NAME = "cache-20200214-01";
+const cacheWhitelist = ["cache-20200214-01"];
 const urlsToCache = [
   "/",
   "/css/font.css",
@@ -39,18 +39,16 @@ const urlsToCache = [
   "/index.html"
 ];
 
-self.addEventListener("install", function (event) {
+self.addEventListener("install", event => {
   // Perform install steps
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener("fetch", function (event) {
+self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request).then(function (response) {
+    caches.match(event.request).then(response => {
       // Cache hit - return response
       if (response) {
         return response;
@@ -60,16 +58,16 @@ self.addEventListener("fetch", function (event) {
   );
 });
 
-self.addEventListener("activate", function (event) {
+self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(function (cacheNames) {
-      return Promise.all(
-        cacheNames.map(function (cacheName) {
+    caches.keys().then(cacheNames =>
+      Promise.all(
+        cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName);
           }
         })
-      );
-    })
+      )
+    )
   );
 });

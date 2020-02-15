@@ -31,9 +31,6 @@ html {
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
-
-  /* 確認用 */
-  background-color: #00f;
 }
 
 body {
