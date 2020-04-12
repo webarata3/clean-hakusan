@@ -1,8 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-sourceCompatibility = 13
-targetCompatibility = 13
+sourceCompatibility = 14
+targetCompatibility = 14
 
 compileJava.options.encoding = 'UTF-8'
 
