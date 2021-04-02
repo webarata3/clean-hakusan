@@ -1,6 +1,6 @@
 {
-  "years": [2019, 2020],
-  "calendarPdfBaseUrl": "http://www.city.hakusan.ishikawa.jp/data/open/cnt/3/10179/1",
+  "years": [2021, 2022],
+  "calendarPdfBaseUrl": "https://www.city.hakusan.lg.jp/shiminseikatsubu/kankyo/4r/documents",
   "regions": [
     {
       "regionName": "松任地域",
@@ -8,60 +8,60 @@
         {
           "areaNo": 1,
           "areaName": "松任Ａ",
-          "pdfName": "mattoa.pdf"
+          "pdfName": "1mattoa2021.pdf"
         },
         {
           "areaNo": 2,
           "areaName": "松任Ｂ・旭",
-          "pdfName": "mattob.pdf"
+          "pdfName": "2mattobasah2021i.pdf"
 
         },
         {
           "areaNo": 3,
           "areaName": "松任Ｃ",
-          "pdfName": "mattoc.pdf"
+          "pdfName": "3mattoc2021.pdf"
 
         },
         {
           "areaNo": 4,
           "areaName": "石川・柏野",
-          "pdfName": "ishikawa.pdf"
+          "pdfName": "4ishikawakashiwano2021.pdf"
 
         },
         {
           "areaNo": 5,
           "areaName": "笠間・宮保・加賀野",
-          "pdfName": "kasama.pdf"
+          "pdfName": "5kasamamiyabokagano2021.pdf"
 
         },
         {
           "areaNo": 6,
           "areaName": "出城・御手洗",
-          "pdfName": "dejiro.pdf"
+          "pdfName": "6dejiromitarashi2021.pdf"
 
         },
         {
           "areaNo": 7,
           "areaName": "一木",
-          "pdfName": "ichiki.pdf"
+          "pdfName": "7ichiki2021.pdf"
 
         },
         {
           "areaNo": 8,
           "areaName": "中奥・郷",
-          "pdfName": "nakaoku.pdf"
+          "pdfName": "8nakaokugo2021.pdf"
 
         },
         {
           "areaNo": 9,
           "areaName": "千代野",
-          "pdfName": "chiyono.pdf"
+          "pdfName": "9chiyono2021.pdf"
 
         },
         {
           "areaNo": 10,
           "areaName": "林中・山島",
-          "pdfName": "hayashinaka.pdf"
+          "pdfName": "10hayashinakayamajima2021.pdf"
 
         }
       ]
@@ -72,19 +72,19 @@
         {
           "areaNo": 11,
           "areaName": "美川",
-          "pdfName": "mikawa.pdf"
+          "pdfName": "11mikawa2021.pdf"
 
         },
         {
           "areaNo": 12,
           "areaName": "蝶屋",
-          "pdfName": "choya.pdf"
+          "pdfName": "12choya2021.pdf"
 
         },
         {
           "areaNo": 13,
           "areaName": "湊",
-          "pdfName": "minato.pdf"
+          "pdfName": "13minato2021.pdf"
 
         }
       ]
@@ -95,31 +95,31 @@
         {
           "areaNo": 14,
           "areaName": "一ノ宮",
-          "pdfName": "ichinomiya.pdf"
+          "pdfName": "14ichinomiya2021.pdf"
 
         },
         {
           "areaNo": 15,
           "areaName": "鶴来",
-          "pdfName": "tsurugi.pdf"
+          "pdfName": "15tsurugi2021.pdf"
 
         },
         {
           "areaNo": 16,
           "areaName": "舘畑",
-          "pdfName": "tachihata.pdf"
+          "pdfName": "16tachihata2021.pdf"
 
         },
         {
           "areaNo": 17,
           "areaName": "蔵山",
-          "pdfName": "kurayama.pdf"
+          "pdfName": "17kurayama2021.pdf"
 
         },
         {
           "areaNo": 18,
           "areaName": "林",
-          "pdfName": "hayashi.pdf"
+          "pdfName": "18hayashi2021.pdf"
 
         }
       ]
@@ -130,31 +130,31 @@
         {
           "areaNo": 19,
           "areaName": "河内",
-          "pdfName": "kawachi.pdf"
+          "pdfName": "19kawachi2021.pdf"
 
         },
         {
           "areaNo": 20,
           "areaName": "吉野谷（中宮除く）",
-          "pdfName": "yoshinodani.pdf"
+          "pdfName": "20yoshinodani2021.pdf"
 
         },
         {
           "areaNo": 21,
           "areaName": "鳥越（仏師ヶ野除く）",
-          "pdfName": "torigoe.pdf"
+          "pdfName": "21torigoe2021.pdf"
 
         },
         {
           "areaNo": 22,
           "areaName": "中宮・仏師ヶ野・尾口（深瀬除く）",
-          "pdfName": "oguchi.pdf"
+          "pdfName": "22oguchichugubushigano2021.pdf"
 
         },
         {
           "areaNo": 23,
           "areaName": "深瀬・白峰",
-          "pdfName": "shiramine.pdf"
+          "pdfName": "23shiraminefukaze2021.pdf"
 
         }
       ]
