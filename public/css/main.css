@@ -120,10 +120,6 @@ main {
 }
 
 /********** menu **********/
-button {
-  background: url(../image/menu.svg) center center no-repeat;
-}
-
 .menu-background {
   position: fixed;
   top: 0;
@@ -267,6 +263,10 @@ menu a:visited {
 
 .header-menu-button {
   background: url(../image/menu.svg) 50% no-repeat;
+}
+
+.header-menu-button:hover {
+  background: url(../image/menu-hover.svg) 50% no-repeat;
 }
 
 .header-reload-button {

@@ -1,4 +1,4 @@
-module CommonUtil exposing (dispHowManyDays, howManyDaysCss, httpError, jsonError, nextDate)
+module Util exposing (dispHowManyDays, howManyDaysCss, httpError, jsonError, nextDate)
 
 import Http
 import Json.Decode

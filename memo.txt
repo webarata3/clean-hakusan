@@ -1,7 +1,7 @@
 コマンド
 firebase serve
-elm make elm/src/Main.elm --output=public/js/main.js
-elm make elm/src/Main.elm --output=public/js/main.js --optimize
+elm make elm/Main.elm --output=public/js/main.js
+elm make elm/Main.elm --output=public/js/main.js --optimize
 
 firebase init
 

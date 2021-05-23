@@ -1,4 +1,4 @@
-module CommonTime exposing (IntDate, diffDayYyyymmddDate, intDateToDispDate, intDateToPosix, intDateToYyyymmddDate, numberToMonth, posixToIntDate, sliceToInt, toMonthNumber, yyyymmddDateToDispDate, yyyymmddDateToIntDate)
+module TimeUtil exposing (IntDate, diffDayYyyymmddDate, intDateToDayOfWeek, intDateToPosix, intDateToShowDate, intDateToYyyymmddDate, numberToMonth, posixToIntDate, sliceToInt, toMonthNumber, yyyymmddDateToIntDate, yyyymmddDateToShowDate)
 
 import Time
 import Time.Extra
@@ -98,9 +98,6 @@ numberToMonth month =
         11 ->
             Time.Nov
 
-        12 ->
-            Time.Dec
-
         _ ->
             Time.Dec
 
@@ -139,8 +136,8 @@ intDateToYyyymmddDate intDate =
     stringYear ++ stringMonth ++ stringDay
 
 
-intDateToDispDate : IntDate -> String
-intDateToDispDate intDate =
+intDateToShowDate : IntDate -> String
+intDateToShowDate intDate =
     String.fromInt intDate.month
         ++ "月"
         ++ String.fromInt intDate.day
@@ -150,9 +147,9 @@ intDateToDispDate intDate =
         ++ ")"
 
 
-yyyymmddDateToDispDate : String -> String
-yyyymmddDateToDispDate yyyymmddDate =
-    intDateToDispDate (yyyymmddDateToIntDate yyyymmddDate)
+yyyymmddDateToShowDate : String -> String
+yyyymmddDateToShowDate yyyymmddDate =
+    intDateToShowDate (yyyymmddDateToIntDate yyyymmddDate)
 
 
 yyyymmddDateToIntDate : String -> IntDate
