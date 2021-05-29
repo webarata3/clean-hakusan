@@ -8,7 +8,7 @@ viewFooter : Html msg
 viewFooter =
     footer []
         [ div [ class "copyright" ]
-            [ text "©2219 "
+            [ text "©2021 "
             , a
                 [ href "https://webarata3.dev"
                 , target "_blank"
