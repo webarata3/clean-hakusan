@@ -354,6 +354,7 @@ label {
   display: flex;
   flex: 1;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .garbage-item {
@@ -363,6 +364,7 @@ label {
   flex: 1;
   flex-direction: row;
   margin: 5px;
+  height: 100%;
 }
 
 .garbage-title {
