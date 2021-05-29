@@ -8,7 +8,7 @@ viewFooter : Html msg
 viewFooter =
     footer []
         [ div [ class "copyright" ]
-            [ text "©2019 "
+            [ text "©2219 "
             , a
                 [ href "https://webarata3.dev"
                 , target "_blank"
@@ -26,24 +26,10 @@ viewFooter =
                     ]
                 , li []
                     [ a
-                        [ href "https://facebook.com/arata.shinichi"
-                        , target "_blank"
-                        ]
-                        [ span [ class "fab fa-facebook" ] [] ]
-                    ]
-                , li []
-                    [ a
                         [ href "https://github.com/webarata3"
                         , target "_blank"
                         ]
                         [ span [ class "fab fa-github" ] [] ]
-                    ]
-                , li []
-                    [ a
-                        [ href "https://ja.stackoverflow.com/users/2214/webarata3?tab=profile"
-                        , target "_blank"
-                        ]
-                        [ span [ class "fab fa-stack-overflow" ] [] ]
                     ]
                 ]
             ]
