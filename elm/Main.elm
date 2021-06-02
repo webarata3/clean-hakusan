@@ -1,4 +1,4 @@
-port module Main exposing (LoadLocalStorageValue, Model, Msg(..), init, loadLocalStorage, localStorageSaved, main, retLoadLocalStorage, saveLocalStorage, subscriptions, update, view)
+port module Main exposing (..)
 
 import Browser
 import Credit
@@ -25,16 +25,10 @@ main =
         }
 
 
-port loadLocalStorage : String -> Cmd msg
+port operateLocalStorage : LocalStorageValue -> Cmd msg
 
 
-port retLoadLocalStorage : (LoadLocalStorageValue -> msg) -> Sub msg
-
-
-port saveLocalStorage : LoadLocalStorageValue -> Cmd msg
-
-
-port localStorageSaved : (String -> msg) -> Sub msg
+port retOperateLocalStorage : (LocalStorageValue -> msg) -> Sub msg
 
 
 
@@ -83,10 +77,10 @@ type alias Garbage =
 type Msg
     = DataError String
     | SetCurrentDate Time.Posix
-    | LoadedLocalStorage LoadLocalStorageValue
-    | LocalStorageSaved String
+    | OperatedLocalStorage LocalStorageValue
     | GotApiVersionLocalStorage String
     | GotApiVersionWeb (Result Http.Error String)
+    | ClearedLocalStorage
     | GotRegionsLocalStorage String
     | GotRegionsWeb (Result Http.Error String)
     | GotAreaGarbageLocalStorage String
@@ -122,8 +116,9 @@ type SubMenuType
     | Credit
 
 
-type alias LoadLocalStorageValue =
-    { key : String
+type alias LocalStorageValue =
+    { tag : String
+    , key : String
     , value : String
     }
 
@@ -192,8 +187,7 @@ init _ =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ retLoadLocalStorage LoadedLocalStorage
-        , localStorageSaved LocalStorageSaved
+        [ retOperateLocalStorage OperatedLocalStorage
         , Time.every (60 * 1000) Tick
         ]
 
@@ -230,63 +224,72 @@ update msg model =
                     TimeUtil.intDateToYyyymmddDate <|
                         TimeUtil.posixToIntDate time
               }
-            , loadLocalStorage "areaNo"
+            , operateLocalStorage
+                { tag = "load"
+                , key = "areaNo"
+                , value = ""
+                }
             )
 
-        LoadedLocalStorage localStorageValue ->
-            case localStorageValue.key of
-                "areaNo" ->
-                    let
-                        areaNo =
-                            if localStorageValue.value == "" then
-                                "01"
+        OperatedLocalStorage localStorageValue ->
+            case localStorageValue.tag of
+                "load" ->
+                    case localStorageValue.key of
+                        "areaNo" ->
+                            let
+                                areaNo =
+                                    if localStorageValue.value == "" then
+                                        "01"
+
+                                    else
+                                        localStorageValue.value
+                            in
+                            ( { model | areaNo = areaNo }
+                            , operateLocalStorage
+                                { tag = "load"
+                                , key = "apiVersion"
+                                , value = ""
+                                }
+                            )
+
+                        "apiVersion" ->
+                            update
+                                (GotApiVersionLocalStorage localStorageValue.value)
+                                model
+
+                        "regions" ->
+                            update
+                                (GotRegionsLocalStorage localStorageValue.value)
+                                model
+
+                        _ ->
+                            update
+                                (GotAreaGarbageLocalStorage localStorageValue.value)
+                                model
+
+                "save" ->
+                    case localStorageValue.key of
+                        "apiVersion" ->
+                            ( model, getRegionsWeb )
+
+                        "regions" ->
+                            update (ChangeArea model.areaNo) model
+
+                        "areaNo" ->
+                            update ViewAreaGarbage model
+
+                        _ ->
+                            if String.startsWith "areaGarbage-" localStorageValue.key then
+                                ( model, Cmd.none )
 
                             else
-                                localStorageValue.value
-                    in
-                    ( { model | areaNo = areaNo }
-                    , loadLocalStorage "apiVersion"
-                    )
+                                ( model, Cmd.none )
 
-                "apiVersion" ->
-                    update
-                        (GotApiVersionLocalStorage localStorageValue.value)
-                        model
-
-                "regions" ->
-                    update
-                        (GotRegionsLocalStorage localStorageValue.value)
-                        model
+                "clear" ->
+                    ( model, getAreaGarbageWeb model.areaNo )
 
                 _ ->
-                    update
-                        (GotAreaGarbageLocalStorage localStorageValue.value)
-                        model
-
-        LocalStorageSaved key ->
-            let
-                a =
-                    Debug.log "localStorage" key
-
-                b =
-                    Debug.log "changed" model.isVersionChange
-            in
-            case key of
-                "apiVersion" ->
-                    ( model, getRegionsWeb )
-
-                "regions" ->
-                    update (ChangeArea model.areaNo) model
-
-                "areaNo" ->
-                    update ViewAreaGarbage model
-
-                _ ->
-                    if String.startsWith "areaGarbage-" key then
-                        ( model, Cmd.none )
-
-                    else
-                        ( model, Cmd.none )
+                    ( model, Cmd.none )
 
         GotApiVersionLocalStorage localStorageValue ->
             ( { model | apiVersion = localStorageValue }
@@ -321,15 +324,22 @@ update msg model =
                         , apiVersion = webApiVersion
                         , viewState = DataOk
                       }
-                    , saveLocalStorage
-                        { key = "apiVersion"
+                    , operateLocalStorage
+                        { tag = "save"
+                        , key = "apiVersion"
                         , value = webApiVersion
                         }
                     )
 
                 NoChange ->
                     -- バージョンが変わっていないのでlocalStorageを使う
-                    ( model, loadLocalStorage "regions" )
+                    ( model
+                    , operateLocalStorage
+                        { tag = "load"
+                        , key = "regions"
+                        , value = ""
+                        }
+                    )
 
                 GetError errorMessage ->
                     update (DataError errorMessage) model
@@ -337,6 +347,9 @@ update msg model =
         GotApiVersionWeb (Err error) ->
             -- TODO 取れない場合はローカルにあるデータを使う
             ( model, Cmd.none )
+
+        ClearedLocalStorage ->
+            ( model, getAreaGarbageWeb model.areaNo )
 
         -- 以前データを取得していてバージョンが変わっていない場合には
         -- localStorageから取得する
@@ -365,8 +378,9 @@ update msg model =
             case regionsResult of
                 Ok regions ->
                     ( { model | viewState = DataOk, regions = regions }
-                    , saveLocalStorage
-                        { key = "regions"
+                    , operateLocalStorage
+                        { tag = "save"
+                        , key = "regions"
                         , value = resp
                         }
                     )
@@ -387,8 +401,9 @@ update msg model =
                     ( { model
                         | maybeAreaGarbage = Just areaGarbage
                       }
-                    , saveLocalStorage
-                        { key = "areaGarbage-" ++ model.areaNo
+                    , operateLocalStorage
+                        { tag = "save"
+                        , key = "areaGarbage-" ++ model.areaNo
                         , value = resp
                         }
                     )
@@ -419,21 +434,33 @@ update msg model =
         ChangeArea areaNo ->
             -- エリアが変わったら最初にareaNoを保存する
             ( { model | areaNo = areaNo }
-            , saveLocalStorage { key = "areaNo", value = areaNo }
+            , operateLocalStorage
+                { tag = "save"
+                , key = "areaNo"
+                , value = areaNo
+                }
             )
 
         ViewAreaGarbage ->
-            let
-                a =
-                    Debug.log "changed2" model.isVersionChange
-            in
             if model.isVersionChange then
                 -- バージョンが変わっていたらWebから取得する
-                ( model, getAreaGarbageWeb model.areaNo )
+                ( model
+                , operateLocalStorage
+                    { tag = "clear"
+                    , key = ""
+                    , value = ""
+                    }
+                )
 
             else
                 -- バージョンが変わっていなければlocalStorageから取得する
-                ( model, loadLocalStorage <| "areaGarbage-" ++ model.areaNo )
+                ( model
+                , operateLocalStorage
+                    { tag = "load"
+                    , key = "areaGarbage-" ++ model.areaNo
+                    , value = ""
+                    }
+                )
 
         ClickMenuOpen ->
             ( { model | menuState = MenuOpen }, Cmd.none )
