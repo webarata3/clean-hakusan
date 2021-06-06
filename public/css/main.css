@@ -39,6 +39,8 @@ body {
   min-height: 100vh;
   min-height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
+  max-width: 600px;
+  margin: 0 auto;
   padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 

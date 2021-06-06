@@ -7,6 +7,7 @@ import Html.Attributes exposing (attribute, class, for, href, id, selected, src,
 import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode exposing (Decoder, decodeString, field, string)
+import Privacy
 import Task
 import Time
 import TimeUtil
@@ -112,6 +113,7 @@ type MenuState
 
 type SubMenuType
     = NoOpenSubMenu
+    | Privacy
     | Disclaimer
     | Credit
 
@@ -499,6 +501,9 @@ update msg model =
                 NoOpenSubMenu ->
                     ( { model | nowOpenSubMenuType = NoOpenSubMenu }, Cmd.none )
 
+                Privacy ->
+                    ( { model | nowOpenSubMenuType = Privacy }, Cmd.none )
+
                 Disclaimer ->
                     ( { model | nowOpenSubMenuType = Disclaimer }, Cmd.none )
 
@@ -588,6 +593,7 @@ view model =
         , View.Footer.viewFooter
         , viewMenuBackground model
         , viewMenu model
+        , viewSubMenuPrivacy (model.nowOpenSubMenuType == Privacy)
         , viewSubMenuDisclaimer (model.nowOpenSubMenuType == Disclaimer)
         , viewSubMenuCredit (model.nowOpenSubMenuType == Credit)
         ]
@@ -648,6 +654,11 @@ viewMenu model =
                         ]
                         []
                     ]
+                ]
+            , li []
+                [ a
+                    [ href "#", onClickNoPrevent (ClickSubMenu Privacy) ]
+                    [ text "プライバシーポリシー" ]
                 ]
             , li []
                 [ a
@@ -845,6 +856,17 @@ subMenuOpenClass isOpen =
 
     else
         class "sub-menu-close"
+
+
+viewSubMenuPrivacy : Bool -> Html Msg
+viewSubMenuPrivacy isOpen =
+    div
+        [ class "sub-menu"
+        , subMenuOpenClass isOpen
+        , onClick ClickMenuClose
+        ]
+        [ Privacy.viewPrivacy
+        ]
 
 
 viewSubMenuDisclaimer : Bool -> Html Msg
