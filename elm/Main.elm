@@ -601,7 +601,7 @@ view model =
 
 viewHeader : Html Msg
 viewHeader =
-    Html.header []
+    Html.header [ class "header" ]
         [ div
             [ class "main__menu-button"
             , onClick ClickMenuOpen
