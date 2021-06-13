@@ -34,16 +34,16 @@ howManyDaysCss : Int -> String
 howManyDaysCss howManyDays =
     case howManyDays of
         0 ->
-            "garbage-schedule today"
+            "garbage__schedule garbage__today"
 
         1 ->
-            "garbage-schedule tomorrow"
+            "garbage__schedule garbage__tomorrow"
 
         2 ->
-            "garbage-schedule day-after-tomorrow"
+            "garbage__schedule garbage__day-after-tomorrow"
 
         _ ->
-            "garbage-schedule"
+            "garbage__schedule"
 
 
 jsonError : Json.Decode.Error -> String

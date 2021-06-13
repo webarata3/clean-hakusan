@@ -6,7 +6,7 @@ import Html.Attributes exposing (class, href, target)
 
 viewPrivacy : Html msg
 viewPrivacy =
-    div [ class "sub-menu-window" ]
+    div [ class "submenu__window" ]
         [ h2 [] [ text "プライバシーポリシー" ]
         , div [ class "text" ]
             [ p [] [ text "当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を使用しています。このGoogleアナリティクスはデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。" ]

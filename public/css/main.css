@@ -14,26 +14,7 @@
     url("../font/FiraSans-Light.ttf") format("truetype");
 }
 
-html,
-body {
-  height: 100%;
-  width: 100%;
-  font-family: "Hiragino Maru Gothic Pro", "ヒラギノ丸ゴ Pro", Roboto,
-    "Droid Sans", "Meiryo", "メイリオ", "MS PGothic", "MS Pゴシック", sans-serif;
-  color: #444;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  background: #fff;
-  box-sizing: border-box;
-  font-size: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-#app {
+.app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -42,6 +23,22 @@ body {
   max-width: 600px;
   margin: 0 auto;
   padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.main {
+  height: 100%;
+  width: 100%;
+  font-family: "Hiragino Maru Gothic Pro", "ヒラギノ丸ゴ Pro", Roboto,
+    "Droid Sans", "Meiryo", "メイリオ", "MS PGothic", "MS Pゴシック", sans-serif;
+  color: #444;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: #fff;
+  box-sizing: border-box;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -61,7 +58,7 @@ header {
   transition: transform 0.233s cubic-bezier(0, 0, 0.21, 1) 0.1s;
 }
 
-.header-title {
+.header__title {
   align-items: center;
   justify-content: center;
   display: flex;
@@ -70,7 +67,7 @@ header {
   flex: 1;
 }
 
-.menu-button {
+.main__menu-button {
   width: 32px;
 }
 
@@ -92,7 +89,7 @@ main {
   align-items: center;
 }
 
-.loading-icon {
+.loading__icon {
   margin: 30px 0 0;
 }
 
@@ -103,20 +100,20 @@ main {
   align-items: center;
 }
 
-.error-message {
+.error__message {
   color: #f00;
   font-size: 14px;
   margin: 5px 0;
 }
 
-.alert {
+.main__alert {
   margin: 10px 5px 0 5px;
   color: #f00;
   font-size: 14px;
 }
 
 /********** menu **********/
-.menu-background {
+.menu__background {
   position: fixed;
   top: 0;
   left: 0;
@@ -138,15 +135,15 @@ menu {
   transition: all 300ms 0s ease;
 }
 
-.menu-close {
+.menu__close {
   transform: translate(-100%, 0);
 }
 
-.menu-open {
+.menu__open {
   transform: translate(0, 0);
 }
 
-.menu-background.sub-menu-open {
+.menu__background.submenu__open {
   z-index: 1000;
 }
 
@@ -173,11 +170,11 @@ menu a:visited {
   padding: 5px;
 }
 
-.sub-menu {
-  --sub-menu-width: 90vw;
+.submenu {
+  --submenu-width: 90vw;
   position: fixed;
-  width: var(--sub-menu-width);
-  left: calc(50% - var(--sub-menu-width) / 2);
+  width: var(--submenu-width);
+  left: calc(50% - var(--submenu-width) / 2);
   background-color: #fff;
   max-height: 80vh;
   overflow: scroll;
@@ -185,66 +182,66 @@ menu a:visited {
   transition: transform 0.5s ease;
 }
 
-.sub-menu-window {
+.submenu__window {
   border: 1px solid #eee;
   background-color: #fff;
   padding: 10px;
 }
 
-.sub-menu-window h2 {
+.submenu__window h2 {
   border-bottom: 1px solid #333;
   text-align: center;
   padding: 5px;
   margin-bottom: 10px;
 }
 
-.sub-menu-window h3 {
+.submenu__window h3 {
   margin-bottom: 10px;
 }
 
-.sub-menu-window .text {
+.submenu__window .text {
   font-size: 14px;
   line-height: 1.8rem;
 }
 
-.sub-menu-window p:not(:last-of-type) {
+.submenu__window p:not(:last-of-type) {
   margin-bottom: 1rem;
 }
 
-.sub-menu-window .warning {
+.submenu__window .warning {
   color: #f00;
 }
 
-.sub-menu.sub-menu-close {
+.submenu.submenu__close {
   transform: translate(0, -100vh);
 }
 
-.sub-menu.sub-menu-open {
+.submenu.submenu__open {
   transform: translate(0, 5vh);
 }
 
-.sub-menu a,
-.sub-menu a:link,
-.sub-menu a:visited,
-.sub-menu a:hover,
-.sub-menu a:active {
+.submenu a,
+.submenu a:link,
+.submenu a:visited,
+.submenu a:hover,
+.submenu a:active {
   color: #1698cc;
   padding: 0 0.5rem;
   text-decoration: none;
 }
 
-.submenu-header {
+.submenu__header {
   background-color: #e0e0e0;
   padding: 16px;
 }
 
-.close-button {
+.submenu__close-button {
   width: 24px;
   height: 24px;
 }
 
-.header-menu-button,
-.header-reload-button {
+.header__menu-button,
+.header__reload-button {
   width: 24px;
   height: 24px;
   margin-right: 16px;
@@ -257,39 +254,39 @@ menu a:visited {
   cursor: pointer;
 }
 
-.header-menu-button {
+.header__menu-button {
   background: url(../image/menu.svg) 50% no-repeat;
 }
 
-.header-menu-button:hover {
+.header__menu-button:hover {
   background: url(../image/menu-hover.svg) 50% no-repeat;
 }
 
-.header-reload-button {
+.header__reload-button {
   background: url(../image/redo-alt-solid.svg) 50% no-repeat;
 }
 
-.credit > div:not(:first-of-type) {
+.credit__license:not(:first-of-type) {
   border-top: 1px solid #000;
 }
 
-.credit > div {
+.credit__license {
   margin: 5px 0 5px;
   padding: 10px 0;
 }
 
-.credit h3 {
+.credit__license-title {
   margin-bottom: 15px;
 }
 
-pre {
+.credit__pre {
   font-family: "Inconsolata", monospace;
   font-size: 16px;
   line-height: 1.2rem;
   white-space: pre-wrap;
 }
 
-.toolbar-external-link-image {
+.submenu__external-link-image {
   margin-left: 5px;
   width: 1rem;
   height: 1rem;
@@ -298,7 +295,7 @@ pre {
 
 /********** select **********/
 
-select {
+.main__select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -319,32 +316,32 @@ select {
   padding: 10px 20px;
 }
 
-.select-area {
+.area__select {
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
 }
 
-.external-link {
+.main__external-link {
   text-align: right;
   width: 100%;
 }
 
-.external-link a,
-.external-link a:hover,
-.external-link a:active,
-.external-link a:visited {
+.main__external-link a,
+.main__external-link a:hover,
+.main__external-link a:active,
+.main__external-link a:visited {
   color: #03c;
   font-size: 10pt;
   text-decoration: none;
 }
 
-.external-link a:not(:last-of-type) {
+.main__external-link a:not(:last-of-type) {
   margin-right: 0.5rem;
 }
 
-label {
+.main__label {
   font-size: 16px;
   margin-right: 8px;
   white-space: nowrap;
@@ -352,14 +349,14 @@ label {
 
 /********** garbage **********/
 
-.garbages {
+.garbage {
   display: flex;
   flex: 1;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.garbage-item {
+.garbage__item {
   border: 1px solid #444;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -369,7 +366,7 @@ label {
   height: 100%;
 }
 
-.garbage-title {
+.garbage__title {
   background-color: #1698cc;
   color: #fff;
   flex: 1;
@@ -379,7 +376,7 @@ label {
   position: relative;
 }
 
-.garbage-title:before {
+.garbage__title:before {
   content: "";
   position: absolute;
   top: 50%;
@@ -390,7 +387,7 @@ label {
   z-index: 2;
 }
 
-.garbage-title:after {
+.garbage__title:after {
   content: "";
   position: absolute;
   top: 50%;
@@ -401,11 +398,11 @@ label {
   z-index: 1;
 }
 
-.garbage-title > div {
+.garbage__title > div {
   margin-bottom: 8px;
 }
 
-.garbage-schedule {
+.garbage__schedule {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -413,7 +410,7 @@ label {
   position: relative;
 }
 
-.garbage-how-many-days {
+.garbage__how-many-days {
   flex: 1;
   font-size: 40px;
   text-align: center;
@@ -422,7 +419,7 @@ label {
   justify-content: center;
 }
 
-.garbage-next-date {
+.garbage__next-date {
   bottom: 5px;
   color: #888;
   font-size: 12px;
@@ -431,19 +428,19 @@ label {
   right: 5px;
 }
 
-.today {
+.garbage__today {
   background-color: #ffff90;
 }
 
-.today .garbage-how-many-days {
+.garbate__today .garbage__how-many-days {
   color: #f00;
 }
 
-.tomorrow .garbage-how-many-days {
+.garbage__tomorrow .garbage__how-many-days {
   color: #f00;
 }
 
-.day-after-tomorrow .garbage-how-many-days {
+.garbage__day-after-tomorrow .garbage__how-many-days {
   color: #00f;
 }
 
