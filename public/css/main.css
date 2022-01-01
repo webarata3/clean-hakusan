@@ -350,10 +350,11 @@ menu a:visited {
 /********** garbage **********/
 
 .garbage {
-  display: flex;
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 10px;
   flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .garbage__item {
