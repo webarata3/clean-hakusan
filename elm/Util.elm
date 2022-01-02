@@ -47,7 +47,7 @@ howManyDaysCss howManyDays =
 
 
 jsonError : Json.Decode.Error -> String
-jsonError error =
+jsonError _ =
     "Json Error"
 
 
