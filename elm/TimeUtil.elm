@@ -208,10 +208,18 @@ intDateToDayOfWeek : IntDate -> String
 intDateToDayOfWeek intDate =
     let
         y =
-            intDate.year
+            if intDate.month == 1 || intDate.month == 2 then
+                intDate.year - 1
+
+            else
+                intDate.year
 
         m =
-            intDate.month
+            if intDate.month == 1 || intDate.month == 2 then
+                intDate.month + 12
+
+            else
+                intDate.month
 
         d =
             intDate.day
