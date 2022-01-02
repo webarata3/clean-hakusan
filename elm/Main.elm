@@ -187,7 +187,7 @@ init _ =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ retOperateLocalStorage OperatedLocalStorage
         , Time.every (60 * 1000) Tick
@@ -201,7 +201,7 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DataError message ->
+        DataError _ ->
             ( model, Cmd.none )
 
         Tick newTime ->
@@ -346,7 +346,7 @@ update msg model =
                 GetError errorMessage ->
                     update (DataError errorMessage) model
 
-        GotApiVersionWeb (Err error) ->
+        GotApiVersionWeb (Err _) ->
             -- TODO 取れない場合はローカルにあるデータを使う
             ( model, Cmd.none )
 
@@ -369,7 +369,7 @@ update msg model =
                         }
 
                 -- localStorageにデータがなければWebから取得する
-                Err error ->
+                Err _ ->
                     ( model, getRegionsWeb )
 
         GotRegionsWeb (Ok resp) ->
@@ -430,7 +430,7 @@ update msg model =
                     )
 
                 -- localStorageにデータがなければWebから取得する
-                Err error ->
+                Err _ ->
                     ( model, getAreaGarbageWeb model.areaNo )
 
         ChangeArea areaNo ->
