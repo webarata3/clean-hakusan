@@ -354,7 +354,6 @@ menu a:visited {
 /********** garbage **********/
 
 .garbage {
-  margin-bottom: 10px;
   display: flex;
   flex: 1;
   flex-direction: column;
