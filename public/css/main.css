@@ -14,9 +14,13 @@
     url("../font/FiraSans-Light.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "KosugiMaru";
+  src: url("../font/KosugiMaru-Regular.ttf") format("truetype");
+}
+
 .app {
-  font-family: "Hiragino Maru Gothic Pro", "ヒラギノ丸ゴ Pro", Roboto,
-    "Droid Sans", "Meiryo", "メイリオ", "MS PGothic", "MS Pゴシック", sans-serif;
+  font-family: 'KosugiMaru', sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;

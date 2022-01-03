@@ -1,6 +1,6 @@
 // キャッシュファイルの指定
-const CACHE_NAME = 'cache-20220102-01';
-const cacheWhitelist = ['cache-20220102-01'];
+const CACHE_NAME = 'cache-20220103-01';
+const cacheWhitelist = ['cache-20220103-01'];
 const urlsToCache = [
   '/',
   '/css/font.css',
@@ -12,6 +12,7 @@ const urlsToCache = [
   '/font/Inconsolata-Bold.ttf',
   '/font/Inconsolata-Regular.ttf',
   '/font/Inconsolata.woff2',
+  '/font/KosugiMaru-Regular.ttf',
   '/js/sw_init.js',
   '/image/icons/apple-touch-icon-152x152.png',
   '/image/icons/favicon-16x16.png',
