@@ -3,7 +3,7 @@ port module Main exposing (..)
 import Browser
 import Credit
 import Html exposing (Attribute, Html, a, article, button, div, h1, h2, h3, img, label, li, main_, menu, optgroup, option, p, pre, select, span, text, ul)
-import Html.Attributes exposing (attribute, class, for, href, id, selected, src, target, type_, value)
+import Html.Attributes exposing (attribute, class, classList, for, href, id, selected, src, target, type_, value)
 import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode exposing (Decoder, decodeString, field, string)
