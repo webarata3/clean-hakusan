@@ -366,7 +366,6 @@ menu a:visited {
   flex: 1;
   flex-direction: row;
   margin: 5px;
-  height: 100%;
 }
 
 .garbage__title {
