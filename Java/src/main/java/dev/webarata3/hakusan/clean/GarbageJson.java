@@ -48,12 +48,11 @@ public class GarbageJson {
             }
         }
         try {
-            ObjectMapper mapper = new ObjectMapper();
+            var mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            String json = mapper
-                    .writeValueAsString(
-                            new AreaGarbage(areaNo, setting.getAreaName(areaNo), setting.getPdfName(areaNo), garbages));
-            Path outputPath = Paths.get("output", String.format("%02d.json", areaNo));
+            var json = mapper.writeValueAsString(
+                    new AreaGarbage(areaNo, setting.getAreaName(areaNo), setting.getPdfName(areaNo), garbages));
+            var outputPath = Paths.get("output", String.format("%02d.json", areaNo));
             Files.writeString(outputPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
