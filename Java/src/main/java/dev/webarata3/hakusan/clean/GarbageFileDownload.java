@@ -7,6 +7,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 public class GarbageFileDownload {
@@ -16,7 +17,7 @@ public class GarbageFileDownload {
     public static void main(String[] args) {
         var setting = GarbageSetting.readSetting();
 
-        var path = Paths.get("data", "source");
+        var path = Paths.get("input", "source");
         for (int areaNo : setting.getAreaNos()) {
             for (var year : setting.getYears()) {
                 download(path, areaNo, year);
@@ -36,7 +37,7 @@ public class GarbageFileDownload {
             var saveDirPath = saveBasePath.resolve(String.valueOf(year));
             Files.createDirectories(saveDirPath);
             var filePath = saveDirPath.resolve(String.format("%02d.html", area));
-            Files.copy(is, filePath);
+            Files.copy(is, filePath, StandardCopyOption.REPLACE_EXISTING);
             return Optional.of(filePath);
         } catch (IOException e) {
             e.printStackTrace();
