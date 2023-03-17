@@ -21,20 +21,26 @@ public class GarbageJson {
     public static void main(String[] args) {
         var setting = GarbageSetting.readSetting();
 
-        var inputBasePath = Paths.get("data", "source");
-        var outputBasePath = Paths.get("data", "dest");
-        try {
-            Path outputPath = Paths.get("output");
-            Files.deleteIfExists(outputPath);
-            Files.createDirectory(outputPath);
-        } catch (IOException e) {
-        }
+        var inputBasePath = Paths.get("input", "source");
+        var outputBasePath = Paths.get("output");
+
+        var areas = new ArrayList<AreaGarbage>();
         for (int areaNo : setting.getAreaNos()) {
-            makeJson(inputBasePath, outputBasePath, areaNo, setting);
+            areas.add(makeArea(inputBasePath, outputBasePath, areaNo, setting));
+        }
+
+        try {
+            var mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            var json = mapper.writeValueAsString(areas);
+            var outputPath = Paths.get("output", "areas.json");
+            Files.writeString(outputPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private static void makeJson(Path inputBasePath, Path outputBasePath, int areaNo, GarbageSetting setting) {
+    private static AreaGarbage makeArea(Path inputBasePath, Path outputBasePath, int areaNo, GarbageSetting setting) {
         var fileName = String.format("%02d.html", areaNo);
         List<Garbage> garbages = null;
         for (int year : setting.getYears()) {
@@ -47,16 +53,7 @@ public class GarbageJson {
                 }
             }
         }
-        try {
-            var mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            var json = mapper.writeValueAsString(
-                    new AreaGarbage(areaNo, setting.getAreaName(areaNo), setting.getPdfName(areaNo), garbages));
-            var outputPath = Paths.get("output", String.format("%02d.json", areaNo));
-            Files.writeString(outputPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return new AreaGarbage(areaNo, setting.getAreaName(areaNo), setting.getPdfName(areaNo), garbages);
     }
 
     private static List<Garbage> parseHtml(int year, Path path) {

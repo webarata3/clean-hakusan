@@ -1,6 +1,6 @@
 {
   "years": [2022, 2022, 2023],
-  "calendarPdfBaseUrl": "https://www.city.hakusan.lg.jp/shiminseikatsubu/kankyo/4r/documents",
+  "calendarPdfBaseUrl": "https://www.city.hakusan.lg.jp/_res/projects/default_project/_page_/001/007/377",
   "regions": [
     {
       "regionName": "松任地域",
@@ -8,60 +8,58 @@
         {
           "areaNo": 1,
           "areaName": "松任Ａ",
-          "pdfName": "1mattoa2021.pdf"
+          "pdfName": "22ja01mattoa.pdf"
         },
         {
           "areaNo": 2,
           "areaName": "松任Ｂ・旭",
-          "pdfName": "2mattobasah2021i.pdf"
+          "pdfName": "22ja02mattobasahi.pdf"
 
         },
         {
           "areaNo": 3,
           "areaName": "松任Ｃ",
-          "pdfName": "3mattoc2021.pdf"
+          "pdfName": "22ja03mattoc.pdf"
 
         },
         {
           "areaNo": 4,
           "areaName": "石川・柏野",
-          "pdfName": "4ishikawakashiwano2021.pdf"
+          "pdfName": "22ja04ishikawakashiwano.pdf"
 
         },
         {
           "areaNo": 5,
           "areaName": "笠間・宮保・加賀野",
-          "pdfName": "5kasamamiyabokagano2021.pdf"
+          "pdfName": "22ja05kasamamiyabokagano.pdf"
 
         },
         {
           "areaNo": 6,
           "areaName": "出城・御手洗",
-          "pdfName": "6dejiromitarashi2021.pdf"
+          "pdfName": "22ja06dejiromitarashi.pdf"
 
         },
         {
           "areaNo": 7,
           "areaName": "一木",
-          "pdfName": "7ichiki2021.pdf"
-
+          "pdfName": "22ja07ichiki.pdf"
         },
         {
           "areaNo": 8,
           "areaName": "中奥・郷",
-          "pdfName": "8nakaokugo2021.pdf"
+          "pdfName": "22ja08nakaokugo.pdf"
 
         },
         {
           "areaNo": 9,
           "areaName": "千代野",
-          "pdfName": "9chiyono2021.pdf"
-
+          "pdfName": "22ja09chiyono.pdf"
         },
         {
           "areaNo": 10,
           "areaName": "林中・山島",
-          "pdfName": "10hayashinakayamajima2021.pdf"
+          "pdfName": "22ja10hayashinakayamajima.pdf"
 
         }
       ]
@@ -72,19 +70,19 @@
         {
           "areaNo": 11,
           "areaName": "美川",
-          "pdfName": "11mikawa2021.pdf"
+          "pdfName": "22ja11mikawa.pdf"
 
         },
         {
           "areaNo": 12,
           "areaName": "蝶屋",
-          "pdfName": "12choya2021.pdf"
+          "pdfName": "22ja12choya.pdf"
 
         },
         {
           "areaNo": 13,
           "areaName": "湊",
-          "pdfName": "13minato2021.pdf"
+          "pdfName": "22ja13minato.pdf"
 
         }
       ]
@@ -95,31 +93,31 @@
         {
           "areaNo": 14,
           "areaName": "一ノ宮",
-          "pdfName": "14ichinomiya2021.pdf"
+          "pdfName": "22ja14ichinomiya.pdf"
 
         },
         {
           "areaNo": 15,
           "areaName": "鶴来",
-          "pdfName": "15tsurugi2021.pdf"
+          "pdfName": "22ja15tsurugi.pdf"
 
         },
         {
           "areaNo": 16,
           "areaName": "舘畑",
-          "pdfName": "16tachihata2021.pdf"
+          "pdfName": "22ja16tachihata.pdf"
 
         },
         {
           "areaNo": 17,
           "areaName": "蔵山",
-          "pdfName": "17kurayama2021.pdf"
+          "pdfName": "22ja17kurayama.pdf"
 
         },
         {
           "areaNo": 18,
           "areaName": "林",
-          "pdfName": "18hayashi2021.pdf"
+          "pdfName": "22ja18hayashi.pdf"
 
         }
       ]
@@ -130,31 +128,30 @@
         {
           "areaNo": 19,
           "areaName": "河内",
-          "pdfName": "19kawachi2021.pdf"
-
+          "pdfName": "22ja19kawachi.pdf"
         },
         {
           "areaNo": 20,
           "areaName": "吉野谷（中宮除く）",
-          "pdfName": "20yoshinodani2021.pdf"
+          "pdfName": "22ja20yoshinodani.pdf"
 
         },
         {
           "areaNo": 21,
           "areaName": "鳥越（仏師ヶ野除く）",
-          "pdfName": "21torigoe2021.pdf"
+          "pdfName": "22ja21torigoe.pdf"
 
         },
         {
           "areaNo": 22,
           "areaName": "中宮・仏師ヶ野・尾口（深瀬除く）",
-          "pdfName": "22oguchichugubushigano2021.pdf"
+          "pdfName": "22ja22oguchichugubushigano.pdf"
 
         },
         {
           "areaNo": 23,
           "areaName": "深瀬・白峰",
-          "pdfName": "23shiraminefukaze2021.pdf"
+          "pdfName": "22ja23shiraminefukaze.pdf"
 
         }
       ]

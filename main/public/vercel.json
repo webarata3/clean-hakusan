@@ -1,0 +1,15 @@
+{
+    "routes": [
+        {
+            "handle": "filesystem"
+        },
+        {
+            "src": "/about",
+            "dest": "/index.html"
+        },
+        {
+            "src": "/contact",
+            "dest": "/index.html"
+        }
+    ]
+}
