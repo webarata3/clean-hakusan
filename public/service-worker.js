@@ -1,10 +1,10 @@
 // キャッシュファイルの指定
-const CACHE_NAME = 'cache-20230318-01';
-const cacheWhitelist = ['cache-20230318-01'];
+const CACHE_NAME = 'cache-20230319-01';
+const cacheWhitelist = ['cache-20230319-01'];
 const urlsToCache = [
   '/',
-  '/static/css/main.99cb5867.css',
-  '/static/css/main.99cb5867.css.map',
+  '/static/css/main.f5f18fc0.css',
+  '/static/css/main.f5f18fc0.css.map',
   '/static/js/787.d3befce1.chunk.js',
   '/static/js/787.d3befce1.chunk.js.map',
   '/static/js/main.9db2c9c6.js',
