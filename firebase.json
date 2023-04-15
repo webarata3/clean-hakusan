@@ -1,11 +1,25 @@
 {
-    "hosting": {
-        "site": "clean-hakusan-app",
-        "public": "public",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ]
-    }
+  "hosting": {
+    "site": "clean-hakusan-app",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/privacy",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/disclaimer",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/credit",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }
