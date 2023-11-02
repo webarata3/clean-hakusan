@@ -33,6 +33,7 @@ public class GarbageJson {
             var mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             var json = mapper.writeValueAsString(areas);
+            System.out.println(json);
             var outputPath = Paths.get("output", "areas.json");
             Files.writeString(outputPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         } catch (Exception e) {
