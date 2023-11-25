@@ -7,7 +7,7 @@ type Props = {
   garbage: Garbage;
 };
 
-const Card = ({ today, garbage }: Props): JSX.Element => {
+const Card = ({ today, garbage }: Props): React.ReactElement => {
   const [garbageDate, setGarbageDate] = useState<string | null>(null);
   const [howManyDates, setHowManyDates] = useState(0);
 
@@ -34,7 +34,7 @@ const Card = ({ today, garbage }: Props): JSX.Element => {
 
   return (
     <div className="flex flex-1 flex-row border border-gray-700 m-1 shadow-[5px_5px_5px_rgba(0,0,0,0.4)]">
-      <div className="text-white bg-sky-500 flex-1 text-sm p-1 relative before:content-[''] before:absolute before:inset-y-1/2 before:right-[-25px] before:mt-[-13px] before:border-[13px] before:border-transparent before:border-l-sky-500 z-10">
+      <div className="text-white bg-main flex-1 text-sm p-1 relative before:content-[''] before:absolute before:inset-y-1/2 before:right-[-25px] before:mt-[-13px] before:border-[13px] before:border-transparent before:border-l-main z-10">
         {renderGarbageTitles()}
       </div>
       <div className={getDateClassName(howManyDates)}>

@@ -1,0 +1,52 @@
+{
+  "pages": {
+    "/_not-found": [
+      "static/chunks/webpack-2e37b1e831f46a94.js",
+      "static/chunks/fd9d1056-4b2c3529c0a2f3c1.js",
+      "static/chunks/472-b2dae1b8ab41345c.js",
+      "static/chunks/main-app-db8725535c256d82.js",
+      "static/chunks/app/_not-found-f29c372dd14da0fe.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-2e37b1e831f46a94.js",
+      "static/chunks/fd9d1056-4b2c3529c0a2f3c1.js",
+      "static/chunks/472-b2dae1b8ab41345c.js",
+      "static/chunks/main-app-db8725535c256d82.js",
+      "static/css/a067bb8ccc4be928.css",
+      "static/chunks/app/layout-dd7b855d86ddc13d.js"
+    ],
+    "/(common)/credit/page": [
+      "static/chunks/webpack-2e37b1e831f46a94.js",
+      "static/chunks/fd9d1056-4b2c3529c0a2f3c1.js",
+      "static/chunks/472-b2dae1b8ab41345c.js",
+      "static/chunks/main-app-db8725535c256d82.js",
+      "static/chunks/326-09f38fdd688d0c7b.js",
+      "static/css/925c18b4b0f7e515.css",
+      "static/chunks/app/(common)/credit/page-667f21528f5256ab.js"
+    ],
+    "/(common)/layout": [
+      "static/chunks/webpack-2e37b1e831f46a94.js",
+      "static/chunks/fd9d1056-4b2c3529c0a2f3c1.js",
+      "static/chunks/472-b2dae1b8ab41345c.js",
+      "static/chunks/main-app-db8725535c256d82.js",
+      "static/css/de52e8cabe20d437.css",
+      "static/chunks/app/(common)/layout-a58d21092492204d.js"
+    ],
+    "/(common)/privacy/page": [
+      "static/chunks/webpack-2e37b1e831f46a94.js",
+      "static/chunks/fd9d1056-4b2c3529c0a2f3c1.js",
+      "static/chunks/472-b2dae1b8ab41345c.js",
+      "static/chunks/main-app-db8725535c256d82.js",
+      "static/chunks/326-09f38fdd688d0c7b.js",
+      "static/chunks/app/(common)/privacy/page-4495c6a00c2b502d.js"
+    ],
+    "/(common)/disclaimer/page": [
+      "static/chunks/webpack-2e37b1e831f46a94.js",
+      "static/chunks/fd9d1056-4b2c3529c0a2f3c1.js",
+      "static/chunks/472-b2dae1b8ab41345c.js",
+      "static/chunks/main-app-db8725535c256d82.js",
+      "static/chunks/326-09f38fdd688d0c7b.js",
+      "static/chunks/app/(common)/disclaimer/page-9b5efc0c43f6bf81.js"
+    ]
+  }
+}

@@ -4,7 +4,7 @@ type Props = {
 
 const ExternalLink = ({ calendarUrl }: Props): JSX.Element => {
   return (
-    <div className="text-right w-full">
+    <div className="text-right px-1 w-full">
       <a
         href="https://www.city.hakusan.lg.jp/seikatsu/kankyo/1001731/1005551/1007377.html"
         target="_blank"
