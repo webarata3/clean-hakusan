@@ -25,8 +25,8 @@ public class GarbageJson {
         var outputBasePath = Paths.get("output");
 
         var areas = new ArrayList<AreaGarbage>();
-        for (int areaNo : setting.getAreaNos()) {
-            areas.add(makeArea(inputBasePath, outputBasePath, areaNo, setting));
+        for (List<Integer> areaNo : setting.getAreaNos()) {
+            areas.add(makeArea(inputBasePath, outputBasePath, areaNo.get(0), setting));
         }
 
         try {

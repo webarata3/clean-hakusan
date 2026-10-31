@@ -8,27 +8,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
 
 public class GarbageFileDownload {
     /* 最初の%dが地域1〜23 次の%dが年度 */
-    private static final String BASE_URL = "https://gb.hn-kouiki.jp/towns/pud/0/%d/%d";
+    private static final String BASE_URL = "https://gb.hn-kouiki.jp/towns/pud/%d/0/%d";
 
     public static void main(String[] args) {
         var setting = GarbageSetting.readSetting();
 
         var path = Paths.get("input", "source");
-        for (int areaNo : setting.getAreaNos()) {
+        for (List<Integer> areaNos : setting.getAreaNos()) {
             for (var year : setting.getYears()) {
-                download(path, areaNo, year);
+                IO.println(year);
+                download(path, areaNos, year);
             }
         }
     }
 
-    public static Optional<Path> download(Path saveBasePath, int area, int year) {
+    public static Optional<Path> download(Path saveBasePath, List<Integer> areaNos, int year) {
         URLConnection conn;
         try {
-            conn = new URL(String.format(BASE_URL, area, year)).openConnection();
+            conn = new URL(String.format(BASE_URL, areaNos.get(1), year)).openConnection();
         } catch (IOException e) {
             e.printStackTrace();
             return Optional.empty();
@@ -36,7 +38,7 @@ public class GarbageFileDownload {
         try (InputStream is = conn.getInputStream()) {
             var saveDirPath = saveBasePath.resolve(String.valueOf(year));
             Files.createDirectories(saveDirPath);
-            var filePath = saveDirPath.resolve(String.format("%02d.html", area));
+            var filePath = saveDirPath.resolve(String.format("%02d.html", areaNos.get(0)));
             Files.copy(is, filePath, StandardCopyOption.REPLACE_EXISTING);
             return Optional.of(filePath);
         } catch (IOException e) {

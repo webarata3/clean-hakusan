@@ -22,30 +22,19 @@ public class GarbageSetting {
     }
 
     public String getAreaName(int areaNo) {
-        List<String> areaNames = regions
-                .stream()
-                .flatMap(v -> v.getAreas().stream())
-                .filter(v -> v.getAreaNo() == areaNo)
-                .map(v -> v.getAreaName())
-                .collect(Collectors.toList());
+        List<String> areaNames = regions.stream().flatMap(v -> v.getAreas().stream())
+                .filter(v -> v.getAreaNo() == areaNo).map(v -> v.getAreaName()).collect(Collectors.toList());
         return areaNames.get(0);
     }
 
     public String getPdfName(int areaNo) {
-        List<String> pdfNames = regions
-                .stream()
-                .flatMap(v -> v.getAreas().stream())
-                .filter(v -> v.getAreaNo() == areaNo)
-                .map(v -> v.getPdfName())
-                .collect(Collectors.toList());
+        List<String> pdfNames = regions.stream().flatMap(v -> v.getAreas().stream())
+                .filter(v -> v.getAreaNo() == areaNo).map(v -> v.getPdfName()).collect(Collectors.toList());
         return String.format("%s/%s", calendarPdfBaseUrl, pdfNames.get(0));
     }
 
-    public List<Integer> getAreaNos() {
-        return regions
-                .stream()
-                .flatMap(v -> v.getAreas().stream())
-                .map(v -> v.getAreaNo())
+    public List<List<Integer>> getAreaNos() {
+        return regions.stream().flatMap(v -> v.getAreas().stream()).map(v -> List.of(v.getAreaNo(), v.getWebAreaNo()))
                 .collect(Collectors.toList());
     }
 
