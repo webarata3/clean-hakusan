@@ -76,19 +76,19 @@
           "areaNo": 11,
 		  "webAreaNo": 196,
           "areaName": "美川",
-          "pdfName": "26ja11mikawa.pdf"
+          "pdfName": "26ja21mikawa.pdf"
         },
         {
           "areaNo": 12,
 		  "webAreaNo": 204,
           "areaName": "蝶屋",
-          "pdfName": "26ja12choya.pdf"
+          "pdfName": "26ja22choya.pdf"
         },
         {
           "areaNo": 13,
 		  "webAreaNo": 211,
           "areaName": "湊",
-          "pdfName": "26ja13minato.pdf"
+          "pdfName": "26ja23minato.pdf"
         }
       ]
     },
@@ -99,31 +99,31 @@
           "areaNo": 14,
 		  "webAreaNo": 212,
           "areaName": "一ノ宮",
-          "pdfName": "26ja14ichinomiya.pdf"
+          "pdfName": "26ja11ichinomiya.pdf"
         },
         {
           "areaNo": 15,
 		  "webAreaNo": 217,
           "areaName": "鶴来",
-          "pdfName": "26ja15tsurugi.pdf"
+          "pdfName": "26ja12tsurugi.pdf"
         },
         {
           "areaNo": 16,
 		  "webAreaNo": 243,
           "areaName": "舘畑",
-          "pdfName": "26ja16tachihata.pdf"
+          "pdfName": "26ja13tachihata.pdf"
         },
         {
           "areaNo": 17,
 		  "webAreaNo": 247,
           "areaName": "蔵山",
-          "pdfName": "26ja17kurayama.pdf"
+          "pdfName": "26ja14kurayama.pdf"
         },
         {
           "areaNo": 18,
 		  "webAreaNo": 262,
           "areaName": "林",
-          "pdfName": "26ja18hayashi.pdf"
+          "pdfName": "26ja15hayashi.pdf"
         }
       ]
     },
@@ -134,31 +134,31 @@
           "areaNo": 19,
 		  "webAreaNo": 276,
           "areaName": "河内",
-          "pdfName": "26ja19kawachi.pdf"
+          "pdfName": "26ja16kawachi.pdf"
         },
         {
           "areaNo": 20,
 		  "webAreaNo": 280,
           "areaName": "吉野谷（中宮除く）",
-          "pdfName": "26ja20yoshinodani.pdf"
+          "pdfName": "26ja17yoshinodani.pdf"
         },
         {
           "areaNo": 21,
 		  "webAreaNo": 305,
           "areaName": "鳥越（仏師ヶ野除く）",
-          "pdfName": "26ja21torigoe.pdf"
+          "pdfName": "26ja18torigoe.pdf"
         },
         {
           "areaNo": 22,
 		  "webAreaNo": 316,
           "areaName": "中宮・仏師ヶ野・尾口（深瀬除く）",
-          "pdfName": "26ja22oguchichugubushigano.pdf"
+          "pdfName": "26ja19oguchichugubushigano.pdf"
         },
         {
           "areaNo": 23,
 		  "webAreaNo": 324,
           "areaName": "深瀬・白峰",
-          "pdfName": "26ja23shiraminefukaze.pdf"
+          "pdfName": "26ja20shiraminefukaze.pdf"
         }
       ]
     }
